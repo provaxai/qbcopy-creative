@@ -1069,10 +1069,140 @@ body { overflow: hidden; }
 .px-content.theme-dark .px-hps-track { background: rgba(255,255,255,.08); }
 .px-content.theme-dark .px-hps-fill { background: rgba(255,255,255,.1); }
 
+/* ── BODY WRAPPER (content + right sidebar) ── */
+.px-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── RIGHT SIDEBAR ── */
+.px-rsidebar {
+  width: 256px;
+  flex-shrink: 0;
+  background: #fff;
+  border-left: 1px solid #E2E8F0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #E2E8F0 transparent;
+}
+.px-rsidebar::-webkit-scrollbar { width: 4px; }
+.px-rsidebar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+
+.px-rs-section {
+  padding: 16px 16px 14px;
+  border-bottom: 1px solid #F1F5F9;
+}
+.px-rs-section:last-child { border-bottom: none; }
+
+.px-rs-label {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #94A3B8;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.px-rs-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: .77rem;
+  color: #334155;
+  line-height: 1.5;
+  padding: 3px 0;
+}
+.px-rs-point-dot {
+  color: #F5520C;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: .6rem;
+  line-height: 1.8;
+}
+
+.px-rs-empty {
+  font-size: .75rem;
+  color: #CBD5E1;
+  font-style: italic;
+}
+
+/* Review toggle */
+.px-rs-review-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #64748B;
+  font-size: .79rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  text-align: left;
+}
+.px-rs-review-btn:hover { border-color: #F5520C; color: #D44208; background: #FFF3EE; }
+.px-rs-review-btn.active { border-color: #F5520C; background: #FFF3EE; color: #D44208; }
+
+/* Notes */
+.px-rs-notes-area {
+  width: 100%;
+  min-height: 90px;
+  padding: 9px 11px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: .78rem;
+  color: #334155;
+  line-height: 1.6;
+  resize: vertical;
+  font-family: inherit;
+  background: #F8FAFC;
+  outline: none;
+  transition: border-color .15s, background .15s;
+  box-sizing: border-box;
+  display: block;
+}
+.px-rs-notes-area:focus { border-color: #FF8C5A; background: #fff; }
+.px-rs-notes-area::placeholder { color: #CBD5E1; }
+.px-rs-save-status {
+  font-size: .67rem;
+  color: #94A3B8;
+  margin-top: 5px;
+  text-align: right;
+  min-height: 14px;
+  transition: opacity .2s;
+}
+
+/* Dark/sepia themes for right sidebar */
+.px-rsidebar.theme-sepia { background: #FAF4E8; border-left-color: #E5D9C0; }
+.px-rsidebar.theme-sepia .px-rs-section { border-bottom-color: #EDE0C4; }
+.px-rsidebar.theme-sepia .px-rs-point { color: #5C4030; }
+.px-rsidebar.theme-sepia .px-rs-notes-area { background: #F5EFE0; border-color: #E0D0A8; color: #5C4030; }
+.px-rsidebar.theme-sepia .px-rs-review-btn { background: #F5EFE0; border-color: #E0D0A8; color: #7A6040; }
+.px-rsidebar.theme-dark { background: #1E293B; border-left-color: rgba(255,255,255,.07); }
+.px-rsidebar.theme-dark .px-rs-section { border-bottom-color: rgba(255,255,255,.06); }
+.px-rsidebar.theme-dark .px-rs-label { color: #475569; }
+.px-rsidebar.theme-dark .px-rs-point { color: #94A3B8; }
+.px-rsidebar.theme-dark .px-rs-review-btn { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: #94A3B8; }
+.px-rsidebar.theme-dark .px-rs-review-btn.active { background: rgba(245,82,12,.12); border-color: #F5520C; color: #FF8C5A; }
+.px-rsidebar.theme-dark .px-rs-notes-area { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.1); color: #CBD5E1; }
+.px-rsidebar.theme-dark .px-rs-notes-area:focus { background: rgba(255,255,255,.07); }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .px-tb-tool-blue, .px-tb-tool-purple { display: none; }
   .px-tb-font { display: none; }
+}
+@media (max-width: 1100px) {
+  .px-rsidebar { display: none; }
 }
 @media (max-width: 768px) {
   .px-sidebar { position: fixed; left: -290px; top: 0; bottom: 0; z-index: 200; transition: left .25s; box-shadow: 0 0 40px rgba(0,0,0,.4); width: 288px !important; }
@@ -1163,14 +1293,23 @@ body { overflow: hidden; }
       <button class="px-tab"        id="tab-socratic" onclick="switchView('socratic')">🧠 Revisão Socrática</button>
     </div>
 
-    <!-- CONTENT -->
-    <div class="px-content" id="px-content">
-      <div class="px-timer" id="px-timer">
-        <button class="px-timer-btn" id="timer-play" onclick="toggleTimer()" title="Iniciar/Pausar">▶</button>
-        <span class="px-timer-display" id="timer-display">1:00:00</span>
-        <button class="px-timer-btn" onclick="resetTimer()" title="Reiniciar">↺</button>
+    <!-- BODY: content + right sidebar -->
+    <div class="px-body">
+
+      <div class="px-content" id="px-content">
+        <div class="px-timer" id="px-timer">
+          <button class="px-timer-btn" id="timer-play" onclick="toggleTimer()" title="Iniciar/Pausar">▶</button>
+          <span class="px-timer-display" id="timer-display">1:00:00</span>
+          <button class="px-timer-btn" onclick="resetTimer()" title="Reiniciar">↺</button>
+        </div>
       </div>
-    </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <aside class="px-rsidebar" id="px-rsidebar">
+        <!-- populated by buildRightSidebar() -->
+      </aside>
+
+    </div><!-- /px-body -->
 
     <!-- BOTTOM NAV -->
     <div class="px-bottom-nav">
@@ -1479,6 +1618,8 @@ function goToLesson(idx) {
   url.searchParams.set('curso', courseKey);
   url.searchParams.set('aula', idx);
   history.replaceState({}, '', url);
+
+  buildRightSidebar(getLesson(idx));
 }
 
 // ── Views ─────────────────────────────────────────────────────────────────────
@@ -1794,9 +1935,86 @@ function updateProgress() {
   document.getElementById('sb-prog-text').textContent = `${done}/${total} (${pct}%)`;
 }
 
-// ── Sidebar toggle ────────────────────────────────────────────────────────────
+// ── Left sidebar toggle ───────────────────────────────────────────────────────
 function toggleSidebar() {
   document.getElementById('px-sidebar').classList.toggle('collapsed');
+}
+
+// ── Right sidebar ─────────────────────────────────────────────────────────────
+function buildRightSidebar(lesson) {
+  const rs = document.getElementById('px-rsidebar');
+  if (!rs) return;
+
+  const points  = getRightSidebarPoints(lesson);
+  const reviews = getReviewSet();
+  const isReview = reviews.has(currentFlat);
+  const note    = localStorage.getItem(`pvx_notes_${courseKey}_${currentFlat}`) || '';
+
+  const pointsHtml = points.length
+    ? points.map(p => `<div class="px-rs-point"><span class="px-rs-point-dot">●</span>${esc(p)}</div>`).join('')
+    : `<div class="px-rs-empty">Mapa mental não disponível.</div>`;
+
+  rs.innerHTML = `
+    <div class="px-rs-section">
+      <div class="px-rs-label">📌 Pontos Importantes</div>
+      ${pointsHtml}
+    </div>
+
+    <div class="px-rs-section">
+      <div class="px-rs-label">🔖 Revisão</div>
+      <button class="px-rs-review-btn${isReview ? ' active' : ''}" id="rs-review-btn" onclick="toggleReview()">
+        ${isReview ? '✓ Marcada para revisar' : '○ Marcar para revisar'}
+      </button>
+    </div>
+
+    <div class="px-rs-section">
+      <div class="px-rs-label">✏️ Anotações</div>
+      <textarea class="px-rs-notes-area" id="rs-notes"
+        placeholder="Suas notas sobre esta aula..."
+        oninput="scheduleNoteSave()">${esc(note)}</textarea>
+      <div class="px-rs-save-status" id="rs-save-status"></div>
+    </div>`;
+}
+
+function getRightSidebarPoints(lesson) {
+  if (!lesson.mindmap) return [];
+  const pts = [];
+  lesson.mindmap.branches.forEach(b => b.nodes.slice(0, 2).forEach(n => pts.push(n)));
+  return pts.slice(0, 6);
+}
+
+function getReviewSet() {
+  const saved = localStorage.getItem(`pvx_review_${courseKey}`);
+  return new Set(saved ? JSON.parse(saved) : []);
+}
+
+function toggleReview() {
+  const set = getReviewSet();
+  if (set.has(currentFlat)) { set.delete(currentFlat); } else { set.add(currentFlat); }
+  localStorage.setItem(`pvx_review_${courseKey}`, JSON.stringify([...set]));
+  const btn = document.getElementById('rs-review-btn');
+  if (!btn) return;
+  const active = set.has(currentFlat);
+  btn.className = 'px-rs-review-btn' + (active ? ' active' : '');
+  btn.textContent = active ? '✓ Marcada para revisar' : '○ Marcar para revisar';
+}
+
+let _noteSaveTimer = null;
+function scheduleNoteSave() {
+  const st = document.getElementById('rs-save-status');
+  if (st) st.textContent = 'digitando...';
+  clearTimeout(_noteSaveTimer);
+  _noteSaveTimer = setTimeout(() => {
+    const area = document.getElementById('rs-notes');
+    if (!area) return;
+    localStorage.setItem(`pvx_notes_${courseKey}_${currentFlat}`, area.value);
+    const st2 = document.getElementById('rs-save-status');
+    if (st2) { st2.textContent = '✓ Salvo'; setTimeout(() => { if (st2) st2.textContent = ''; }, 2000); }
+  }, 700);
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ── Timer ─────────────────────────────────────────────────────────────────────
@@ -1918,9 +2136,15 @@ function setFontSize(size) {
 
 // ── Theme ─────────────────────────────────────────────────────────────────────
 function setTheme(theme) {
-  const c = document.getElementById('px-content');
-  c.classList.remove('theme-sepia', 'theme-dark');
-  if (theme !== 'light') c.classList.add(`theme-${theme}`);
+  const targets = [
+    document.getElementById('px-content'),
+    document.getElementById('px-rsidebar'),
+  ];
+  targets.forEach(el => {
+    if (!el) return;
+    el.classList.remove('theme-sepia', 'theme-dark');
+    if (theme !== 'light') el.classList.add(`theme-${theme}`);
+  });
   document.querySelectorAll('.px-tb-theme-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(`t-${theme}`).classList.add('active');
 }
