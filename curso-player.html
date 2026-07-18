@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Curso — QbStudy AI</title>
+<title>Curso — Provax PRF</title>
 <link rel="stylesheet" href="style.css">
 <style>
 /* ── COURSE PLAYER LAYOUT ── */
@@ -1101,11 +1101,11 @@ function init() {
   const course = COURSES[courseKey];
   if (!course) { location.href = 'cursos-app.html'; return; }
 
-  const saved = localStorage.getItem(`qbs_progress_${courseKey}`);
+  const saved = localStorage.getItem(`pvx_progress_${courseKey}`);
   if (saved) completed = new Set(JSON.parse(saved));
 
   document.getElementById('sidebar-course-title').textContent = course.title;
-  document.title = course.title + ' — QbStudy AI';
+  document.title = course.title + ' — Provax PRF';
 
   buildFlatList(course);
   buildSidebar(course);
@@ -1420,7 +1420,7 @@ function renderAiHelper(lesson) {
 // ── Navigation ────────────────────────────────────────────────────────────────
 function completeAndNext() {
   completed.add(currentFlat);
-  localStorage.setItem(`qbs_progress_${courseKey}`, JSON.stringify([...completed]));
+  localStorage.setItem(`pvx_progress_${courseKey}`, JSON.stringify([...completed]));
 
   const item = document.getElementById(`lesson-item-${currentFlat}`);
   if (item) {

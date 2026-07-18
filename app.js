@@ -1,8 +1,8 @@
-/* ── QbStudy AI – Shared Application Logic ── */
+/* ── Provax PRF – Shared Application Logic ── */
 
 // ── AUTH ────────────────────────────────────────
 const Auth = {
-  key: 'qbs_user',
+  key: 'pvx_user',
   login(userData) {
     localStorage.setItem(this.key, JSON.stringify(userData));
   },
@@ -63,7 +63,7 @@ function renderSidebar(activePage) {
   const html = `
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon">⚡</div>
-      QbStudy AI
+      Provax PRF
     </div>
     <div class="sidebar-user">
       <div class="sidebar-avatar">${avatarLetter}</div>
