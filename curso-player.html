@@ -78,10 +78,7 @@
   color: var(--text-muted);
 }
 .module-header.open .module-arrow { transform: rotate(180deg); }
-.module-lessons {
-  display: none;
-  flex-direction: column;
-}
+.module-lessons { display: none; flex-direction: column; }
 .module-lessons.open { display: flex; }
 .lesson-item {
   display: flex;
@@ -102,30 +99,17 @@
 }
 .lesson-item.done { color: var(--text-muted); }
 .lesson-icon {
-  width: 20px;
-  height: 20px;
+  width: 20px; height: 20px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  font-size: .6rem;
-  font-weight: 700;
+  font-size: .6rem; font-weight: 700;
   border: 1.5px solid var(--border);
   background: var(--surface);
   color: var(--text-muted);
 }
-.lesson-item.done .lesson-icon {
-  background: var(--success);
-  border-color: var(--success);
-  color: #fff;
-}
-.lesson-item.active .lesson-icon {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
-  font-size: .8rem;
-}
+.lesson-item.done .lesson-icon { background: var(--success); border-color: var(--success); color: #fff; }
+.lesson-item.active .lesson-icon { background: var(--primary); border-color: var(--primary); color: #fff; font-size: .8rem; }
 
 /* Main area */
 .player-main {
@@ -153,9 +137,7 @@
 .player-topbar-left a {
   font-size: .82rem;
   color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  display: flex; align-items: center; gap: 4px;
 }
 .player-topbar-left a:hover { color: var(--primary); }
 .player-lesson-title {
@@ -196,17 +178,8 @@
   align-items: center;
   gap: 6px;
 }
-.lesson-body {
-  font-size: .95rem;
-  line-height: 1.85;
-  color: var(--text);
-}
-.lesson-body h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  margin: 24px 0 10px;
-  color: var(--text);
-}
+.lesson-body { font-size: .95rem; line-height: 1.85; color: var(--text); }
+.lesson-body h3 { font-size: 1rem; font-weight: 700; margin: 24px 0 10px; color: var(--text); }
 .lesson-body p { margin-bottom: 14px; }
 .lesson-body ul { margin: 0 0 14px 20px; }
 .lesson-body ul li { margin-bottom: 6px; }
@@ -229,7 +202,193 @@
   color: #78350F;
 }
 
-/* AI helper */
+/* ── VIEW TABS ── */
+.player-view-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  height: 44px;
+}
+.view-tab {
+  padding: 0 16px;
+  height: 44px;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  transition: color .15s, border-color .15s;
+  margin-bottom: -1px;
+  display: flex; align-items: center; gap: 6px;
+}
+.view-tab:hover { color: var(--text); }
+.view-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.audio-pill {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+  font-size: .78rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: none;
+  transition: all .15s;
+  font-weight: 600;
+}
+.audio-pill:hover { border-color: var(--primary); color: var(--primary); }
+.audio-pill.playing { border-color: var(--success); color: var(--success); background: #D1FAE5; }
+
+/* ── MIND MAP ── */
+.mm-wrap {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.mm-root {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px 28px;
+  font-weight: 800;
+  font-size: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(37,99,235,.28);
+}
+.mm-connector-v {
+  width: 2px;
+  background: var(--border);
+}
+.mm-connector-h {
+  height: 2px;
+  background: var(--border);
+  align-self: stretch;
+}
+.mm-branches-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+}
+.mm-branch-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 130px;
+}
+.mm-branch-label {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: .82rem;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+}
+.mm-leaves { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+.mm-leaf {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: .77rem;
+  color: var(--text);
+  text-align: center;
+  transition: border-color .15s, background .15s;
+  cursor: default;
+}
+.mm-leaf:hover { border-color: var(--primary); background: var(--primary-light); }
+.mm-note {
+  margin-top: 24px;
+  font-size: .78rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── SOCRATIC REVIEW ── */
+.socratic-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+.socratic-intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.socratic-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+  flex-shrink: 0;
+}
+.socratic-q-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: box-shadow .18s;
+}
+.socratic-q-block:focus-within,
+.socratic-q-block.revealed { box-shadow: 0 0 0 2px var(--primary-light); border-color: var(--primary); }
+.socratic-q-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 20px 10px;
+}
+.socratic-q-num {
+  width: 26px; height: 26px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 800;
+  flex-shrink: 0;
+}
+.socratic-q-text {
+  font-size: .92rem;
+  font-weight: 600;
+  line-height: 1.55;
+  flex: 1;
+  padding-top: 2px;
+}
+.socratic-actions { display: flex; gap: 8px; padding: 0 20px 16px; flex-wrap: wrap; }
+.socratic-hint-box, .socratic-answer-box {
+  margin: 0 20px 14px;
+  padding: 11px 15px;
+  border-radius: var(--radius-sm);
+  font-size: .875rem;
+  line-height: 1.6;
+  display: none;
+}
+.socratic-hint-box { background: #FEF3C7; border-left: 3px solid #F59E0B; color: #78350F; }
+.socratic-answer-box { background: #D1FAE5; border-left: 3px solid var(--success); color: #065F46; font-weight: 500; }
+.socratic-hint-box.visible, .socratic-answer-box.visible { display: block; }
+
+/* ── AI HELPER ── */
 .ai-helper {
   max-width: 760px;
   margin: 20px auto 0;
@@ -242,53 +401,27 @@
   gap: 14px;
 }
 .ai-avatar {
-  width: 36px;
-  height: 36px;
+  width: 36px; height: 36px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--purple));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: .9rem;
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem; flex-shrink: 0;
 }
-.ai-helper-content h4 {
-  font-size: .85rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--primary);
-}
-.ai-helper-content p {
-  font-size: .85rem;
-  line-height: 1.65;
-  color: var(--text-muted);
-  margin-bottom: 10px;
-}
+.ai-helper-content h4 { font-size: .85rem; font-weight: 700; margin-bottom: 6px; color: var(--primary); }
+.ai-helper-content p { font-size: .85rem; line-height: 1.65; color: var(--text-muted); margin-bottom: 10px; }
 .ai-helper-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* Quiz */
-.lesson-quiz {
-  max-width: 760px;
-  margin: 20px auto 0;
-}
+/* ── QUIZ ── */
+.lesson-quiz { max-width: 760px; margin: 20px auto 0; }
 .quiz-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 24px;
 }
-.quiz-card h4 {
-  font-size: .9rem;
-  font-weight: 700;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.quiz-card h4 { font-size: .9rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .quiz-option {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  display: flex; align-items: flex-start; gap: 10px;
   padding: 11px 14px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
@@ -297,59 +430,62 @@
   font-size: .88rem;
   transition: border-color .15s, background .15s;
 }
-.quiz-option:hover { border-color: var(--primary); background: var(--primary-light); }
-.quiz-option.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); font-weight: 600; }
+.quiz-option:hover:not(.locked) { border-color: var(--primary); background: var(--primary-light); }
 .quiz-option.correct { border-color: var(--success); background: #D1FAE5; color: #065F46; }
 .quiz-option.wrong { border-color: var(--danger); background: #FEE2E2; color: #991B1B; }
+.quiz-option.locked { pointer-events: none; }
 .quiz-letter {
-  width: 24px;
-  height: 24px;
+  width: 24px; height: 24px;
   border-radius: 50%;
   background: var(--bg);
   border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: .73rem;
-  font-weight: 700;
-  flex-shrink: 0;
-  margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .73rem; font-weight: 700;
+  flex-shrink: 0; margin-top: 1px;
+}
+.quiz-feedback { margin-top: 12px; font-size: .85rem; display: none; }
+.quiz-retry-bar {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #FEF3C7;
+  border-radius: var(--radius-sm);
+  font-size: .85rem;
+  color: #78350F;
 }
 
-/* Bottom nav */
+/* ── BOTTOM NAV ── */
 .player-nav {
   background: var(--surface);
   border-top: 1px solid var(--border);
   padding: 14px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   flex-shrink: 0;
 }
-.player-nav-center {
-  font-size: .82rem;
-  color: var(--text-muted);
-}
+.player-nav-center { font-size: .82rem; color: var(--text-muted); }
 
-/* Toggle sidebar */
-#player-sidebar-toggle {
-  display: none;
-}
+/* ── RESPONSIVE ── */
+#player-sidebar-toggle { display: none; }
 @media (max-width: 900px) {
   .player-sidebar { position: fixed; left: -300px; top: 0; bottom: 0; z-index: 200; transition: left .3s; box-shadow: var(--shadow-lg); }
   .player-sidebar.open { left: 0; }
   #player-sidebar-toggle { display: flex; }
   .lesson-content-card { padding: 24px 20px; }
+  .player-view-bar { padding: 0 16px; }
+  .view-tab { padding: 0 10px; font-size: .78rem; }
+  .audio-pill span { display: none; }
+  .mm-branches-row { gap: 10px; }
+  .mm-branch-col { min-width: 110px; }
 }
 </style>
 </head>
 <body>
 <div class="player-layout">
 
-  <!-- Lesson sidebar -->
+  <!-- Sidebar -->
   <aside class="player-sidebar" id="player-sidebar">
     <div class="player-sidebar-header">
-      <h2 id="sidebar-course-title">🚔 Extensivo PRF Interativo</h2>
+      <h2 id="sidebar-course-title"></h2>
       <div class="player-progress-bar">
         <div class="player-progress-fill" id="progress-fill" style="width:0%"></div>
       </div>
@@ -358,7 +494,7 @@
     <div class="player-modules" id="player-modules"></div>
   </aside>
 
-  <!-- Main content -->
+  <!-- Main -->
   <div class="player-main">
     <div class="player-topbar">
       <div class="player-topbar-left">
@@ -367,14 +503,20 @@
         <span style="color:var(--border)">|</span>
         <span class="player-lesson-title" id="topbar-lesson-title">Carregando...</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span id="topbar-user" style="font-size:.82rem;color:var(--text-muted);"></span>
-      </div>
+      <span id="topbar-user" style="font-size:.82rem;color:var(--text-muted);"></span>
     </div>
 
-    <div class="player-content" id="player-content">
-      <!-- lesson content injected here -->
+    <!-- View tabs -->
+    <div class="player-view-bar">
+      <button class="view-tab active" id="tab-content"  onclick="switchView('content')">📖 Conteúdo</button>
+      <button class="view-tab"        id="tab-mindmap"  onclick="switchView('mindmap')">🗺 Mapa Mental</button>
+      <button class="view-tab"        id="tab-socratic" onclick="switchView('socratic')">🧠 Revisão Socrática</button>
+      <button class="audio-pill" id="audio-btn" onclick="speakSummary()" title="Ouvir resumo em áudio">
+        🎧 <span>Ouvir resumo</span>
+      </button>
     </div>
+
+    <div class="player-content" id="player-content"></div>
 
     <div class="player-nav">
       <button class="btn btn-ghost" id="btn-prev" onclick="navigate(-1)">← Aula anterior</button>
@@ -393,7 +535,7 @@ if (user) {
   if (el) el.textContent = user.name || user.email;
 }
 
-// ── Course data ──────────────────────────────────────────────
+// ── Course data ──────────────────────────────────────────────────────────────
 const COURSES = {
   prf: {
     title: '🚔 Extensivo PRF Interativo',
@@ -403,6 +545,33 @@ const COURSES = {
         lessons: [
           {
             title: '1.1 Interpretação de Texto',
+            summary: 'Interpretação de texto exige extrair o sentido real do autor, não apenas a transcrição literal. A banca CESPE distingue explícito e implícito. Use a estratégia de leitura em dois tempos: primeiro e último parágrafo para identificar o tema, depois leitura orientada pelas questões. Atenção especial aos conectivos que indicam contraste, conclusão e causa.',
+            mindmap: {
+              root: 'Interpretação de Texto',
+              branches: [
+                { label: 'Tipos de questão', nodes: ['Ideia principal', 'Inferência', 'Ref. pronominal', 'Sentido contextual'] },
+                { label: 'CESPE cobra', nodes: ['Explícito vs Implícito', '"É possível inferir..."', 'Rel. entre parágrafos'] },
+                { label: 'Estratégia', nodes: ['1º e último parágrafo', 'Leia as questões antes', 'Leitura orientada'] },
+                { label: 'Conectivos', nodes: ['Adversidade: porém/mas', 'Conclusão: logo/assim', 'Causa: pois/porque'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Por que "inferir" é diferente de "transcrever" um trecho do texto? O que muda na sua leitura?',
+                hint: 'Pense: inferir requer que você vá além do que está escrito — a conclusão precisa ser sustentada pelo texto, mas não está explícita nele.',
+                answer: 'Transcrever é copiar literalmente — já inferir é concluir algo que o texto implica mas não diz diretamente. A banca testa se você leu com profundidade, não se decorou palavras.',
+              },
+              {
+                q: 'Se você vê "porém" ou "todavia" numa frase, o que isso sinaliza sobre a relação entre as ideias antes e depois desse conectivo?',
+                hint: 'Esses conectivos pertencem à família da adversidade — eles introduzem uma ideia que contrasta com a anterior.',
+                answer: 'Sinalizam contraste ou oposição. A ideia que vem depois do "porém" vai contra ou limita a ideia anterior. É pista valiosa para questões de "o autor defende que…".',
+              },
+              {
+                q: 'Por que a estratégia de ler primeiro e último parágrafo antes do texto completo economiza tempo na prova?',
+                hint: 'O primeiro parágrafo geralmente apresenta o tema e a tese; o último parágrafo geralmente conclui ou reforça o argumento central.',
+                answer: 'Com tema e conclusão em mente, você lê o restante com foco — sabe o que o autor defende e consegue localizar onde cada questão está respondida, sem releitura total.',
+              },
+            ],
             content: `
               <h1>Interpretação de Texto</h1>
               <div class="lesson-breadcrumb">Módulo 1 — Língua Portuguesa <span>›</span> Aula 1.1</div>
@@ -446,6 +615,28 @@ const COURSES = {
           },
           {
             title: '1.2 Ortografia e Acentuação',
+            summary: 'O Acordo Ortográfico de 2009 eliminou o trema em palavras portuguesas e removeu vários acentos diferenciais. Permanecem apenas pôde, pôr, e as formas de ter e vir no plural. O decreto 6.583 de 2008 promulgou o acordo com vigência plena a partir de 2016.',
+            mindmap: {
+              root: 'Ortografia e Acentuação',
+              branches: [
+                { label: 'Acordo 2009', nodes: ['Decreto 6.583/2008', 'Vigência: 2016', 'Eliminou trema'] },
+                { label: 'Sem trema', nodes: ['questão', 'frequente', 'linguiça', 'tranquilo'] },
+                { label: 'Acentos mantidos', nodes: ['pôde vs pode', 'pôr vs por', 'têm / vêm'] },
+                { label: 'Acentos extintos', nodes: ['para (verbo)', 'pelo/pela', 'voo, zoo, oo'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Qual é a lógica por trás da distinção entre "pôde" e "pode"? O que justifica manter esse acento diferencial?',
+                hint: 'Pense no tempo verbal: um é passado, outro é presente. Sem o acento, as duas formas seriam graficamente idênticas.',
+                answer: '"Pôde" é pretérito perfeito (ele pôde ontem) e "pode" é presente (ele pode hoje). O acento evita ambiguidade — sem ele, não saberíamos o tempo verbal pela escrita.',
+              },
+              {
+                q: 'Por que a banca gosta de cobrar "linguiça", "frequente" e "tranquilo" em questões de ortografia?',
+                hint: 'Essas palavras tinham trema antes de 2009 e muitos candidatos ainda escrevem com trema por hábito.',
+                answer: 'São palavras onde o candidato mais erra por inércia de hábito antigo. O trema foi eliminado em 2009 e a banca explora esse ponto de confusão exatamente porque é onde os estudantes menos atentos erram.',
+              },
+            ],
             content: `
               <h1>Ortografia e Acentuação</h1>
               <div class="lesson-breadcrumb">Módulo 1 — Língua Portuguesa <span>›</span> Aula 1.2</div>
@@ -476,6 +667,23 @@ const COURSES = {
           },
           {
             title: '1.3 Morfologia — Classes Gramaticais',
+            summary: 'As dez classes gramaticais são cobradas em questões de interpretação, concordância e regência. O destaque vai para substantivos e pronomes — especialmente a identificação do referente pronominal. Pronomes relativos como que, o qual e cujo retomam o substantivo mais próximo, salvo quando o sentido exigir outro.',
+            mindmap: {
+              root: 'Classes Gramaticais',
+              branches: [
+                { label: 'Variáveis', nodes: ['Substantivo', 'Artigo', 'Adjetivo', 'Numeral', 'Pronome', 'Verbo'] },
+                { label: 'Invariáveis', nodes: ['Advérbio', 'Preposição', 'Conjunção', 'Interjeição'] },
+                { label: 'CESPE cobra', nodes: ['Referente pronominal', 'Classificação mórfica', 'Função vs classe'] },
+                { label: 'Pronomes rel.', nodes: ['que / o qual', 'cujo (posse)', 'onde (lugar)', 'retomam o mais próximo'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Qual é a diferença entre a CLASSE de uma palavra e a FUNÇÃO que ela exerce na oração?',
+                hint: 'Um substantivo pode funcionar como sujeito, objeto ou adjunto. A classe é fixa; a função muda conforme o contexto.',
+                answer: 'A classe é a categoria da palavra (substantivo, verbo…) e não muda. A função é o papel que ela exerce na oração (sujeito, predicado, adjunto…) e depende do contexto. A CESPE cobra os dois separadamente.',
+              },
+            ],
             content: `
               <h1>Morfologia — Classes Gramaticais</h1>
               <div class="lesson-breadcrumb">Módulo 1 — Língua Portuguesa <span>›</span> Aula 1.3</div>
@@ -500,6 +708,27 @@ const COURSES = {
         lessons: [
           {
             title: '2.1 Lógica Proposicional',
+            summary: 'A lógica proposicional domina o raciocínio lógico na PRF. Os quatro conectivos fundamentais são: conjunção E, disjunção OU, condicional SE-ENTÃO e negação. A condicional é falsa somente quando o antecedente é verdadeiro e o consequente é falso. A negação da condicional equivale a p e não-q — esse é o ponto mais cobrado.',
+            mindmap: {
+              root: 'Lógica Proposicional',
+              branches: [
+                { label: 'Conectivos', nodes: ['∧ conjunção (E)', '∨ disjunção (OU)', '→ condicional', '¬ negação'] },
+                { label: 'Condicional p→q', nodes: ['Falsa: p=V e q=F', 'Verdadeira: demais casos', 'Mnemônico: "Só mente quem promete e não cumpre"'] },
+                { label: 'Equivalências', nodes: ['¬(p→q) ≡ p∧¬q', 'p→q ≡ ¬p∨q', 'Contrapositiva: ¬q→¬p'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Por que a condicional "Se você estudar, passará" é VERDADEIRA mesmo quando o candidato não estudou e não passou?',
+                hint: 'Pense: a promessa foi feita para quem estuda. Se o candidato não estudou, a promessa nem foi acionada — ela não pode ser considerada quebrada.',
+                answer: 'A condicional só é falsificada quando a condição (p) ocorre mas o resultado (q) não segue. Se p é falso, a proposição é verdadeira por convenção lógica — não houve como testar a promessa.',
+              },
+              {
+                q: 'Qual é a negação correta de "Se chover, o evento será cancelado"?',
+                hint: 'Negação de p→q não é "Se não chover, o evento não será cancelado". Use a equivalência ¬(p→q) ≡ p∧¬q.',
+                answer: '"Choveu E o evento não foi cancelado." A negação une o antecedente verdadeiro com o consequente falso — a única combinação que quebra a promessa.',
+              },
+            ],
             content: `
               <h1>Lógica Proposicional</h1>
               <div class="lesson-breadcrumb">Módulo 2 — Raciocínio Lógico <span>›</span> Aula 2.1</div>
@@ -530,6 +759,22 @@ const COURSES = {
           },
           {
             title: '2.2 Diagramas de Venn',
+            summary: 'Diagramas de Venn resolvem problemas de conjuntos muito cobrados na PRF. A fórmula principal é: A união B equivale a A mais B menos a intersecção de A e B. Sempre identifique o que é exclusivo de cada conjunto e o que pertence aos dois antes de calcular.',
+            mindmap: {
+              root: 'Diagramas de Venn',
+              branches: [
+                { label: 'Fórmula 2 conj.', nodes: ['|A∪B| = |A|+|B|-|A∩B|', 'Evita dupla contagem', 'Identifique ∩ primeiro'] },
+                { label: 'Extensão 3 conj.', nodes: ['|A∪B∪C| =', 'A+B+C-∩AB-∩AC-∩BC+∩ABC', 'Raro na PRF'] },
+                { label: 'Armadilhas', nodes: ['Confundir união/intersecção', '"Apenas A": exclui ∩', '"Pelo menos um": união total'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Por que subtraímos a intersecção ao calcular a união de dois conjuntos? O que aconteceria se não subtraíssemos?',
+                hint: 'Pense em quem pertence aos dois grupos ao mesmo tempo — essas pessoas seriam contadas duas vezes, uma em cada conjunto.',
+                answer: 'Quem está na intersecção foi somado duas vezes (uma ao contar A, outra ao contar B). Subtrair a intersecção corrige essa dupla contagem e dá o total real de pessoas em pelo menos um dos grupos.',
+              },
+            ],
             content: `
               <h1>Diagramas de Venn</h1>
               <div class="lesson-breadcrumb">Módulo 2 — Raciocínio Lógico <span>›</span> Aula 2.2</div>
@@ -554,6 +799,27 @@ const COURSES = {
         lessons: [
           {
             title: '3.1 CTB — Parte Geral',
+            summary: 'O CTB é a lei mais cobrada nas provas da PRF, instituído pela Lei 9.503 de 1997. O Sistema Nacional de Trânsito tem o CONTRAN no topo como órgão máximo normativo. A PRF fiscaliza exclusivamente rodovias federais. As definições básicas do artigo primeiro distinguem via de pista, e rodovia de estrada pela presença ou ausência de pavimentação.',
+            mindmap: {
+              root: 'CTB — Lei 9.503/1997',
+              branches: [
+                { label: 'SNT (hierarquia)', nodes: ['CONTRAN (normativo)', 'SENATRAN (exec. federal)', 'CETRAN/CONTRANDIFE', 'DETRAN (exec. estadual)', 'PRF (rodovias fed.)'] },
+                { label: 'Definições Art. 1º', nodes: ['Via = pista+calçada+acost.', 'Rodovia = rural pavimentada', 'Estrada = rural NÃO pavim.', 'Pista = parte p/ veículos'] },
+                { label: 'Atualizações', nodes: ['Lei 14.071/2020 (CNH)', 'Art. 1º caput', 'Vigência nacional'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Qual é a distinção prática entre RODOVIA e ESTRADA segundo o CTB? Por que essa diferença importa para as atribuições da PRF?',
+                hint: 'A diferença está na pavimentação — e a PRF só tem competência sobre um dos dois tipos.',
+                answer: 'Rodovia é via rural PAVIMENTADA; estrada é rural NÃO PAVIMENTADA. A PRF fiscaliza rodovias federais (pavimentadas). Numa estrada de terra federal, outro órgão assumiria. A banca cobra exatamente isso para confundir quem associa PRF a "qualquer via fora da cidade".',
+              },
+              {
+                q: 'O CONTRAN e o DETRAN fazem parte do mesmo sistema. Qual é a diferença fundamental de competência entre eles?',
+                hint: 'Um é normativo (cria regras) e o outro é executivo estadual (implementa regras, licencia e registra veículos).',
+                answer: 'O CONTRAN é o órgão máximo NORMATIVO — ele edita as normas do trânsito nacional. O DETRAN é o órgão executivo estadual — ele implementa as normas, cuida do registro e licenciamento de veículos e da habilitação no estado.',
+              },
+            ],
             content: `
               <h1>CTB — Código de Trânsito Brasileiro</h1>
               <div class="lesson-breadcrumb">Módulo 3 — Legislação de Trânsito <span>›</span> Aula 3.1</div>
@@ -592,6 +858,22 @@ const COURSES = {
           },
           {
             title: '3.2 SNT — Órgãos e Competências',
+            summary: 'A PRF integra o Sistema Nacional de Trânsito e suas competências estão no artigo 20 do CTB. São atribuições específicas da PRF: fiscalizar rodovias federais, credenciar serviços de escolta, levantar dados de acidentes e aplicar as penalidades cabíveis. O registro e a habilitação são do DETRAN; a normatização é do CONTRAN.',
+            mindmap: {
+              root: 'Competências SNT',
+              branches: [
+                { label: 'PRF (Art. 20)', nodes: ['Fiscaliza rodovias fed.', 'Credencia escolta', 'Dados de acidentes', 'Aplica penalidades'] },
+                { label: 'DETRAN', nodes: ['Registro de veículos', 'Licenciamento', 'Habilitação (CNH)', 'Fiscalização estadual'] },
+                { label: 'CONTRAN', nodes: ['Normas gerais', 'Sinalização nacional', 'Órgão máximo', 'Recurso final'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Um policial rodoviário federal aborda um veículo em uma rodovia estadual. Ele tem competência para autuar? Por quê?',
+                hint: 'A competência da PRF é sobre RODOVIAS FEDERAIS. Em via estadual, quem tem competência é a PM ou órgão estadual de trânsito.',
+                answer: 'Em regra, não — a PRF tem competência específica nas RODOVIAS FEDERAIS. Em rodovias estaduais, a competência é da PM ou do órgão estadual. Há exceções em situações de flagrante ou convênios, mas a regra geral cobra essa delimitação.',
+              },
+            ],
             content: `
               <h1>SNT — Órgãos e Competências</h1>
               <div class="lesson-breadcrumb">Módulo 3 — Legislação de Trânsito <span>›</span> Aula 3.2</div>
@@ -627,6 +909,27 @@ const COURSES = {
         lessons: [
           {
             title: '4.1 Princípios Fundamentais',
+            summary: 'Os artigos 1 a 4 da CF de 1988 estabelecem fundamentos e objetivos da República. Os cinco fundamentos do artigo 1 são memorizados com o acrônimo SOVED: Soberania, Cidadania, Dignidade da pessoa humana, Valores sociais do trabalho e livre iniciativa, e Pluralismo político. Os objetivos do artigo 3 são lembrados por CEGA: Construir, Erradicar, Garantir desenvolvimento e promover o bem de Todos.',
+            mindmap: {
+              root: 'Princípios Fundamentais CF/88',
+              branches: [
+                { label: 'Art. 1º — SOVED', nodes: ['Soberania', 'Cidadania', 'Dignidade (DPH)', 'Valores sociais', 'Pluralismo político'] },
+                { label: 'Art. 3º — CEGA', nodes: ['Construir soc. justa', 'Erradicar pobreza', 'Garantir desenvolvimento', 'Promover bem de todos'] },
+                { label: 'Art. 4º — Rel. int.', nodes: ['Autodeterminação', 'Não-intervenção', 'Igualdade entre estados', 'Defesa da paz'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Por que "Dignidade da pessoa humana" é considerada o fundamento mais importante da CF/88, mesmo sem hierarquia formal entre os fundamentos?',
+                hint: 'Pense na base de onde decorrem os demais direitos fundamentais — liberdade, igualdade, saúde, educação.',
+                answer: 'A dignidade é o núcleo axiológico da Constituição — é o valor do qual irradiam todos os direitos fundamentais. Sem ela, os outros fundamentos perdem sentido. A jurisprudência do STF frequentemente a usa como fundamento em decisões sobre outros direitos.',
+              },
+              {
+                q: 'O que diferencia os FUNDAMENTOS (Art. 1º) dos OBJETIVOS (Art. 3º) da República?',
+                hint: 'Fundamentos são o "o que somos"; objetivos são o "para onde vamos".',
+                answer: 'Fundamentos são os pilares identitários do Estado — o que caracteriza e define o Brasil como Estado Democrático de Direito. Objetivos são metas a serem alcançadas — programas de ação para o futuro. Um é ser; o outro é dever-ser.',
+              },
+            ],
             content: `
               <h1>Princípios Fundamentais da CF/88</h1>
               <div class="lesson-breadcrumb">Módulo 4 — Direito Constitucional <span>›</span> Aula 4.1</div>
@@ -670,6 +973,29 @@ const COURSES = {
         lessons: [
           {
             title: '5.1 Princípios LIMPE',
+            summary: 'O artigo 37 da CF de 1988 lista os princípios expressos da Administração Pública, memorizados por LIMPE: Legalidade, Impessoalidade, Moralidade, Publicidade e Eficiência. A eficiência foi acrescentada pela Emenda Constitucional 19 de 1998, conhecida como Reforma Administrativa. O princípio da legalidade administrativa é mais restritivo do que o aplicado aos particulares: o administrador só pode fazer o que a lei expressamente autoriza.',
+            mindmap: {
+              root: 'Princípios LIMPE — Art. 37',
+              branches: [
+                { label: 'L — Legalidade', nodes: ['Só faz o que a lei permite', 'Oposto ao particular', 'Vinculação estrita'] },
+                { label: 'I — Impessoalidade', nodes: ['Veda favoritismo', 'Atos p/ interesse público', 'Vedação de promoção pessoal'] },
+                { label: 'M — Moralidade', nodes: ['Ética e boa-fé', 'Controle pelo TCU/MP', 'LIA (Lei 8.429)'] },
+                { label: 'P — Publicidade', nodes: ['Regra: publicar', 'Sigilo: exceção', 'Diário Oficial'] },
+                { label: 'E — Eficiência', nodes: ['EC 19/1998', 'Melhor uso de recursos', 'Avaliação de desempenho'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Por que o princípio da legalidade é mais restritivo para o administrador público do que para o cidadão comum?',
+                hint: 'Para o cidadão, a liberdade é a regra — ele pode fazer tudo que a lei não proíbe. Para o administrador, qual é a regra?',
+                answer: 'O cidadão tem liberdade residual: pode fazer tudo que a lei não proíbe. O administrador tem competência vinculada: só pode fazer o que a lei expressamente permite. O silêncio da lei é proibição para o administrador, não liberdade.',
+              },
+              {
+                q: 'Por que o princípio da impessoalidade proíbe que um político coloque seu nome e foto em obras públicas concluídas com verba pública?',
+                hint: 'Pense em para quem o ato administrativo foi feito — e de onde vem o recurso que financiou a obra.',
+                answer: 'A obra foi paga com dinheiro público e realizada em nome do Estado, não do agente político. Usar a obra para promoção pessoal viola a impessoalidade — confunde o agente com o Estado e usa recurso público em benefício próprio, o que também ofende a moralidade.',
+              },
+            ],
             content: `
               <h1>Princípios da Administração Pública</h1>
               <div class="lesson-breadcrumb">Módulo 5 — Direito Administrativo <span>›</span> Aula 5.1</div>
@@ -711,6 +1037,23 @@ const COURSES = {
         lessons: [
           {
             title: '1.1 Conceito e Histórico',
+            summary: 'A Lei 8.072 de 1990 surgiu em resposta às ondas de violência nos anos 80 e foi anunciada pela Constituição no artigo 5, inciso XLIII. Os crimes equiparados a hediondos são três: tortura, tráfico de drogas e terrorismo. Esses equiparados têm o mesmo tratamento constitucional dos hediondos, mas não são hediondos propriamente ditos.',
+            mindmap: {
+              root: 'Crimes Hediondos',
+              branches: [
+                { label: 'Base constitucional', nodes: ['Art. 5º, XLIII CF', 'Inafiançáveis', 'Sem graça ou anistia', 'Resp. mandantes e omissos'] },
+                { label: 'Equiparados', nodes: ['Tortura (Lei 9.455/97)', 'Tráfico (Lei 11.343/06)', 'Terrorismo (Lei 13.260/16)', 'NÃO são hediondos'] },
+                { label: 'Vedações', nodes: ['Anistia', 'Graça', 'Indulto', 'Fiança'] },
+                { label: 'Progressão', nodes: ['40%: primário + crime sem resultado morte', '50%: reincidente', '60%: com morte'] },
+              ]
+            },
+            socratic: [
+              {
+                q: 'Qual é a diferença jurídica entre um crime HEDIONDO e um crime EQUIPARADO a hediondo? Por que a distinção importa?',
+                hint: 'Hediondo está na lista da Lei 8.072. Equiparado recebe o mesmo TRATAMENTO, mas por lei própria.',
+                answer: 'Crimes hediondos são os listados expressamente na Lei 8.072/1990. Equiparados são tortura, tráfico e terrorismo — têm o mesmo tratamento constitucional (inafiançáveis, sem graça/anistia) mas estão em leis próprias. Importa porque questões de prova perguntam "é hediondo?" e tráfico, por exemplo, é "equiparado", não hediondo em si.',
+              },
+            ],
             content: `
               <h1>Crimes Hediondos — Conceito e Histórico</h1>
               <div class="lesson-breadcrumb">Módulo 1 — Introdução <span>›</span> Aula 1.1</div>
@@ -743,11 +1086,14 @@ const COURSES = {
   },
 };
 
-// ── State ────────────────────────────────────────────────────
-let courseKey = 'prf';
-let flatLessons = [];   // [{moduleIdx, lessonIdx, title}]
+// ── State ────────────────────────────────────────────────────────────────────
+let courseKey   = 'prf';
+let flatLessons = [];
 let currentFlat = 0;
-let completed = new Set();
+let completed   = new Set();
+let currentView = 'content';
+let quizAttempts = {}; // {flatIdx: attempts}
+let speechUtterance = null;
 
 function init() {
   const params = new URLSearchParams(location.search);
@@ -755,7 +1101,6 @@ function init() {
   const course = COURSES[courseKey];
   if (!course) { location.href = 'cursos-app.html'; return; }
 
-  // Load completion from localStorage
   const saved = localStorage.getItem(`qbs_progress_${courseKey}`);
   if (saved) completed = new Set(JSON.parse(saved));
 
@@ -788,78 +1133,192 @@ function buildSidebar(course) {
     header.innerHTML = `${mod.name} <span class="module-arrow">▾</span>`;
     header.onclick = () => {
       header.classList.toggle('open');
-      lessons.classList.toggle('open');
+      lessonList.classList.toggle('open');
     };
 
-    const lessons = document.createElement('div');
-    lessons.className = 'module-lessons open';
+    const lessonList = document.createElement('div');
+    lessonList.className = 'module-lessons open';
 
     mod.lessons.forEach((les, li) => {
       const flatIdx = flatLessons.findIndex(f => f.moduleIdx === mi && f.lessonIdx === li);
       const item = document.createElement('div');
       item.className = 'lesson-item' + (completed.has(flatIdx) ? ' done' : '');
       item.id = `lesson-item-${flatIdx}`;
-      item.innerHTML = `
-        <div class="lesson-icon">${completed.has(flatIdx) ? '✓' : '▶'}</div>
-        <span>${les.title}</span>
-      `;
+      item.innerHTML = `<div class="lesson-icon">${completed.has(flatIdx) ? '✓' : '▶'}</div><span>${les.title}</span>`;
       item.onclick = () => goToLesson(flatIdx);
-      lessons.appendChild(item);
+      lessonList.appendChild(item);
     });
 
     group.appendChild(header);
-    group.appendChild(lessons);
+    group.appendChild(lessonList);
     container.appendChild(group);
   });
 }
 
+function getLesson(idx) {
+  const { moduleIdx, lessonIdx } = flatLessons[idx];
+  return COURSES[courseKey].modules[moduleIdx].lessons[lessonIdx];
+}
+
 function goToLesson(idx) {
   if (idx < 0 || idx >= flatLessons.length) return;
+  stopSpeech();
   currentFlat = idx;
-  const { moduleIdx, lessonIdx } = flatLessons[idx];
-  const course = COURSES[courseKey];
-  const lesson = course.modules[moduleIdx].lessons[lessonIdx];
+  currentView = 'content';
 
-  // Update active sidebar item
   document.querySelectorAll('.lesson-item').forEach(el => el.classList.remove('active'));
   const activeItem = document.getElementById(`lesson-item-${idx}`);
-  if (activeItem) {
-    activeItem.classList.add('active');
-    activeItem.scrollIntoView({ block: 'nearest' });
-  }
+  if (activeItem) { activeItem.classList.add('active'); activeItem.scrollIntoView({ block: 'nearest' }); }
 
-  // Render content
-  const content = document.getElementById('player-content');
-  content.innerHTML = `
-    <div class="lesson-content-card">${lesson.content}</div>
-    ${lesson.quiz ? renderQuiz(lesson.quiz, idx) : ''}
-    ${renderAiHelper(lesson)}
-  `;
-  content.scrollTop = 0;
-
-  // Quiz interactions
-  if (lesson.quiz) setupQuiz(idx, lesson.quiz);
-
-  // Topbar title
-  document.getElementById('topbar-lesson-title').textContent = lesson.title;
-  document.getElementById('topbar-lesson-title').title = lesson.title;
-
-  // Nav
+  renderView('content');
+  document.getElementById('topbar-lesson-title').textContent = flatLessons[idx].title;
+  document.getElementById('topbar-lesson-title').title = flatLessons[idx].title;
   document.getElementById('btn-prev').disabled = idx === 0;
   const isLast = idx === flatLessons.length - 1;
-  const btnNext = document.getElementById('btn-next');
-  btnNext.textContent = isLast ? '✓ Concluir curso' : 'Concluir e avançar →';
+  document.getElementById('btn-next').textContent = isLast ? '✓ Concluir curso' : 'Concluir e avançar →';
   document.getElementById('nav-label').textContent = `Aula ${idx + 1} de ${flatLessons.length}`;
-
   updateProgress();
 
-  // Update URL without reload
   const url = new URL(location);
   url.searchParams.set('curso', courseKey);
   url.searchParams.set('aula', idx);
   history.replaceState({}, '', url);
 }
 
+// ── Views ────────────────────────────────────────────────────────────────────
+function switchView(view) {
+  stopSpeech();
+  currentView = view;
+  ['content', 'mindmap', 'socratic'].forEach(v => {
+    const tab = document.getElementById(`tab-${v}`);
+    if (tab) tab.classList.toggle('active', v === view);
+  });
+  renderView(view);
+}
+
+function renderView(view) {
+  const lesson = getLesson(currentFlat);
+  const content = document.getElementById('player-content');
+  content.scrollTop = 0;
+
+  if (view === 'content') {
+    content.innerHTML = `
+      <div class="lesson-content-card">${lesson.content}</div>
+      ${lesson.quiz ? renderQuiz(lesson.quiz, currentFlat) : ''}
+      ${renderAiHelper(lesson)}
+    `;
+  } else if (view === 'mindmap') {
+    content.innerHTML = lesson.mindmap ? renderMindMap(lesson) : `
+      <div style="max-width:760px;margin:40px auto;text-align:center;color:var(--text-muted);padding:60px 20px;">
+        <div style="font-size:2rem;margin-bottom:12px;">🗺</div>
+        <p>Mapa mental não disponível para esta aula.</p>
+      </div>`;
+  } else if (view === 'socratic') {
+    content.innerHTML = lesson.socratic ? renderSocratic(lesson) : `
+      <div style="max-width:760px;margin:40px auto;text-align:center;color:var(--text-muted);padding:60px 20px;">
+        <div style="font-size:2rem;margin-bottom:12px;">🧠</div>
+        <p>Revisão socrática não disponível para esta aula.</p>
+      </div>`;
+  }
+}
+
+// ── Mind Map ─────────────────────────────────────────────────────────────────
+function renderMindMap(lesson) {
+  const mm = lesson.mindmap;
+  const branchesHtml = mm.branches.map(branch => `
+    <div class="mm-branch-col">
+      <div class="mm-branch-label">${branch.label}</div>
+      <div class="mm-leaves">
+        ${branch.nodes.map(n => `<div class="mm-leaf">${n}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="mm-wrap">
+      <div class="mm-root">${mm.root}</div>
+      <div class="mm-connector-v" style="height:24px;"></div>
+      <div class="mm-branches-row">${branchesHtml}</div>
+      <p class="mm-note">Passe o cursor sobre os nós para destacá-los · Use junto com a Revisão Socrática para fixar o conteúdo</p>
+    </div>
+  `;
+}
+
+// ── Socratic Review ───────────────────────────────────────────────────────────
+function renderSocratic(lesson) {
+  const blocks = lesson.socratic.map((item, i) => `
+    <div class="socratic-q-block" id="sq-block-${i}">
+      <div class="socratic-q-header">
+        <div class="socratic-q-num">${i + 1}</div>
+        <div class="socratic-q-text">${item.q}</div>
+      </div>
+      <div class="socratic-hint-box" id="sq-hint-${i}">${item.hint}</div>
+      <div class="socratic-answer-box" id="sq-ans-${i}">${item.answer}</div>
+      <div class="socratic-actions">
+        <button class="btn btn-ghost btn-sm" onclick="toggleSocratic('hint',${i})">💡 Ver dica</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleSocratic('answer',${i})">✅ Ver resposta</button>
+      </div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="socratic-wrap">
+      <div class="socratic-intro">
+        <div class="socratic-avatar">✨</div>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--primary);margin-bottom:4px;">Athena AI — Revisão Socrática</div>
+          <div style="font-size:.85rem;color:var(--text-muted);line-height:1.6;">Reflita sobre cada pergunta antes de revelar a dica ou resposta. O esforço de recuperação ativa fortalece a memória muito mais do que reler o conteúdo.</div>
+        </div>
+      </div>
+      ${blocks}
+    </div>
+  `;
+}
+
+function toggleSocratic(type, idx) {
+  const el = document.getElementById(`sq-${type === 'hint' ? 'hint' : 'ans'}-${idx}`);
+  const block = document.getElementById(`sq-block-${idx}`);
+  if (!el) return;
+  const isVisible = el.classList.contains('visible');
+  el.classList.toggle('visible', !isVisible);
+  if (!isVisible) block.classList.add('revealed');
+}
+
+// ── Audio TTS ─────────────────────────────────────────────────────────────────
+function speakSummary() {
+  const lesson = getLesson(currentFlat);
+  const btn = document.getElementById('audio-btn');
+  if (!lesson.summary) { alert('Resumo em áudio não disponível para esta aula.'); return; }
+
+  if (speechSynthesis.speaking) {
+    stopSpeech();
+    return;
+  }
+
+  const utter = new SpeechSynthesisUtterance(lesson.summary);
+  utter.lang = 'pt-BR';
+  utter.rate = 0.92;
+  utter.pitch = 1;
+
+  // Prefer a PT-BR voice if available
+  const voices = speechSynthesis.getVoices();
+  const ptVoice = voices.find(v => v.lang.startsWith('pt'));
+  if (ptVoice) utter.voice = ptVoice;
+
+  utter.onstart = () => { btn.classList.add('playing'); btn.innerHTML = '⏹ <span>Parar áudio</span>'; };
+  utter.onend = utter.onerror = () => { btn.classList.remove('playing'); btn.innerHTML = '🎧 <span>Ouvir resumo</span>'; };
+
+  speechUtterance = utter;
+  speechSynthesis.speak(utter);
+}
+
+function stopSpeech() {
+  if (speechSynthesis.speaking) speechSynthesis.cancel();
+  const btn = document.getElementById('audio-btn');
+  if (btn) { btn.classList.remove('playing'); btn.innerHTML = '🎧 <span>Ouvir resumo</span>'; }
+}
+
+// ── Quiz with retry ───────────────────────────────────────────────────────────
 function renderQuiz(quiz, flatIdx) {
   const letters = ['A', 'B', 'C', 'D'];
   const isDone = completed.has(flatIdx);
@@ -868,18 +1327,79 @@ function renderQuiz(quiz, flatIdx) {
       <div class="quiz-card" id="quiz-${flatIdx}">
         <h4>📝 Questão de fixação</h4>
         <p style="font-size:.9rem;line-height:1.6;margin-bottom:16px;">${quiz.q}</p>
-        ${quiz.options.map((opt, i) => `
-          <div class="quiz-option${isDone && i === quiz.correct ? ' correct' : ''}" data-idx="${i}" onclick="answerQuiz(${flatIdx},${i},${quiz.correct})">
-            <div class="quiz-letter">${letters[i]}</div>
-            <span>${opt}</span>
-          </div>
-        `).join('')}
-        <div id="quiz-feedback-${flatIdx}" style="margin-top:12px;font-size:.85rem;display:none;"></div>
+        <div id="quiz-options-${flatIdx}">
+          ${quiz.options.map((opt, i) => `
+            <div class="quiz-option${isDone && i === quiz.correct ? ' correct locked' : ''}" data-idx="${i}"
+                 onclick="answerQuiz(${flatIdx},${i},${quiz.correct})">
+              <div class="quiz-letter">${letters[i]}</div>
+              <span>${opt}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback-${flatIdx}"></div>
       </div>
     </div>
   `;
 }
 
+function answerQuiz(flatIdx, chosen, correct) {
+  const card = document.getElementById(`quiz-${flatIdx}`);
+  if (!card) return;
+  if (card.querySelector('.correct')) return; // already solved
+
+  if (!quizAttempts[flatIdx]) quizAttempts[flatIdx] = 0;
+  const attempts = quizAttempts[flatIdx];
+
+  const options = card.querySelectorAll('.quiz-option');
+  const feedback = document.getElementById(`quiz-feedback-${flatIdx}`);
+  const lesson = getLesson(flatIdx);
+  const explanation = lesson.quiz.explanation;
+
+  if (chosen === correct) {
+    options.forEach((opt, i) => {
+      opt.classList.add('locked');
+      if (i === correct) opt.classList.add('correct');
+    });
+    feedback.style.display = 'block';
+    feedback.innerHTML = `<span style="color:var(--success);font-weight:700;">✓ Correto!</span> ${explanation}`;
+    return;
+  }
+
+  // Wrong answer
+  quizAttempts[flatIdx] = attempts + 1;
+  options[chosen].classList.add('wrong');
+
+  if (attempts + 1 >= 2) {
+    // Lock after 2nd wrong attempt
+    options.forEach((opt, i) => {
+      opt.classList.add('locked');
+      if (i === correct) opt.classList.add('correct');
+    });
+    feedback.style.display = 'block';
+    feedback.innerHTML = `<span style="color:var(--danger);font-weight:700;">✗ Incorreto.</span> ${explanation}`;
+    return;
+  }
+
+  // 1st wrong attempt — allow retry
+  feedback.style.display = 'block';
+  feedback.innerHTML = `
+    <div class="quiz-retry-bar">
+      <span>✗ Incorreto. Você ainda tem mais uma tentativa.</span>
+      <button class="btn btn-sm btn-ghost" onclick="retryQuiz(${flatIdx},${correct})">Tentar novamente</button>
+    </div>
+  `;
+}
+
+function retryQuiz(flatIdx, correct) {
+  const card = document.getElementById(`quiz-${flatIdx}`);
+  if (!card) return;
+  const options = card.querySelectorAll('.quiz-option');
+  options.forEach(opt => { opt.classList.remove('wrong', 'correct', 'locked'); });
+  const feedback = document.getElementById(`quiz-feedback-${flatIdx}`);
+  if (feedback) { feedback.style.display = 'none'; feedback.innerHTML = ''; }
+}
+
+// ── AI Helper ─────────────────────────────────────────────────────────────────
 function renderAiHelper(lesson) {
   return `
     <div class="ai-helper">
@@ -897,38 +1417,11 @@ function renderAiHelper(lesson) {
   `;
 }
 
-function setupQuiz(flatIdx, quiz) {
-  // no-op; onclick is inline
-}
-
-function answerQuiz(flatIdx, chosen, correct) {
-  const card = document.getElementById(`quiz-${flatIdx}`);
-  if (!card) return;
-
-  // Check if already answered
-  if (card.querySelector('.correct, .wrong')) return;
-
-  const options = card.querySelectorAll('.quiz-option');
-  options.forEach((opt, i) => {
-    opt.style.pointerEvents = 'none';
-    if (i === correct) opt.classList.add('correct');
-    else if (i === chosen) opt.classList.add('wrong');
-  });
-
-  const feedback = document.getElementById(`quiz-feedback-${flatIdx}`);
-  const { explanation } = COURSES[courseKey].modules[flatLessons[flatIdx].moduleIdx].lessons[flatLessons[flatIdx].lessonIdx].quiz;
-  feedback.style.display = 'block';
-  feedback.innerHTML = chosen === correct
-    ? `<span style="color:var(--success);font-weight:700;">✓ Correto!</span> ${explanation}`
-    : `<span style="color:var(--danger);font-weight:700;">✗ Incorreto.</span> ${explanation}`;
-}
-
+// ── Navigation ────────────────────────────────────────────────────────────────
 function completeAndNext() {
-  // Mark current as done
   completed.add(currentFlat);
   localStorage.setItem(`qbs_progress_${courseKey}`, JSON.stringify([...completed]));
 
-  // Update sidebar item
   const item = document.getElementById(`lesson-item-${currentFlat}`);
   if (item) {
     item.classList.add('done');
@@ -942,6 +1435,7 @@ function completeAndNext() {
   if (currentFlat < flatLessons.length - 1) {
     goToLesson(currentFlat + 1);
   } else {
+    stopSpeech();
     document.getElementById('player-content').innerHTML += `
       <div style="max-width:760px;margin:20px auto;background:var(--success);color:#fff;border-radius:var(--radius);padding:32px;text-align:center;">
         <div style="font-size:2.5rem;margin-bottom:12px;">🎉</div>
@@ -953,9 +1447,7 @@ function completeAndNext() {
   }
 }
 
-function navigate(dir) {
-  goToLesson(currentFlat + dir);
-}
+function navigate(dir) { goToLesson(currentFlat + dir); }
 
 function updateProgress() {
   const total = flatLessons.length;
