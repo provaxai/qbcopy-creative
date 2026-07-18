@@ -894,6 +894,111 @@ body { overflow: hidden; }
 .btn-sm { padding: 5px 11px; font-size: .76rem; }
 .btn-primary { background: linear-gradient(135deg, #F5520C, #FF7040); color: #fff; }
 
+/* ── HERO ── */
+.px-hero {
+  max-width: 780px;
+  margin: 0 auto 24px;
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 26px 32px 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+}
+.px-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.px-hero-mod {
+  font-size: .69rem;
+  font-weight: 700;
+  color: #F5520C;
+  background: #FFF3EE;
+  border: 1px solid #FDBEA0;
+  border-radius: 20px;
+  padding: 3px 11px;
+  letter-spacing: .01em;
+}
+.px-hero-chips { display: flex; gap: 6px; align-items: center; }
+.px-hero-chip {
+  font-size: .69rem;
+  font-weight: 600;
+  color: #64748B;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+.px-hero-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1.25;
+  letter-spacing: -.03em;
+  margin-bottom: 10px;
+}
+.px-hero-rule {
+  height: 3px;
+  width: 44px;
+  background: linear-gradient(90deg, #F5520C, #FF7040);
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+.px-hero-segs-label {
+  font-size: .65rem;
+  font-weight: 700;
+  color: #94A3B8;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.px-hero-segs { display: flex; gap: 10px; }
+.px-hps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.px-hps-track {
+  height: 4px;
+  background: #F1F5F9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.px-hps-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: #E2E8F0;
+  transition: width .5s ease;
+}
+.px-hps.active .px-hps-fill { background: linear-gradient(90deg, #F5520C, #FF7040); }
+.px-hps.done   .px-hps-fill { background: #10B981; }
+.px-hps-lbl {
+  font-size: .67rem;
+  font-weight: 600;
+  color: #CBD5E1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.px-hps.active .px-hps-lbl { color: #F5520C; }
+.px-hps.done   .px-hps-lbl { color: #10B981; }
+
+/* Hero dark/sepia */
+.px-content.theme-sepia .px-hero { background: #FAF4E8; border-color: #E5D9C0; }
+.px-content.theme-sepia .px-hero-title { color: #3D2B1F; }
+.px-content.theme-sepia .px-hero-chip { background: #F5EFE0; border-color: #E0D0A8; color: #7A6040; }
+.px-content.theme-sepia .px-hero-segs-label { color: #A8956A; }
+.px-content.theme-dark .px-hero { background: #1E293B; border-color: rgba(255,255,255,.08); }
+.px-content.theme-dark .px-hero-title { color: #F1F5F9; }
+.px-content.theme-dark .px-hero-chip { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.1); color: #94A3B8; }
+.px-content.theme-dark .px-hero-segs-label { color: #475569; }
+.px-content.theme-dark .px-hps-track { background: rgba(255,255,255,.08); }
+.px-content.theme-dark .px-hps-fill { background: rgba(255,255,255,.1); }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .px-tb-tool-blue, .px-tb-tool-purple { display: none; }
@@ -910,6 +1015,13 @@ body { overflow: hidden; }
   .px-tabs { padding: 0 12px; }
   .px-tab { padding: 0 12px; font-size: .74rem; }
   .px-content { padding: 20px 14px; }
+}
+@media (max-width: 480px) {
+  .px-hero { padding: 18px 16px 16px; }
+  .px-hero-title { font-size: 1.2rem; }
+  .px-hero-top { flex-direction: column; align-items: flex-start; }
+  .px-hero-segs { gap: 6px; }
+  .px-hps-lbl { font-size: .61rem; }
 }
 </style>
 </head>
@@ -1177,6 +1289,16 @@ function init() {
   buildSidebar(course);
   goToLesson(Number(params.get('aula') || 0));
   updateTimerDisplay();
+
+  // Scroll → reading progress
+  document.getElementById('px-content').addEventListener('scroll', function() {
+    if (currentView !== 'content') return;
+    const max = this.scrollHeight - this.clientHeight;
+    if (max <= 0) return;
+    const pct = Math.min(100, Math.round((this.scrollTop / max) * 100));
+    const prog = getLessonProg(currentFlat);
+    if (pct > prog.readPct) { prog.readPct = pct; updateHeroProgress(); }
+  });
 }
 
 function buildFlatList(course) {
@@ -1292,6 +1414,7 @@ function goToLesson(idx) {
 // ── Views ─────────────────────────────────────────────────────────────────────
 function switchView(view) {
   stopSpeech();
+  if (view === 'socratic') { getLessonProg(currentFlat).socraticDone = true; }
   currentView = view;
   ['content','mindmap','socratic'].forEach(v => {
     const t = document.getElementById(`tab-${v}`);
@@ -1312,7 +1435,13 @@ function renderView(view) {
 
   let html = '';
   if (view === 'content') {
-    html = `<div class="px-lesson-card">${lesson.content}</div>
+    // Strip h1 + breadcrumb from card — hero provides them
+    const tmp = document.createElement('div');
+    tmp.innerHTML = lesson.content;
+    const h1 = tmp.querySelector('h1'); if (h1) h1.remove();
+    const bc = tmp.querySelector('.lesson-breadcrumb'); if (bc) bc.remove();
+    html = `${renderHero(lesson, currentFlat)}
+      <div class="px-lesson-card">${tmp.innerHTML}</div>
       ${lesson.quiz ? renderQuiz(lesson.quiz, currentFlat) : ''}
       ${renderAiHelper(lesson)}`;
   } else if (view === 'mindmap') {
@@ -1398,7 +1527,7 @@ function speakSummary() {
   const voices = speechSynthesis.getVoices();
   const ptVoice = voices.find(v => v.lang.startsWith('pt'));
   if (ptVoice) utter.voice = ptVoice;
-  utter.onstart = () => { btn.classList.add('playing'); btn.textContent = '⏹'; };
+  utter.onstart = () => { btn.classList.add('playing'); btn.textContent = '⏹'; getLessonProg(currentFlat).audioDone = true; updateHeroProgress(); };
   utter.onend = utter.onerror = () => { btn.classList.remove('playing'); btn.textContent = '🎧'; };
   speechUtterance = utter;
   speechSynthesis.speak(utter);
@@ -1444,6 +1573,7 @@ function answerQuiz(flatIdx, chosen, correct) {
     options.forEach((opt, i) => { opt.classList.add('locked'); if (i === correct) opt.classList.add('correct'); });
     feedback.style.display = 'block';
     feedback.innerHTML = `<span style="color:#10B981;font-weight:700;">✓ Correto!</span> ${explanation}`;
+    getLessonProg(flatIdx).quizDone = true; updateHeroProgress();
     return;
   }
 
@@ -1454,6 +1584,7 @@ function answerQuiz(flatIdx, chosen, correct) {
     options.forEach((opt, i) => { opt.classList.add('locked'); if (i === correct) opt.classList.add('correct'); });
     feedback.style.display = 'block';
     feedback.innerHTML = `<span style="color:#EF4444;font-weight:700;">✗ Incorreto.</span> ${explanation}`;
+    getLessonProg(flatIdx).quizDone = true; updateHeroProgress();
     return;
   }
 
@@ -1565,6 +1696,83 @@ function updateTimerDisplay() {
   const s = timerSeconds % 60;
   document.getElementById('timer-display').textContent =
     `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ── Lesson progress tracking (per-session, in-memory) ─────────────────────────
+const lessonProg = {};
+
+function getLessonProg(idx) {
+  if (!lessonProg[idx]) {
+    lessonProg[idx] = {
+      readPct:       0,
+      quizDone:      completed.has(idx),
+      socraticDone:  false,
+      audioDone:     false,
+    };
+  }
+  return lessonProg[idx];
+}
+
+function estimateReadTime(lesson) {
+  const stripped = (lesson.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = stripped.split(' ').filter(Boolean).length
+              + (lesson.summary || '').split(' ').filter(Boolean).length;
+  const mins = Math.max(3, Math.round(words / 200));
+  return `~${mins} min`;
+}
+
+function renderHero(lesson, flatIdx) {
+  const prog       = getLessonProg(flatIdx);
+  const { moduleIdx } = flatLessons[flatIdx];
+  const mod        = COURSES[courseKey].modules[moduleIdx];
+  const lesNum     = lesson.title.match(/^(\d+\.\d+)/)?.[1] || '';
+  const shortTitle = lesson.title.replace(/^\d+\.\d+\s+/, '');
+
+  const segs = [
+    { id:'hps-read', icon:'📖', label:'Leitura',   pct: prog.readPct,             done: prog.readPct >= 80 },
+    { id:'hps-quiz', icon:'📝', label:'Questão',   pct: prog.quizDone  ? 100 : 0, done: prog.quizDone },
+    { id:'hps-soc',  icon:'🧠', label:'Socrática', pct: prog.socraticDone?100 : 0, done: prog.socraticDone },
+    { id:'hps-aud',  icon:'🎧', label:'Áudio',     pct: prog.audioDone ? 100 : 0, done: prog.audioDone },
+  ];
+
+  const segsHtml = segs.map(s => `
+    <div class="px-hps${s.done?' done':s.pct>0?' active':''}" id="${s.id}">
+      <div class="px-hps-track"><div class="px-hps-fill" style="width:${s.pct}%"></div></div>
+      <div class="px-hps-lbl"><span>${s.done?'✓':s.icon}</span>${s.label}</div>
+    </div>`).join('');
+
+  return `<div class="px-hero">
+    <div class="px-hero-top">
+      <span class="px-hero-mod">Módulo ${moduleIdx + 1} · ${mod.name}</span>
+      <div class="px-hero-chips">
+        <span class="px-hero-chip">⏱ ${estimateReadTime(lesson)}</span>
+        ${lesNum ? `<span class="px-hero-chip">Aula ${lesNum}</span>` : ''}
+      </div>
+    </div>
+    <div class="px-hero-title">${shortTitle}</div>
+    <div class="px-hero-rule"></div>
+    <div class="px-hero-segs-label">Progresso desta aula</div>
+    <div class="px-hero-segs">${segsHtml}</div>
+  </div>`;
+}
+
+function updateHeroProgress() {
+  if (currentView !== 'content') return;
+  const prog = getLessonProg(currentFlat);
+  const segs = [
+    { id:'hps-read', icon:'📖', pct: prog.readPct,             done: prog.readPct >= 80 },
+    { id:'hps-quiz', icon:'📝', pct: prog.quizDone  ? 100 : 0, done: prog.quizDone },
+    { id:'hps-soc',  icon:'🧠', pct: prog.socraticDone?100 : 0, done: prog.socraticDone },
+    { id:'hps-aud',  icon:'🎧', pct: prog.audioDone ? 100 : 0, done: prog.audioDone },
+  ];
+  segs.forEach(s => {
+    const el = document.getElementById(s.id);
+    if (!el) return;
+    el.querySelector('.px-hps-fill').style.width = s.pct + '%';
+    el.className = 'px-hps' + (s.done ? ' done' : s.pct > 0 ? ' active' : '');
+    const icon = el.querySelector('.px-hps-lbl span');
+    if (icon) icon.textContent = s.done ? '✓' : s.icon;
+  });
 }
 
 // ── Font size ─────────────────────────────────────────────────────────────────
