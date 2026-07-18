@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prova Oral — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm" aria-label="Abrir menu">☰</button>
+        <div class="topbar-title">Prova Oral</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user"></span>
+      </div>
+    </div>
+
+    <div class="content-area narrow">
+
+      <!-- Settings bar -->
+      <div class="oral-settings">
+        <div class="oral-setting">
+          <label class="oral-label" for="oral-subject">Disciplina</label>
+          <select class="form-input" id="oral-subject" onchange="onSubjectChange()">
+            <option value="adm">Direito Administrativo</option>
+            <option value="const">Direito Constitucional</option>
+            <option value="penal">Direito Penal</option>
+            <option value="transito">Legislação de Trânsito</option>
+            <option value="etica">Ética e Legislação</option>
+          </select>
+        </div>
+        <div class="oral-setting">
+          <label class="oral-label" for="oral-diff">Dificuldade</label>
+          <select class="form-input" id="oral-diff">
+            <option value="easy">Fácil</option>
+            <option value="medium" selected>Médio</option>
+            <option value="hard">Difícil</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadQuestion()" aria-label="Carregar nova pergunta">
+          ↻ Nova pergunta
+        </button>
+      </div>
+
+      <!-- Question card -->
+      <div class="oral-question-card">
+        <div class="oral-q-num" id="q-num" aria-label="Progresso da sessão">PERGUNTA 1 DE 10</div>
+        <p class="oral-q-text" id="q-text">Carregando pergunta...</p>
+        <p class="oral-q-context" id="q-context"></p>
+      </div>
+
+      <!-- Studio zone: recording controls -->
+      <div class="oral-studio">
+        <p class="oral-instruction">
+          Responda em voz alta. Grave sua resposta e receba avaliação detalhada da IA.
+        </p>
+
+        <div class="oral-controls" role="group" aria-label="Controles de navegação e gravação">
+          <button class="btn btn-ghost oral-nav-btn" onclick="prevQuestion()" aria-label="Pergunta anterior">
+            ← Anterior
+          </button>
+
+          <div class="oral-rec-zone">
+            <button
+              class="rec-btn start"
+              id="rec-btn"
+              onclick="toggleRecording()"
+              aria-label="Iniciar gravação"
+              aria-pressed="false"
+            >🎤</button>
+            <div
+              class="oral-timer"
+              id="oral-timer"
+              aria-live="polite"
+              aria-label="Tempo de gravação"
+            >0:00</div>
+          </div>
+
+          <button class="btn btn-ghost oral-nav-btn" onclick="nextQuestion()" aria-label="Próxima pergunta">
+            Próxima →
+          </button>
+        </div>
+
+        <div class="oral-actions">
+          <button class="btn btn-ghost btn-sm" onclick="toggleHint()" aria-expanded="false" id="hint-toggle">
+            💡 Ver dica
+          </button>
+          <button
+            class="btn btn-primary btn-sm"
+            id="eval-btn"
+            onclick="getAiFeedback()"
+            disabled
+            aria-label="Avaliar minha resposta com IA"
+          >
+            Avaliar resposta
+          </button>
+        </div>
+
+        <div
+          id="rec-status"
+          class="oral-rec-status"
+          role="status"
+          aria-live="assertive"
+        ></div>
+      </div>
+
+      <!-- Hint box -->
+      <div id="hint-box" class="alert alert-info oral-hint" hidden>
+        <div id="hint-text"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div id="oral-feedback" class="oral-feedback" hidden>
+        <div class="oral-feedback-title">Avaliação IA da Resposta</div>
+        <div class="oral-score-row" id="oral-scores"></div>
+        <div class="oral-tips-label">Pontos de melhoria</div>
+        <div id="oral-tips" class="oral-tips"></div>
+        <hr class="oral-divider">
+        <div class="oral-model-label">Resposta de referência</div>
+        <div id="oral-model" class="oral-model-text"></div>
+      </div>
+
+      <!-- Session progress -->
+      <div class="oral-session" role="status" aria-label="Estatísticas da sessão">
+        <span class="oral-session-label">Sessão</span>
+        <span class="oral-stat">✅ <span id="s-ok">0</span> respondidas</span>
+        <span class="oral-stat">⏩ <span id="s-skip">0</span> puladas</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('oral');
+initSidebarToggle();
+
+const QUESTIONS = {
+  adm: [
+    { q:'Explique o princípio da legalidade no Direito Administrativo e como ele difere do princípio da legalidade aplicado aos particulares.', hint:'No Direito Administrativo, o administrador só pode fazer o que a lei expressamente autoriza. Para o particular, pode fazer tudo o que a lei não proíbe. Base: Art. 37, CF/88.', model:'O princípio da legalidade, previsto no art. 37 da CF/88, impõe à Administração Pública que só pratique atos que tenham amparo legal expresso. Enquanto para os particulares vigora o princípio geral do art. 5º, II — "ninguém será obrigado a fazer ou deixar de fazer algo senão em virtude de lei" —, para o administrador público a regra é mais restritiva: apenas é permitido fazer o que a lei autoriza. Isso decorre do regime de direito público, que exige vinculação positiva à lei, sendo a discricionariedade limitada e controlável.' },
+    { q:'Quais são os atributos do ato administrativo? Explique cada um deles.', hint:'São 4: Presunção de legitimidade/legalidade, Imperatividade, Autoexecutoriedade e Tipicidade.', model:'Os atributos do ato administrativo são: (1) Presunção de legitimidade — o ato é presumido válido até prova em contrário; (2) Imperatividade — o ato impõe obrigações independentemente da vontade do destinatário; (3) Autoexecutoriedade — a Administração pode executar o ato diretamente sem precisar do Judiciário, exceto nos casos de multa; (4) Tipicidade — o ato deve corresponder a uma das figuras previamente definidas em lei, vedando atos atípicos gravosos ao particular.' },
+    { q:'O que é autotutela administrativa e qual seu fundamento?', hint:'A Administração pode anular (ilegalidade) ou revogar (inconveniência) seus próprios atos. Súmulas 346 e 473 do STF.', model:'A autotutela é o poder-dever da Administração Pública de controlar seus próprios atos, podendo anulá-los quando ilegais ou revogá-los quando inoportunos ou inconvenientes. Está fundamentada nas Súmulas 346 e 473 do STF. A anulação tem efeitos ex tunc (retroativos) e decorre de vício de legalidade; a revogação tem efeitos ex nunc (prospectivos) e decorre do mérito administrativo. O prazo decadencial para a Administração anular atos favoráveis ao administrado é de 5 anos, salvo má-fé.' },
+  ],
+  const: [
+    { q:'Quais são os fundamentos da República Federativa do Brasil e como o SOVED pode ajudar na memorização?', hint:'SOVED: Soberania, Cidadania, Dignidade da pessoa humana, Valores sociais do trabalho/livre iniciativa, Pluralismo político. Art. 1º, CF.', model:'Os fundamentos estão no art. 1º, CF/88, e são cinco: Soberania, Cidadania, Dignidade da pessoa humana, Valores sociais do trabalho e da livre iniciativa, e Pluralismo político. O acrônimo SOVED facilita a memorização. Esses fundamentos orientam toda a interpretação constitucional e estabelecem os pilares do Estado Democrático de Direito brasileiro. A soberania diz respeito à autonomia estatal; a dignidade da pessoa humana é princípio-base dos direitos fundamentais; o pluralismo político garante a democracia.' },
+    { q:'O que são cláusulas pétreas? Cite-as.', hint:'Art. 60, §4º, CF: (1) Forma federativa, (2) Voto direto/secreto/universal/periódico, (3) Separação dos Poderes, (4) Direitos e garantias individuais.', model:'Cláusulas pétreas são limitações materiais ao poder de reforma constitucional, previstas no art. 60, §4º, CF/88. São imutáveis e não podem ser objeto de deliberação de proposta de emenda constitucional que tenda a aboli-las. São elas: (I) a forma federativa de Estado; (II) o voto direto, secreto, universal e periódico; (III) a separação dos Poderes; e (IV) os direitos e garantias individuais. Ressalte-se que podem ser ampliadas, mas não abolidas.' },
+  ],
+  penal: [
+    { q:'Diferencie dolo direto de dolo eventual e culpa consciente.', hint:'Dolo direto: quer o resultado. Dolo eventual: prevê e assume o risco. Culpa consciente: prevê mas acredita que não vai ocorrer.', model:'No dolo direto, o agente prevê o resultado e diretamente o quer como fim de sua conduta. No dolo eventual, o agente prevê o resultado como possível e, embora não o queira diretamente, assume o risco de produzi-lo — "tanto faz". Na culpa consciente, o agente prevê o resultado mas acredita sinceramente que pode evitá-lo pela sua habilidade ou atenção. A diferença essencial entre dolo eventual e culpa consciente está na aceitação do risco: no dolo eventual aceita; na culpa consciente rejeita o resultado.' },
+    { q:'Explique o iter criminis e suas fases.', hint:'4 fases: Cogitação (impunível), Preparação (regra: impunível), Execução, Consumação. Tentativa na execução interrompida.', model:'O iter criminis é o caminho percorrido pelo crime, composto por quatro fases: (1) Cogitação — fase interna, pensamento criminoso, sempre impunível; (2) Preparação — atos externos preparatórios, geralmente impuníveis salvo quando tipificados como crime autônomo (ex: petrechos para falsificação); (3) Execução — início dos atos executórios, quando surge a tentativa; (4) Consumação — produção do resultado. A tentativa ocorre quando o agente inicia a execução mas não consuma por circunstâncias alheias à sua vontade, com redução de pena de 1/3 a 2/3.' },
+  ],
+  transito: [
+    { q:'Qual é a estrutura do Sistema Nacional de Trânsito e quais os principais órgãos?', hint:'CONTRAN → SENATRAN → CETRAN → DETRAN → CTM. Normativos e executivos em cada nível.', model:'O Sistema Nacional de Trânsito é composto por órgãos normativos e executivos em nível federal, estadual e municipal. No âmbito federal, o CONTRAN é o órgão máximo normativo, e a SENATRAN é o órgão executivo. Nos estados e DF, o CETRAN/CONTRANDIFE exerce função normativa estadual, e o DETRAN é o órgão executivo. Nos municípios, o CTM (Conselho Municipal de Trânsito) e os órgãos executivos municipais completam a estrutura. A PRF fiscaliza as rodovias federais, enquanto a PM fiscaliza vias estaduais e municipais.' },
+    { q:'Explique as categorias da CNH e os requisitos para cada uma.', hint:'A: moto. B: carro. C: veículo de carga leve. D: passageiros (ônibus). E: combinações de veículos.', model:'A Carteira Nacional de Habilitação possui cinco categorias: Categoria A — motocicletas e veículos similares, exigindo ao menos 18 anos; Categoria B — automóveis com até 8 passageiros e capacidade de carga até 3.500 kg; Categoria C — veículos de carga acima de 3.500 kg; Categoria D — passageiros com mais de 8 assentos; Categoria E — combinações de veículos. Para as categorias C, D e E é exigida experiência prévia em B e exames específicos. A renovação ocorre a cada 5 anos (com periodicidade menor para idosos acima de 50 anos).' },
+  ],
+  etica: [
+    { q:'Quais são os deveres funcionais do servidor público federal previstos no Estatuto dos Servidores Públicos (Lei 8.112/90)?', hint:'Art. 116: assiduidade, pontualidade, lealdade, probidade, sigilo, cortesia, etc.', model:'Os deveres dos servidores públicos federais estão no art. 116 da Lei 8.112/1990 e incluem: exercer com zelo e dedicação as atribuições do cargo; ser leal às instituições e ao ordenamento jurídico; observar as normas legais e regulamentares; cumprir as ordens superiores, exceto quando manifestamente ilegais; manter conduta compatível com a moralidade administrativa; guardar sigilo sobre assuntos de conhecimento restrito; zelar pela economia do material público; comunicar imediatamente ao superior hierárquico toda irregularidade que tomem conhecimento, entre outros. O descumprimento pode ensejar responsabilidade administrativa.' },
+  ],
+};
+
+let currentSubject = 'adm';
+let currentIdx = 0;
+let answered = 0;
+let skipped = 0;
+let recording = false;
+let recTimer = null;
+let recSeconds = 0;
+let hasRecorded = false;
+
+function loadQuestion() {
+  currentSubject = document.getElementById('oral-subject').value;
+  const qs = QUESTIONS[currentSubject] || QUESTIONS.adm;
+  const q = qs[currentIdx % qs.length];
+
+  document.getElementById('q-num').textContent = `PERGUNTA ${currentIdx + 1} DE ${qs.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-context').textContent = '';
+
+  // Reset state
+  const hintBox = document.getElementById('hint-box');
+  hintBox.hidden = true;
+  const hintToggle = document.getElementById('hint-toggle');
+  hintToggle.setAttribute('aria-expanded', 'false');
+
+  document.getElementById('oral-feedback').hidden = true;
+  document.getElementById('eval-btn').disabled = true;
+  hasRecorded = false;
+
+  stopRecording();
+}
+
+function onSubjectChange() {
+  if (answered > 0 || skipped > 0) {
+    const ok = confirm('Trocar de disciplina vai reiniciar a sessão. Deseja continuar?');
+    if (!ok) {
+      // Revert select to current subject
+      document.getElementById('oral-subject').value = currentSubject;
+      return;
+    }
+    answered = 0;
+    skipped = 0;
+    currentIdx = 0;
+    document.getElementById('s-ok').textContent = '0';
+    document.getElementById('s-skip').textContent = '0';
+  }
+  loadQuestion();
+}
+
+function nextQuestion() {
+  skipped++;
+  document.getElementById('s-skip').textContent = skipped;
+  const qs = QUESTIONS[currentSubject] || QUESTIONS.adm;
+  currentIdx = (currentIdx + 1) % qs.length;
+  loadQuestion();
+}
+
+function prevQuestion() {
+  const qs = QUESTIONS[currentSubject] || QUESTIONS.adm;
+  currentIdx = (currentIdx - 1 + qs.length) % qs.length;
+  loadQuestion();
+}
+
+function toggleHint() {
+  const box = document.getElementById('hint-box');
+  const btn = document.getElementById('hint-toggle');
+  const qs = QUESTIONS[currentSubject] || QUESTIONS.adm;
+  const q = qs[currentIdx % qs.length];
+  const isHidden = box.hidden;
+
+  document.getElementById('hint-text').textContent = q.hint;
+  box.hidden = !isHidden;
+  btn.setAttribute('aria-expanded', String(!isHidden));
+}
+
+function toggleRecording() {
+  if (recording) {
+    stopRecording();
+    // Enable evaluate after stopping
+    document.getElementById('eval-btn').disabled = false;
+  } else {
+    startRecording();
+  }
+}
+
+function startRecording() {
+  recording = true;
+  hasRecorded = true;
+  recSeconds = 0;
+
+  const btn = document.getElementById('rec-btn');
+  btn.className = 'rec-btn recording';
+  btn.textContent = '⏹';
+  btn.setAttribute('aria-label', 'Parar gravação');
+  btn.setAttribute('aria-pressed', 'true');
+
+  const timer = document.getElementById('oral-timer');
+  timer.classList.add('active');
+
+  document.getElementById('rec-status').textContent = '🔴 Gravando... fale sua resposta com clareza';
+  document.getElementById('eval-btn').disabled = true;
+
+  recTimer = setInterval(() => {
+    recSeconds++;
+    const m = Math.floor(recSeconds / 60);
+    const s = recSeconds % 60;
+    const timeStr = `${m}:${String(s).padStart(2, '0')}`;
+    document.getElementById('oral-timer').textContent = timeStr;
+  }, 1000);
+}
+
+function stopRecording() {
+  recording = false;
+  clearInterval(recTimer);
+
+  const btn = document.getElementById('rec-btn');
+  btn.className = 'rec-btn start';
+  btn.textContent = '🎤';
+  btn.setAttribute('aria-label', 'Iniciar gravação');
+  btn.setAttribute('aria-pressed', 'false');
+
+  const timer = document.getElementById('oral-timer');
+  timer.classList.remove('active');
+
+  if (recSeconds > 0) {
+    const m = Math.floor(recSeconds / 60);
+    const s = recSeconds % 60;
+    document.getElementById('rec-status').textContent =
+      `✅ Gravação concluída: ${m}:${String(s).padStart(2, '0')} — clique em "Avaliar resposta"`;
+  } else {
+    document.getElementById('rec-status').textContent = '';
+  }
+}
+
+function getAiFeedback() {
+  if (!hasRecorded) return;
+
+  const qs = QUESTIONS[currentSubject] || QUESTIONS.adm;
+  const q = qs[currentIdx % qs.length];
+  const fb = document.getElementById('oral-feedback');
+
+  fb.hidden = true;
+  document.getElementById('eval-btn').disabled = true;
+  document.getElementById('rec-status').textContent = '⏳ Avaliando sua resposta...';
+
+  setTimeout(() => {
+    answered++;
+    document.getElementById('s-ok').textContent = answered;
+
+    const scores = [
+      { label: 'Conteúdo', score: Math.floor(6 + Math.random() * 4), color: 'var(--primary)' },
+      { label: 'Clareza', score: Math.floor(6 + Math.random() * 4), color: 'var(--success)' },
+      { label: 'Fundamentação', score: Math.floor(5 + Math.random() * 5), color: 'var(--accent)' },
+    ];
+
+    document.getElementById('oral-scores').innerHTML = scores.map(s =>
+      `<div class="oral-score-badge" style="background:${s.color}20;color:${s.color};border:1px solid ${s.color}30;">${s.label}: ${s.score}/10</div>`
+    ).join('');
+
+    document.getElementById('oral-tips').innerHTML =
+      '• Use termos técnicos jurídicos com precisão<br>' +
+      '• Cite sempre a base legal (artigo, lei, CF)<br>' +
+      '• Estruture a resposta: conceito → requisitos → consequências<br>' +
+      (recSeconds < 30 ? '• Desenvolva mais sua resposta — tempo de gravação muito curto.' : '• Boa extensão de resposta.');
+
+    document.getElementById('oral-model').textContent = q.model;
+
+    fb.hidden = false;
+    document.getElementById('rec-status').textContent = '';
+    fb.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1200);
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

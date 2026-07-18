@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Esquema IA — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">🗺️ Esquema IA</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+    <div class="content-area">
+      <div style="display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;">
+        <!-- Controls -->
+        <div class="card" style="padding:24px;">
+          <div class="panel-title">⚙️ Configurar Esquema</div>
+          <div class="form-group">
+            <label class="form-label">Tópico / Tema</label>
+            <input type="text" class="form-input" id="schema-topic" placeholder="Ex: Crimes Hediondos" value="Direito Administrativo">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nível de detalhe</label>
+            <select class="form-input" id="schema-level">
+              <option value="basic">Básico (3 níveis)</option>
+              <option value="medium" selected>Médio (4 níveis)</option>
+              <option value="detailed">Detalhado (5 níveis)</option>
+            </select>
+          </div>
+          <div style="margin-bottom:16px;">
+            <div style="font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:8px;">Tópicos prontos</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <button class="fc-deck-btn" style="text-align:left;" onclick="loadSchema('adm')">📋 Direito Administrativo</button>
+              <button class="fc-deck-btn" style="text-align:left;" onclick="loadSchema('const')">⚖️ Direito Constitucional</button>
+              <button class="fc-deck-btn" style="text-align:left;" onclick="loadSchema('transito')">🚔 Código de Trânsito</button>
+              <button class="fc-deck-btn" style="text-align:left;" onclick="loadSchema('penal')">🔒 Direito Penal</button>
+              <button class="fc-deck-btn" style="text-align:left;" onclick="loadSchema('hediondo')">⚠️ Crimes Hediondos</button>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="generateSchema()">🗺️ Gerar Esquema</button>
+        </div>
+
+        <!-- Schema output -->
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <h3 style="font-weight:700;" id="schema-title">Esquema Visual</h3>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost btn-sm" onclick="expandAll()">+ Expandir tudo</button>
+              <button class="btn btn-ghost btn-sm" onclick="collapseAll()">− Recolher tudo</button>
+            </div>
+          </div>
+          <div class="schema-output" id="schema-output">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);text-align:center;gap:12px;">
+              <div style="font-size:2.5rem;">🗺️</div>
+              <div style="font-weight:600;">Seu esquema aparecerá aqui</div>
+              <div style="font-size:.85rem;">Selecione um tópico ou digite um tema</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('esquema');
+initSidebarToggle();
+
+const SCHEMAS = {
+  adm: {
+    title: 'Direito Administrativo',
+    root: 'DIREITO ADMINISTRATIVO',
+    branches: [
+      { label: 'Princípios (Art. 37 CF)', items: [
+        { label: 'LIMPE', sub: ['Legalidade', 'Impessoalidade', 'Moralidade', 'Publicidade', 'Eficiência'] },
+        { label: 'Princípios implícitos', sub: ['Proporcionalidade', 'Razoabilidade', 'Continuidade', 'Autotutela'] },
+      ]},
+      { label: 'Ato Administrativo', items: [
+        { label: 'Elementos (COFIMOT)', sub: ['Competência', 'Objeto', 'Forma', 'Motivo', 'Finalidade'] },
+        { label: 'Atributos', sub: ['Presunção de legitimidade', 'Imperatividade', 'Autoexecutoriedade', 'Tipicidade'] },
+        { label: 'Extinção', sub: ['Anulação (ilegalidade)', 'Revogação (conveniência)', 'Cassação', 'Caducidade'] },
+      ]},
+      { label: 'Poderes Administrativos', items: [
+        { label: 'Poder Vinculado', sub: ['Todos os elementos fixados em lei', 'Sem margem de escolha'] },
+        { label: 'Poder Discricionário', sub: ['Mérito administrativo', 'Conveniência e oportunidade'] },
+        { label: 'Poder Hierárquico', sub: ['Subordinação interna', 'Delegação e avocação'] },
+        { label: 'Poder de Polícia', sub: ['Limite ao exercício de direitos', 'Atributos: discricionariedade, autoexecutoriedade, coercibilidade'] },
+      ]},
+      { label: 'Servidores Públicos', items: [
+        { label: 'Ingresso', sub: ['Concurso público (regra)', 'Livre nomeação (exceção — cargos em comissão)'] },
+        { label: 'Estabilidade', sub: ['Após 3 anos de exercício', 'Avaliação especial de desempenho'] },
+        { label: 'Responsabilidade', sub: ['Civil', 'Penal', 'Administrativa'] },
+      ]},
+    ]
+  },
+  const: {
+    title: 'Direito Constitucional',
+    root: 'DIREITO CONSTITUCIONAL',
+    branches: [
+      { label: 'Fundamentos (Art. 1º CF)', items: [
+        { label: 'SOVED', sub: ['Soberania', 'Cidadania', 'Dignidade da pessoa humana', 'Valores sociais do trabalho', 'Pluralismo político'] },
+      ]},
+      { label: 'Direitos Fundamentais (Art. 5º)', items: [
+        { label: 'Direitos individuais', sub: ['Vida', 'Liberdade', 'Igualdade', 'Segurança', 'Propriedade'] },
+        { label: 'Remédios constitucionais', sub: ['Habeas Corpus', 'Mandado de Segurança', 'Mandado de Injunção', 'Habeas Data', 'Ação Popular'] },
+        { label: 'Características', sub: ['Cláusulas pétreas', 'Aplicação imediata (§1º)', 'Não taxatividade (§2º)'] },
+      ]},
+      { label: 'Organização do Estado', items: [
+        { label: 'Forma de Estado', sub: ['Federação'] },
+        { label: 'Forma de Governo', sub: ['República'] },
+        { label: 'Sistema de Governo', sub: ['Presidencialismo'] },
+        { label: 'Regime Político', sub: ['Democracia'] },
+      ]},
+      { label: 'Cláusulas Pétreas (Art. 60 §4º)', items: [
+        { label: 'Imutáveis', sub: ['Forma federativa de Estado', 'Voto direto, secreto, universal e periódico', 'Separação dos Poderes', 'Direitos e garantias individuais'] },
+      ]},
+    ]
+  },
+  transito: {
+    title: 'Código de Trânsito Brasileiro',
+    root: 'CTB — LEI 9.503/1997',
+    branches: [
+      { label: 'Sistema Nacional de Trânsito', items: [
+        { label: 'Órgãos normativos', sub: ['CONTRAN (federal)', 'CETRAN (estadual)', 'CONTRANDIFE (DF)'] },
+        { label: 'Órgãos executivos', sub: ['SENATRAN (federal)', 'DETRAN (estadual)', 'CTM (municipal)'] },
+      ]},
+      { label: 'Infrações de Trânsito', items: [
+        { label: 'Classificação por pontos', sub: ['Leve: 3 pontos', 'Média: 4 pontos', 'Grave: 5 pontos', 'Gravíssima: 7 pontos'] },
+        { label: 'Exemplos gravíssimas', sub: ['Excesso de vel. > 50%', 'Embriaguez ao volante', 'Avançar sinal vermelho', 'Usar celular ao volante'] },
+      ]},
+      { label: 'Habilitação (CNH)', items: [
+        { label: 'Categorias', sub: ['A (moto)', 'B (carro)', 'C (caminhão leve)', 'D (ônibus)', 'E (combinações)'] },
+        { label: 'Suspensão', sub: ['20 pontos em 12 meses (geral)', '30 pontos (primário/leve/média)'] },
+      ]},
+      { label: 'Crimes de Trânsito', items: [
+        { label: 'Art. 306 — Embriaguez', sub: ['≥ 0,3 mg/L no ar alveolar', '≥ 6 dg/L no sangue', 'Pena: 6 meses a 3 anos'] },
+        { label: 'Art. 302 — Homicídio culposo', sub: ['Pena: 2 a 4 anos'] },
+        { label: 'Art. 303 — Lesão culposa', sub: ['Pena: 6 meses a 2 anos'] },
+      ]},
+    ]
+  },
+  penal: {
+    title: 'Direito Penal',
+    root: 'DIREITO PENAL — CP (DL 2.848/1940)',
+    branches: [
+      { label: 'Teoria do Crime', items: [
+        { label: 'Conceito analítico', sub: ['Fato típico', 'Ilicitude (antijuridicidade)', 'Culpabilidade'] },
+        { label: 'Fato típico', sub: ['Conduta', 'Resultado', 'Nexo causal', 'Tipicidade'] },
+      ]},
+      { label: 'Excludentes de ilicitude (Art. 23)', items: [
+        { label: 'Estado de necessidade', sub: ['Perigo atual não provocado', 'Inevitabilidade da lesão'] },
+        { label: 'Legítima defesa', sub: ['Agressão injusta atual ou iminente', 'Uso moderado dos meios'] },
+        { label: 'Estrito cumprimento', sub: ['Dever imposto por lei', 'Atos de agentes públicos'] },
+        { label: 'Exercício regular', sub: ['Direito reconhecido pelo ordenamento'] },
+      ]},
+      { label: 'Iter Criminis', items: [
+        { label: 'Fases', sub: ['Cogitação (impunível)', 'Preparação (geralmente impunível)', 'Execução', 'Consumação'] },
+        { label: 'Tentativa (Art. 14, II)', sub: ['Início de execução', 'Não consumação por fatores alheios', 'Pena: reduz 1/3 a 2/3'] },
+      ]},
+      { label: 'Penas (Art. 32)', items: [
+        { label: 'Privativas de liberdade', sub: ['Reclusão', 'Detenção', 'Prisão simples'] },
+        { label: 'Restritivas de direitos', sub: ['Prestação de serviços', 'Limitação de fim de semana', 'Interdição temporária'] },
+        { label: 'Multa', sub: ['Dias-multa (1 a 360)', 'Valor fixado pelo juiz'] },
+      ]},
+    ]
+  },
+  hediondo: {
+    title: 'Crimes Hediondos',
+    root: 'LEI 8.072/1990 — CRIMES HEDIONDOS',
+    branches: [
+      { label: 'Rol taxativo (Art. 1º)', items: [
+        { label: 'Crimes contra a vida', sub: ['Homicídio qualificado', 'Lesão corporal dolosa c/ morte (policial/FF)', 'Genocídio'] },
+        { label: 'Crimes patrimoniais', sub: ['Latrocínio', 'Extorsão qualificada pela morte', 'Extorsão mediante sequestro'] },
+        { label: 'Crimes sexuais', sub: ['Estupro', 'Estupro de vulnerável'] },
+        { label: 'Outros', sub: ['Terrorismo', 'Tortura', 'Epidemia c/ morte'] },
+      ]},
+      { label: 'Vedações (Art. 2º)', items: [
+        { label: 'Proibições absolutas', sub: ['Anistia', 'Graça', 'Indulto'] },
+        { label: 'Fiança', sub: ['Inafiançáveis'] },
+      ]},
+      { label: 'Progressão de regime', items: [
+        { label: 'Primário', sub: ['40% da pena'] },
+        { label: 'Reincidente específico', sub: ['60% da pena'] },
+        { label: 'Observação', sub: ['STF aboliu regime inicial fechado obrigatório (ADC 06)'] },
+      ]},
+      { label: 'Pacote Anticrime (Lei 13.964/2019)', items: [
+        { label: 'Alterações', sub: ['Ampliou o rol de hediondos', 'Modificou critérios de progressão', 'Criou RDD (Regime Disciplinar Diferenciado)'] },
+      ]},
+    ]
+  }
+};
+
+function generateSchema() {
+  const topic = document.getElementById('schema-topic').value.trim();
+  if (!topic) { alert('Digite um tema para gerar o esquema.'); return; }
+  const output = document.getElementById('schema-output');
+  output.innerHTML = `<div class="loading-dots"><span></span><span></span><span></span></div><div style="text-align:center;color:var(--text-muted);font-size:.85rem;margin-top:8px;">Gerando esquema...</div>`;
+  setTimeout(() => {
+    // Try to find matching schema
+    const key = Object.keys(SCHEMAS).find(k => SCHEMAS[k].title.toLowerCase().includes(topic.toLowerCase()) || topic.toLowerCase().includes(k));
+    if (key) {
+      renderSchemaData(SCHEMAS[key]);
+    } else {
+      output.innerHTML = `<div style="padding:20px;color:var(--text-muted);text-align:center;">Esquema para "<strong>${topic}</strong>" não encontrado. Tente um dos tópicos prontos no painel.</div>`;
+    }
+  }, 1000);
+}
+
+function loadSchema(key) {
+  const s = SCHEMAS[key];
+  if (!s) return;
+  document.getElementById('schema-topic').value = s.title;
+  const output = document.getElementById('schema-output');
+  output.innerHTML = `<div class="loading-dots"><span></span><span></span><span></span></div>`;
+  setTimeout(() => renderSchemaData(s), 800);
+}
+
+function renderSchemaData(s) {
+  document.getElementById('schema-title').textContent = '🗺️ ' + s.title;
+  let html = `<div class="schema-node">
+    <div class="schema-root">
+      <span style="background:var(--primary);color:#fff;padding:4px 14px;border-radius:6px;font-size:.95rem;">${s.root}</span>
+    </div>
+    <div class="schema-branch">`;
+
+  s.branches.forEach((b, bi) => {
+    html += `<div style="margin-bottom:12px;">
+      <div class="schema-item" style="cursor:pointer;" onclick="toggleBranch('b${bi}')">
+        <span style="background:var(--primary-light);color:var(--primary);padding:3px 10px;border-radius:4px;font-size:.85rem;">${b.label}</span>
+        <span style="font-size:.72rem;color:var(--text-light);margin-left:4px;">▾</span>
+      </div>
+      <div class="schema-sub" id="b${bi}">`;
+
+    b.items.forEach((item, ii) => {
+      html += `<div style="margin:6px 0;">
+        <div class="schema-sub-item" style="font-weight:600;color:var(--text);cursor:pointer;" onclick="toggleBranch('b${bi}i${ii}')">
+          ${item.label}
+          <span style="font-size:.68rem;color:var(--text-light);">▾</span>
+        </div>
+        <div class="schema-sub" id="b${bi}i${ii}">`;
+
+      item.sub.forEach(sub => {
+        html += `<div class="schema-sub-item" style="margin-left:8px;">• ${sub}</div>`;
+      });
+
+      html += `</div></div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  html += `</div></div>`;
+  document.getElementById('schema-output').innerHTML = html;
+}
+
+function toggleBranch(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+function expandAll() {
+  document.querySelectorAll('.schema-sub').forEach(el => el.style.display = '');
+}
+
+function collapseAll() {
+  document.querySelectorAll('.schema-sub').forEach(el => el.style.display = 'none');
+}
+
+// Load default on startup
+loadSchema('adm');
+</script>
+</body>
+</html>

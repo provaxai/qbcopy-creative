@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treinador de Discursiva — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">✍️ Treinador de Discursiva</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+    <div class="content-area narrow">
+      <!-- Prompt selector -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+        <button class="topic-chip active" onclick="selectPrompt(0,this)">Tema atual</button>
+        <button class="topic-chip" onclick="selectPrompt(1,this)">Improbidade Adm.</button>
+        <button class="topic-chip" onclick="selectPrompt(2,this)">Segurança Pública</button>
+        <button class="topic-chip" onclick="selectPrompt(3,this)">Direitos Humanos</button>
+        <button class="topic-chip" onclick="selectPrompt(4,this)">Ética Policial</button>
+      </div>
+
+      <!-- Prompt card -->
+      <div class="disc-prompt" id="disc-prompt">
+        <h3>📋 Tema da Discursiva — PRF 2024</h3>
+        <p id="prompt-text">A atuação das forças de segurança pública no combate à criminalidade organizada nas rodovias federais: desafios, estratégias e limites legais. Discorra sobre o papel da Polícia Rodoviária Federal nesse contexto, abordando os instrumentos legais disponíveis e os princípios constitucionais que orientam a atividade policial.</p>
+        <div class="disc-meta" style="margin-top:12px;margin-bottom:0;">
+          <div class="disc-meta-item">⏱ <strong>Tempo:</strong> 60 min</div>
+          <div class="disc-meta-item">📝 <strong>Mín.:</strong> 20 linhas</div>
+          <div class="disc-meta-item">📏 <strong>Máx.:</strong> 40 linhas</div>
+          <div class="disc-meta-item">⭐ <strong>Valor:</strong> 10 pontos</div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="alert alert-info" style="margin-bottom:16px;">
+        💡 <strong>Dica:</strong> Estruture sua redação em Introdução (contextualização + tese), Desenvolvimento (2-3 argumentos com exemplos e base legal) e Conclusão (proposta de intervenção).
+      </div>
+
+      <!-- Writing area -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;">
+        <div class="disc-meta" style="margin-bottom:12px;">
+          <div class="disc-meta-item" id="timer-display">⏱ 60:00</div>
+          <div class="disc-meta-item" id="word-count">📝 0 palavras</div>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" id="timer-btn" onclick="toggleTimer()">▶ Iniciar</button>
+          </div>
+        </div>
+        <textarea class="disc-textarea" id="essay-area" placeholder="Escreva sua redação aqui..." oninput="updateWordCount(this)"></textarea>
+        <div class="disc-counter" id="char-count">0 / 3000 caracteres</div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="getAiFeedback()" id="feedback-btn">🤖 Corrigir com IA</button>
+        <button class="btn btn-ghost" onclick="clearEssay()">🗑 Limpar</button>
+        <button class="btn btn-ghost" onclick="saveEssay()">💾 Salvar rascunho</button>
+      </div>
+
+      <!-- Feedback -->
+      <div id="feedback-area" style="display:none;margin-top:24px;">
+        <div class="feedback-card">
+          <h3>📊 Resultado da Correção IA</h3>
+          <div class="score-grid" id="score-grid"></div>
+          <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+          <div style="font-weight:700;margin-bottom:10px;">Pontos de Feedback</div>
+          <div class="feedback-points" id="feedback-points"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('discursiva');
+initSidebarToggle();
+
+const PROMPTS = [
+  { title:'📋 Tema da Discursiva — PRF 2024', text:'A atuação das forças de segurança pública no combate à criminalidade organizada nas rodovias federais: desafios, estratégias e limites legais. Discorra sobre o papel da Polícia Rodoviária Federal nesse contexto, abordando os instrumentos legais disponíveis e os princípios constitucionais que orientam a atividade policial.' },
+  { title:'📋 Improbidade Administrativa', text:'A Lei 14.230/2021 trouxe importantes modificações à Lei de Improbidade Administrativa (Lei 8.429/1992), exigindo dolo específico para a caracterização dos atos ímprobos. Analise as principais alterações e seu impacto no combate à corrupção no Brasil.' },
+  { title:'📋 Segurança Pública (Art. 144 CF)', text:'O artigo 144 da Constituição Federal de 1988 estabelece o sistema de segurança pública no Brasil. Discorra sobre a estrutura constitucional desse sistema, as atribuições de cada órgão e os desafios contemporâneos para a efetividade das políticas públicas de segurança.' },
+  { title:'📋 Direitos Humanos e Atividade Policial', text:'O respeito aos direitos humanos é condição essencial para a legitimidade da atuidade policial em um Estado Democrático de Direito. Discorra sobre os princípios internacionais de uso da força e da atuação policial, abordando o princípio da proporcionalidade e o uso progressivo da força.' },
+  { title:'📋 Ética Policial e Probidade', text:'A probidade administrativa e a ética no exercício da função policial são pilares do Estado de Direito. Analise os deveres ético-funcionais do servidor policial, as consequências das infrações disciplinares e o papel institucional na prevenção à corrupção nas forças de segurança pública.' },
+];
+
+function selectPrompt(i, btn) {
+  document.querySelectorAll('.topic-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const p = PROMPTS[i];
+  document.getElementById('disc-prompt').querySelector('h3').textContent = p.title;
+  document.getElementById('prompt-text').textContent = p.text;
+  clearEssay();
+}
+
+// Timer
+let timerInterval = null;
+let timeLeft = 3600;
+let running = false;
+
+function toggleTimer() {
+  const btn = document.getElementById('timer-btn');
+  if (running) {
+    clearInterval(timerInterval);
+    running = false;
+    btn.textContent = '▶ Retomar';
+  } else {
+    running = true;
+    btn.textContent = '⏸ Pausar';
+    timerInterval = setInterval(() => {
+      if (timeLeft <= 0) { clearInterval(timerInterval); btn.textContent = '⏱ Encerrado'; return; }
+      timeLeft--;
+      const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+      const s = String(timeLeft%60).padStart(2,'0');
+      document.getElementById('timer-display').textContent = `⏱ ${m}:${s}`;
+      if (timeLeft <= 300) document.getElementById('timer-display').style.color = 'var(--danger)';
+    }, 1000);
+  }
+}
+
+function updateWordCount(el) {
+  const text = el.value;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('word-count').textContent = `📝 ${words} palavras`;
+  document.getElementById('char-count').textContent = `${text.length} / 3000 caracteres`;
+  if (text.length > 3000) el.value = text.slice(0,3000);
+}
+
+function clearEssay() {
+  document.getElementById('essay-area').value = '';
+  document.getElementById('word-count').textContent = '📝 0 palavras';
+  document.getElementById('char-count').textContent = '0 / 3000 caracteres';
+  document.getElementById('feedback-area').style.display = 'none';
+  timeLeft = 3600;
+  clearInterval(timerInterval);
+  running = false;
+  document.getElementById('timer-btn').textContent = '▶ Iniciar';
+  document.getElementById('timer-display').textContent = '⏱ 60:00';
+  document.getElementById('timer-display').style.color = '';
+}
+
+function saveEssay() {
+  const text = document.getElementById('essay-area').value.trim();
+  if (!text) { alert('Escreva algo antes de salvar.'); return; }
+  localStorage.setItem('qbs_draft', text);
+  alert('Rascunho salvo com sucesso!');
+}
+
+function getAiFeedback() {
+  const text = document.getElementById('essay-area').value.trim();
+  if (text.split(/\s+/).length < 50) {
+    alert('Escreva pelo menos 50 palavras para receber o feedback.');
+    return;
+  }
+
+  const btn = document.getElementById('feedback-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Analisando...';
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = '🤖 Corrigir com IA';
+
+    const words = text.trim().split(/\s+/).length;
+    const hasTese = /portanto|assim|desse modo|conclui-se|por fim|em conclusão/i.test(text);
+    const hasLei = /art\.|lei|constituição|código|decreto/i.test(text);
+    const hasParag = text.split('\n').filter(l => l.trim()).length >= 3;
+
+    const scores = {
+      estrutura: hasParag ? Math.floor(7 + Math.random()*3) : Math.floor(4 + Math.random()*3),
+      argumentacao: hasLei ? Math.floor(7 + Math.random()*3) : Math.floor(5 + Math.random()*3),
+      linguagem: words > 100 ? Math.floor(7 + Math.random()*3) : Math.floor(4 + Math.random()*3),
+      conclusao: hasTese ? Math.floor(7 + Math.random()*3) : Math.floor(4 + Math.random()*3),
+    };
+
+    const total = Object.values(scores).reduce((a,b)=>a+b,0);
+    const maxTotal = 40;
+    const finalScore = ((total/maxTotal)*10).toFixed(1);
+
+    document.getElementById('score-grid').innerHTML = `
+      <div class="score-item"><div class="score-circle" style="border-color:${scores.estrutura>=7?'var(--success)':'var(--accent)'}">${scores.estrutura}/10</div><div class="score-label">Estrutura</div></div>
+      <div class="score-item"><div class="score-circle" style="border-color:${scores.argumentacao>=7?'var(--success)':'var(--accent)'}">${scores.argumentacao}/10</div><div class="score-label">Argumentação</div></div>
+      <div class="score-item"><div class="score-circle" style="border-color:${scores.linguagem>=7?'var(--success)':'var(--accent)'}">${scores.linguagem}/10</div><div class="score-label">Linguagem</div></div>
+      <div class="score-item"><div class="score-circle" style="font-size:1.4rem;border-color:${parseFloat(finalScore)>=7?'var(--primary)':'var(--accent)'};border-width:4px;color:var(--primary);">${finalScore}</div><div class="score-label">Nota Final</div></div>
+    `;
+
+    const points = [];
+    if (hasLei) points.push({ type:'pos', text:'✅ Boa fundamentação legal — referências a leis e artigos identificadas.' });
+    if (hasParag) points.push({ type:'pos', text:'✅ Texto bem estruturado em parágrafos.' });
+    if (hasTese) points.push({ type:'pos', text:'✅ Conclusão com proposta de intervenção identificada.' });
+    if (words > 200) points.push({ type:'pos', text:`✅ Extensão adequada: ${words} palavras.` });
+    if (!hasLei) points.push({ type:'neg', text:'❌ Falta fundamentação legal — cite artigos, leis e princípios constitucionais.' });
+    if (!hasParag) points.push({ type:'neg', text:'❌ Estruture melhor em parágrafos: introdução, desenvolvimento e conclusão.' });
+    if (!hasTese) points.push({ type:'neg', text:'❌ Conclusão sem proposta concreta — finalize com uma solução ou recomendação.' });
+    if (words < 150) points.push({ type:'neg', text:`❌ Texto curto (${words} palavras). Desenvolva mais os argumentos.` });
+    points.push({ type:'neutral', text:'💡 Dica: Use conectivos como "ademais", "outrossim", "nesse diapasão" para melhorar a coesão.' });
+
+    document.getElementById('feedback-points').innerHTML = points.map(p => `<div class="${p.type==='pos'?'fp-positive':p.type==='neg'?'fp-negative':'fp-neutral'}">${p.text}</div>`).join('');
+
+    document.getElementById('feedback-area').style.display = 'block';
+    document.getElementById('feedback-area').scrollIntoView({ behavior: 'smooth' });
+  }, 2000);
+}
+</script>
+</body>
+</html>

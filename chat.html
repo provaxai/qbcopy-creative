@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat IA — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content" style="display:flex;flex-direction:column;">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">💬 Chat IA</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+
+    <div class="chat-layout" style="flex:1;">
+      <!-- Chat Sidebar -->
+      <div class="chat-sidebar">
+        <div class="chat-sidebar-top">
+          <button class="btn btn-primary btn-full btn-sm" onclick="newChat()">+ Nova conversa</button>
+        </div>
+        <div class="chat-history" id="chat-history">
+          <div class="chat-hist-item active">💬 Conversa atual</div>
+          <div class="chat-hist-item" onclick="loadSampleChat(1)">📚 Direito Constitucional</div>
+          <div class="chat-hist-item" onclick="loadSampleChat(2)">🚔 Legislação de Trânsito</div>
+          <div class="chat-hist-item" onclick="loadSampleChat(3)">📐 Matemática PRF</div>
+        </div>
+      </div>
+
+      <!-- Chat Main -->
+      <div class="chat-main">
+        <div class="chat-header">
+          <div class="chat-ai-avatar">🤖</div>
+          <div class="chat-header-info">
+            <h3>QbStudy IA</h3>
+            <p>● Online — especialista em concursos públicos</p>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <!-- Welcome message -->
+          <div class="chat-msg ai">
+            <div class="chat-msg-avatar" style="background:linear-gradient(135deg,#2563EB,#7C3AED);color:#fff;">🤖</div>
+            <div>
+              <div class="chat-bubble">
+                Olá! Sou o assistente IA do QbStudy, especializado em concursos públicos. 🎯<br><br>
+                Posso te ajudar com:<br>
+                • <strong>Tirar dúvidas</strong> sobre qualquer disciplina<br>
+                • <strong>Explicar conceitos</strong> de forma simples<br>
+                • <strong>Criar questões</strong> para praticar<br>
+                • <strong>Resumir</strong> tópicos do edital<br><br>
+                O que você quer estudar hoje?
+              </div>
+              <div style="font-size:.72rem;color:var(--text-light);margin-top:4px;padding:0 4px;">QbStudy IA • agora</div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin:8px 0;">
+            <span style="font-size:.75rem;color:var(--text-light);background:var(--border);padding:4px 12px;border-radius:50px;">Sugestões rápidas</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 8px;">
+            <button class="btn btn-ghost btn-sm" onclick="sendQuick('Explique o Princípio da Legalidade no Direito Administrativo')">Princípio da Legalidade</button>
+            <button class="btn btn-ghost btn-sm" onclick="sendQuick('Quais são as infrações de trânsito gravíssimas?')">Infrações gravíssimas</button>
+            <button class="btn btn-ghost btn-sm" onclick="sendQuick('Explique o conceito de improbidade administrativa')">Improbidade administrativa</button>
+            <button class="btn btn-ghost btn-sm" onclick="sendQuick('Como funciona a progressão de regime no crime hediondo?')">Crimes hediondos</button>
+          </div>
+        </div>
+
+        <div class="chat-input-bar">
+          <div class="chat-input-wrap">
+            <textarea class="chat-textarea" id="chat-input" placeholder="Pergunte qualquer coisa sobre concursos..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+            <button class="chat-send" id="send-btn" onclick="sendMessage()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div style="font-size:.72rem;color:var(--text-light);margin-top:8px;text-align:center;">QbStudy IA pode cometer erros. Verifique informações importantes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('chat');
+initSidebarToggle();
+
+const RESPONSES = {
+  default: [
+    "Ótima pergunta! Vou te explicar esse conceito de forma clara para o concurso. {q}",
+    "No contexto dos concursos públicos, esse tema é muito cobrado. Veja: {q}",
+    "Excelente dúvida! Esse é um tema recorrente nas provas. {q}"
+  ],
+  legalidade: `O <strong>Princípio da Legalidade</strong> é um dos pilares do Direito Administrativo Brasileiro. 📜<br><br>
+<strong>Para o particular:</strong> "É permitido fazer tudo o que a lei não proíbe" (art. 5º, II, CF/88)<br><br>
+<strong>Para a Administração Pública:</strong> "Só é permitido fazer o que a lei expressamente autoriza"<br><br>
+<strong>Base legal:</strong> Art. 37, caput, CF/88: "A administração pública obedecerá aos princípios de legalidade, impessoalidade, moralidade, publicidade e eficiência" (LIMPE).<br><br>
+⚠️ <strong>Macete LIMPE:</strong> <em>L</em>egalidade, <em>I</em>mpessoalidade, <em>M</em>oralidade, <em>P</em>ublicidade, <em>E</em>ficiência`,
+  transito: `As <strong>infrações de trânsito gravíssimas</strong> estão no art. 258-A do CTB. Principais: 🚦<br><br>
+• Ultrapassar o sinal vermelho<br>
+• Dirigir embriagado (acima de 0,05mg/L ou 6 decigramas/L de sangue)<br>
+• Excesso de velocidade acima de 50% do limite<br>
+• Participar de racha<br>
+• Usar celular ao volante<br>
+• Transitar na faixa de pedestres sem dar preferência<br><br>
+<strong>Penalidade base:</strong> Multa de R$ 293,47, com 7 pontos na CNH e possibilidade de suspensão.`,
+  improbidade: `A <strong>Improbidade Administrativa</strong> está regulada pela Lei 8.429/1992 (com alterações pela Lei 14.230/2021). ⚖️<br><br>
+<strong>Atos de Improbidade:</strong><br>
+• <strong>Art. 9</strong> - Enriquecimento ilícito (dolo + dano)<br>
+• <strong>Art. 10</strong> - Dano ao erário (dolo apenas, após 2021)<br>
+• <strong>Art. 11</strong> - Violação dos princípios (dolo + lesão)<br><br>
+<strong>⚠️ Mudança importante (Lei 14.230/2021):</strong> Passou a exigir DOLO ESPECÍFICO em todos os casos. A culpa grave não é mais suficiente!<br><br>
+<strong>Sanções:</strong> Perda da função, suspensão dos direitos políticos, multa e ressarcimento ao erário.`,
+  hediondo: `Os <strong>Crimes Hediondos</strong> são definidos pela Lei 8.072/1990. 🔒<br><br>
+<strong>Rol taxativo (art. 1º):</strong><br>
+• Homicídio qualificado<br>
+• Lesão corporal dolosa seguida de morte<br>
+• Latrocínio<br>
+• Extorsão com morte<br>
+• Estupro e estupro de vulnerável<br>
+• Genocídio<br>
+• Terrorismo<br>
+• Tortura<br><br>
+<strong>Regime de cumprimento:</strong><br>
+• Inicial fechado: ABOLIDO pelo STF (ADC 06)<br>
+• Progressão: 40% da pena (primário) ou 60% (reincidente)<br>
+• Sem anistia, graça ou indulto`,
+};
+
+function getAiResponse(text) {
+  const t = text.toLowerCase();
+  if (t.includes('legalidade')) return RESPONSES.legalidade;
+  if (t.includes('trânsito') || t.includes('transito') || t.includes('infração') || t.includes('cnh') || t.includes('gravíssim')) return RESPONSES.transito;
+  if (t.includes('improbidade')) return RESPONSES.improbidade;
+  if (t.includes('hediondo') || t.includes('progressão') || t.includes('regime')) return RESPONSES.hediondo;
+  // generic
+  return `Boa pergunta! Esse é um tema muito cobrado nos concursos. 📚<br><br>
+Sobre <strong>"${text.slice(0,60)}${text.length>60?'...':''}"</strong>:<br><br>
+O conceito está relacionado com as disciplinas cobradas na maioria dos concursos policiais. Para aprofundar, recomendo:<br><br>
+• Consultar a legislação específica do edital<br>
+• Praticar com questões do banco de questões<br>
+• Criar flashcards para os pontos-chave<br>
+• Usar o Resumo Inteligente para condensar o tema<br><br>
+Quer que eu explique algum ponto específico com mais detalhes? 🎯`;
+}
+
+function addMessage(text, role, isHtml = false) {
+  const msgs = document.getElementById('chat-messages');
+  const isUser = role === 'user';
+  const user = Auth.getUser();
+  const initial = (user?.name || 'U')[0].toUpperCase();
+
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  div.style.maxWidth = '80%';
+  div.style.alignSelf = isUser ? 'flex-end' : 'flex-start';
+
+  const avatarHtml = isUser
+    ? `<div class="chat-msg-avatar" style="background:#E2E8F0;color:#475569;">${initial}</div>`
+    : `<div class="chat-msg-avatar" style="background:linear-gradient(135deg,#2563EB,#7C3AED);color:#fff;">🤖</div>`;
+
+  const time = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+
+  div.innerHTML = `
+    ${avatarHtml}
+    <div>
+      <div class="chat-bubble">${isHtml ? text : escHtml(text)}</div>
+      <div style="font-size:.72rem;color:var(--text-light);margin-top:4px;padding:0 4px;text-align:${isUser?'right':'left'}">${isUser?(user?.name||'Você'):('QbStudy IA')} • ${time}</div>
+    </div>
+  `;
+
+  // fix flex direction for user
+  if (isUser) div.style.flexDirection = 'row-reverse';
+
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chat-messages');
+  const el = document.createElement('div');
+  el.className = 'chat-msg ai';
+  el.id = 'typing-indicator';
+  el.innerHTML = `
+    <div class="chat-msg-avatar" style="background:linear-gradient(135deg,#2563EB,#7C3AED);color:#fff;">🤖</div>
+    <div class="chat-bubble"><div class="typing"><span></span><span></span><span></span></div></div>
+  `;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+
+  addMessage(text, 'user');
+  document.getElementById('send-btn').disabled = true;
+
+  showTyping();
+  const delay = 800 + Math.random() * 1000;
+  setTimeout(() => {
+    removeTyping();
+    addMessage(getAiResponse(text), 'ai', true);
+    document.getElementById('send-btn').disabled = false;
+  }, delay);
+}
+
+function sendQuick(text) {
+  document.getElementById('chat-input').value = text;
+  sendMessage();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function newChat() {
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML = '';
+  addMessage('Nova conversa iniciada. Como posso te ajudar?', 'ai', false);
+}
+
+function loadSampleChat(id) {
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML = '';
+  const samples = {
+    1: [{r:'user',t:'Explique o Princípio da Legalidade'},{r:'ai',t:RESPONSES.legalidade,h:true}],
+    2: [{r:'user',t:'Quais são as infrações de trânsito gravíssimas?'},{r:'ai',t:RESPONSES.transito,h:true}],
+    3: [{r:'user',t:'Como calcular porcentagem rapidamente nas provas?'},{r:'ai',t:'Para calcular porcentagem rapidamente: <strong>x% de N = (x × N) / 100</strong><br><br>Dica: 10% é sempre dividir por 10. 5% é metade de 10%. 1% é dividir por 100.<br><br>Exemplo: 15% de 200 = 10% (20) + 5% (10) = 30 ✅',h:true}],
+  };
+  const s = samples[id] || samples[1];
+  s.forEach(m => addMessage(m.t, m.r, m.h));
+}
+</script>
+</body>
+</html>

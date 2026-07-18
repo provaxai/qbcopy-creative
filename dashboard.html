@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm" style="display:none;padding:8px;">☰</button>
+        <div class="topbar-title">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <a href="upgrade.html" class="btn btn-accent btn-sm">⭐ Upgrade</a>
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div class="dash-welcome">
+        <h1 id="welcome-msg">Bem-vindo de volta! 👋</h1>
+        <p>Continue estudando de onde parou. Escolha uma ferramenta abaixo.</p>
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;">
+        <div class="card" style="padding:16px 20px;">
+          <div style="font-size:.78rem;color:var(--text-muted);font-weight:600;margin-bottom:4px;">FLASHCARDS HOJE</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--primary);">0</div>
+        </div>
+        <div class="card" style="padding:16px 20px;">
+          <div style="font-size:.78rem;color:var(--text-muted);font-weight:600;margin-bottom:4px;">SEQUÊNCIA</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--accent);">0 dias 🔥</div>
+        </div>
+        <div class="card" style="padding:16px 20px;">
+          <div style="font-size:.78rem;color:var(--text-muted);font-weight:600;margin-bottom:4px;">RESUMOS CRIADOS</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--success);">0</div>
+        </div>
+        <div class="card" style="padding:16px 20px;">
+          <div style="font-size:.78rem;color:var(--text-muted);font-weight:600;margin-bottom:4px;">HORAS DE ESTUDO</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--purple);">0h</div>
+        </div>
+      </div>
+
+      <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:16px;">Ferramentas de Estudo</h2>
+      <div class="tools-grid">
+
+        <a href="cursos-app.html" class="tool-tile">
+          <div class="t-icon">📚</div>
+          <h3>Cursos</h3>
+          <p>Acesse cursos exclusivos organizados por concurso e disciplina.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+        <a href="resumo.html" class="tool-tile">
+          <div class="t-icon">📝</div>
+          <h3>Resumo Inteligente</h3>
+          <p>Crie resumos com lacunas interativas para fixar o conteúdo.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+        <a href="chat.html" class="tool-tile">
+          <div class="t-icon">💬</div>
+          <h3>Chat IA</h3>
+          <p>Converse com IA para tirar dúvidas sobre qualquer matéria.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+        <a href="pdf-ia.html" class="tool-tile">
+          <div class="t-icon">📄</div>
+          <h3>PDF IA</h3>
+          <p>Transforme PDFs em ferramentas de estudo automaticamente.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+        <a href="flashcards.html" class="tool-tile">
+          <div class="t-icon">🃏</div>
+          <h3>Flashcards</h3>
+          <p>Revise com cartões inteligentes e repetição espaçada.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+        <a href="esquema.html" class="tool-tile">
+          <div class="t-icon">🗺️</div>
+          <h3>Esquema IA</h3>
+          <p>Visualize conteúdos complexos em esquemas visuais automáticos.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+        <a href="legis.html" class="tool-tile">
+          <div class="t-icon">⚖️</div>
+          <h3>Legis</h3>
+          <p>Acesse e estude legislação de forma organizada e anotada.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+        <a href="discursiva.html" class="tool-tile">
+          <div class="t-icon">✍️</div>
+          <h3>Treinador de Discursiva</h3>
+          <p>Pratique redações com feedback detalhado por IA.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+        <a href="prova-oral.html" class="tool-tile">
+          <div class="t-icon">🎤</div>
+          <h3>Prova Oral</h3>
+          <p>Prepare-se para provas orais com simulações realistas.</p>
+          <span style="color:var(--primary);font-size:.82rem;font-weight:600;">Acessar →</span>
+        </a>
+
+      </div>
+
+      <!-- Upgrade nudge -->
+      <div style="background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:1px solid #BFDBFE;border-radius:12px;padding:28px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:800;font-size:1.05rem;margin-bottom:4px;">Desbloqueie o plano completo ⭐</div>
+          <div style="font-size:.88rem;color:var(--text-muted);">Acesso ilimitado a todas as ferramentas IA por menos de R$ 1,20/dia</div>
+        </div>
+        <a href="upgrade.html" class="btn btn-primary">Ver Planos →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  Auth.requireAuth();
+  renderSidebar('dashboard');
+  initSidebarToggle();
+  const user = Auth.getUser();
+  if (user) {
+    document.getElementById('welcome-msg').textContent = `Bem-vindo de volta, ${user.name || 'Estudante'}! 👋`;
+  }
+  // show hamburger on mobile
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar-toggle').style.display = 'flex';
+  }
+</script>
+</body>
+</html>

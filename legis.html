@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legis — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">⚖️ Legis</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+    <div class="content-area">
+      <!-- Search -->
+      <div class="legis-search-bar">
+        <input type="text" class="form-input" id="legis-search" placeholder="🔍 Buscar legislação, artigo, lei..." oninput="filterLegis(this.value)">
+        <button class="btn btn-primary" onclick="filterLegis(document.getElementById('legis-search').value)">Buscar</button>
+      </div>
+
+      <!-- Filter chips -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+        <button class="topic-chip active" onclick="setFilter('all',this)">Todas</button>
+        <button class="topic-chip" onclick="setFilter('cf',this)">Constituição Federal</button>
+        <button class="topic-chip" onclick="setFilter('ctb',this)">CTB</button>
+        <button class="topic-chip" onclick="setFilter('cp',this)">Código Penal</button>
+        <button class="topic-chip" onclick="setFilter('adm',this)">Dir. Administrativo</button>
+        <button class="topic-chip" onclick="setFilter('leg',this)">Leis Especiais</button>
+      </div>
+
+      <div id="legis-list"></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('legis');
+initSidebarToggle();
+
+const LEGIS = [
+  { id:'cf1', cat:'cf', title:'Art. 1º — Fundamentos da República', law:'Constituição Federal/1988',
+    arts:[
+      { num:'Art. 1º', text:'A República Federativa do Brasil, formada pela união indissolúvel dos Estados e Municípios e do Distrito Federal, constitui-se em Estado Democrático de Direito e tem como fundamentos: I – a <mark class="art-highlight">soberania</mark>; II – a <mark class="art-highlight">cidadania</mark>; III – a <mark class="art-highlight">dignidade da pessoa humana</mark>; IV – os <mark class="art-highlight">valores sociais do trabalho e da livre iniciativa</mark>; V – o <mark class="art-highlight">pluralismo político</mark>.' },
+      { num:'Parágrafo único', text:'Todo o poder emana do povo, que o exerce por meio de representantes eleitos ou diretamente, nos termos desta Constituição.' },
+    ]},
+  { id:'cf5', cat:'cf', title:'Art. 5º — Direitos e Garantias Fundamentais', law:'Constituição Federal/1988',
+    arts:[
+      { num:'Art. 5º (caput)', text:'Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à <mark class="art-highlight">vida</mark>, à <mark class="art-highlight">liberdade</mark>, à <mark class="art-highlight">igualdade</mark>, à <mark class="art-highlight">segurança</mark> e à <mark class="art-highlight">propriedade</mark>, nos termos seguintes:' },
+      { num:'Inc. XXXIX', text:'<mark class="art-highlight">Não há crime sem lei anterior que o defina, nem pena sem prévia cominação legal.</mark> (Princípio da Legalidade Penal)' },
+      { num:'Inc. LXVIII', text:'Conceder-se-á <mark class="art-highlight">habeas corpus</mark> sempre que alguém sofrer ou se achar ameaçado de sofrer violência ou coação em sua liberdade de locomoção, por ilegalidade ou abuso de poder.' },
+      { num:'Inc. LXIX', text:'Conceder-se-á <mark class="art-highlight">mandado de segurança</mark> para proteger direito líquido e certo, não amparado por habeas corpus ou habeas data, quando o responsável pela ilegalidade ou abuso de poder for autoridade pública ou agente de pessoa jurídica no exercício de atribuições do Poder Público.' },
+    ]},
+  { id:'cf37', cat:'cf adm', title:'Art. 37 — Princípios da Administração Pública (LIMPE)', law:'Constituição Federal/1988',
+    arts:[
+      { num:'Art. 37 (caput)', text:'A administração pública direta e indireta de qualquer dos Poderes da União, dos Estados, do Distrito Federal e dos Municípios obedecerá aos princípios de <mark class="art-highlight">legalidade, impessoalidade, moralidade, publicidade e eficiência</mark> e, também, ao seguinte:' },
+      { num:'Inc. II', text:'A investidura em cargo ou emprego público depende de <mark class="art-highlight">aprovação prévia em concurso público</mark> de provas ou de provas e títulos, de acordo com a natureza e a complexidade do cargo ou emprego, na forma prevista em lei, ressalvadas as nomeações para cargo em comissão declarado em lei de livre nomeação e exoneração.' },
+    ]},
+  { id:'ctb1', cat:'ctb', title:'Art. 1º a 4º — Disposições Gerais CTB', law:'Lei 9.503/1997 — CTB',
+    arts:[
+      { num:'Art. 1º', text:'O trânsito de qualquer natureza nas vias terrestres do território nacional, abertas à circulação, rege-se por este Código.' },
+      { num:'Art. 2º', text:'São vias terrestres urbanas e rurais as ruas, as avenidas, os logradouros, os caminhos, as passagens, as estradas e as rodovias, que terão seu uso regulamentado pelo órgão ou entidade com circunscrição sobre elas.' },
+    ]},
+  { id:'ctb2', cat:'ctb', title:'Art. 306 — Crime de Embriaguez ao Volante', law:'Lei 9.503/1997 — CTB',
+    arts:[
+      { num:'Art. 306', text:'Conduzir veículo automotor com capacidade psicomotora alterada em razão da influência de álcool ou de outra substância psicoativa que determine dependência: Penas — detenção, de seis meses a três anos, multa e suspensão ou proibição de se obter a permissão ou a habilitação para dirigir veículo automotor.' },
+      { num:'§1º', text:'As condutas previstas no caput serão constatadas por: I – concentração igual ou superior a <mark class="art-highlight">6 decigramas de álcool por litro de sangue</mark> ou igual ou superior a <mark class="art-highlight">0,3 miligrama de álcool por litro de ar alveolar expirado</mark>; II – sinais que indiquem, na forma disciplinada pelo Contran, alteração da capacidade psicomotora.' },
+    ]},
+  { id:'cp1', cat:'cp', title:'Art. 1º — Princípio da Legalidade', law:'Decreto-Lei 2.848/1940 — Código Penal',
+    arts:[
+      { num:'Art. 1º', text:'<mark class="art-highlight">Não há crime sem lei anterior que o defina. Não há pena sem prévia cominação legal.</mark>' },
+    ]},
+  { id:'cp23', cat:'cp', title:'Art. 23 — Excludentes de Ilicitude', law:'Decreto-Lei 2.848/1940 — Código Penal',
+    arts:[
+      { num:'Art. 23', text:'Não há crime quando o agente pratica o fato: I – em <mark class="art-highlight">estado de necessidade</mark>; II – em <mark class="art-highlight">legítima defesa</mark>; III – em <mark class="art-highlight">estrito cumprimento de dever legal</mark> ou no <mark class="art-highlight">exercício regular de direito</mark>.' },
+    ]},
+  { id:'lei8072', cat:'leg', title:'Lei 8.072/1990 — Crimes Hediondos', law:'Lei 8.072/1990',
+    arts:[
+      { num:'Art. 1º (rol)', text:'São considerados hediondos os seguintes crimes: homicídio qualificado, lesão corporal dolosa seguida de morte (praticado por policiais), latrocínio, extorsão qualificada pela morte, extorsão mediante sequestro, estupro, estupro de vulnerável, epidemia com resultado morte, falsificação de produtos terapêuticos, genocídio e outros previstos em lei.' },
+      { num:'Art. 2º', text:'Os crimes hediondos, a prática da tortura, o tráfico ilícito de entorpecentes e drogas afins e o terrorismo são <mark class="art-highlight">insuscetíveis de anistia, graça e indulto</mark>.' },
+      { num:'Art. 2º §2º', text:'A progressão de regime, no caso dos condenados pelos crimes previstos neste artigo, dar-se-á após o cumprimento de <mark class="art-highlight">40% (primário)</mark> da pena e <mark class="art-highlight">60% (reincidente específico)</mark>.' },
+    ]},
+  { id:'lei8429', cat:'leg adm', title:'Lei 8.429/1992 — Improbidade Administrativa', law:'Lei 8.429/1992 (alt. Lei 14.230/2021)',
+    arts:[
+      { num:'Art. 1º', text:'O sistema de responsabilização por atos de improbidade administrativa tutelará a probidade na organização do Estado e no exercício das funções públicas, mediante a responsabilização dos agentes públicos.' },
+      { num:'Art. 1º §1º', text:'Consideram-se atos de improbidade administrativa as condutas dolosas tipificadas nos arts. 9º, 10 e 11 desta Lei, ressalvados tipos previstos em leis especiais. (Após 2021: <mark class="art-highlight">apenas dolo, não mais culpa grave</mark>.)' },
+    ]},
+];
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function renderLegis() {
+  const list = document.getElementById('legis-list');
+  const filtered = LEGIS.filter(l => {
+    const matchCat = currentFilter === 'all' || l.cat.includes(currentFilter);
+    const matchSearch = !currentSearch || l.title.toLowerCase().includes(currentSearch.toLowerCase()) || l.law.toLowerCase().includes(currentSearch.toLowerCase()) || l.arts.some(a => a.text.toLowerCase().includes(currentSearch.toLowerCase()));
+    return matchCat && matchSearch;
+  });
+
+  if (!filtered.length) {
+    list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma legislação encontrada.</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(l => `
+    <div class="legis-card">
+      <div class="legis-card-header" onclick="toggleLegis('${l.id}')">
+        <div>
+          <h3>${l.title}</h3>
+          <p>${l.law} • ${l.arts.length} artigo${l.arts.length>1?'s':''}</p>
+        </div>
+        <div class="faq-arrow" id="arrow-${l.id}">▾</div>
+      </div>
+      <div class="legis-card-body" id="body-${l.id}">
+        ${l.arts.map(a => `
+          <div class="legis-art">
+            <strong>${a.num}</strong>
+            <div>${a.text}</div>
+          </div>
+        `).join('<hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleLegis(id) {
+  const body  = document.getElementById('body-'+id);
+  const arrow = document.getElementById('arrow-'+id);
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.legis-card-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.faq-arrow').forEach(a => a.style.transform = '');
+  if (!isOpen) {
+    body.classList.add('open');
+    arrow.style.transform = 'rotate(180deg)';
+  }
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.topic-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLegis();
+}
+
+function filterLegis(val) {
+  currentSearch = val;
+  renderLegis();
+}
+
+renderLegis();
+</script>
+</body>
+</html>

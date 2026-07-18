@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo Inteligente — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">📝 Resumo Inteligente</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div class="resumo-layout">
+        <!-- INPUT -->
+        <div class="input-panel">
+          <div class="panel-title">📥 Entrada</div>
+
+          <div style="margin-bottom:12px;">
+            <div style="font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:8px;">Tópicos rápidos</div>
+            <div class="topic-chips" id="topic-chips">
+              <button class="topic-chip" onclick="selectTopic(this,'limpe')">LIMPE (Adm.)</button>
+              <button class="topic-chip" onclick="selectTopic(this,'transito')">Código de Trânsito</button>
+              <button class="topic-chip" onclick="selectTopic(this,'penal')">Direito Penal</button>
+              <button class="topic-chip" onclick="selectTopic(this,'constitucional')">Constituição</button>
+              <button class="topic-chip" onclick="selectTopic(this,'hediondos')">Crimes Hediondos</button>
+              <button class="topic-chip" onclick="selectTopic(this,'improbidade')">Improbidade</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ou cole seu próprio texto</label>
+            <textarea class="form-input" id="resumo-input" rows="10" placeholder="Cole aqui o texto que deseja resumir, ou selecione um tópico acima..."></textarea>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="generateResumo()" id="gen-btn">✨ Gerar Resumo com Lacunas</button>
+            <button class="btn btn-ghost" onclick="clearAll()">🗑 Limpar</button>
+          </div>
+
+          <div style="margin-top:20px;padding:14px;background:var(--bg);border-radius:var(--radius);font-size:.82rem;color:var(--text-muted);">
+            💡 <strong>Como usar:</strong> Selecione um tópico ou cole seu texto, clique em "Gerar Resumo". As <span style="background:#DBEAFE;color:var(--primary);padding:0 4px;border-radius:2px;">palavras sublinhadas</span> são lacunas — clique nelas para revelar.
+          </div>
+        </div>
+
+        <!-- OUTPUT -->
+        <div class="output-panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+            <div class="panel-title" style="margin-bottom:0;">📄 Resumo com Lacunas</div>
+            <div style="display:flex;gap:8px;" id="output-actions" style="display:none;">
+              <button class="btn btn-ghost btn-sm" onclick="revealAll()">👁 Revelar tudo</button>
+              <button class="btn btn-ghost btn-sm" onclick="hideAll()">🙈 Ocultar tudo</button>
+            </div>
+          </div>
+          <div id="resumo-output" class="resumo-result">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);text-align:center;gap:12px;">
+              <div style="font-size:2.5rem;">📝</div>
+              <div style="font-weight:600;">Seu resumo aparecerá aqui</div>
+              <div style="font-size:.85rem;">Selecione um tópico ou cole um texto e clique em "Gerar Resumo"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('resumo');
+initSidebarToggle();
+
+const TOPICS = {
+  limpe: `Os princípios expressos da Administração Pública estão no artigo 37 da Constituição Federal de 1988. O princípio da legalidade determina que o administrador só pode fazer o que a lei autoriza. O princípio da impessoalidade proíbe favoritismos e perseguições, devendo o agente sempre agir em nome da Administração. O princípio da moralidade exige que os atos administrativos respeitem a ética, a probidade e a boa-fé. O princípio da publicidade impõe transparência aos atos administrativos, ressalvados os casos de sigilo previstos em lei. O princípio da eficiência, incluído pela Emenda Constitucional 19 de 1998, determina que a Administração deve buscar os melhores resultados com o menor custo. A junção das iniciais forma o acrônimo LIMPE, amplamente cobrado em provas de concursos públicos federais e estaduais.`,
+
+  transito: `O Código de Trânsito Brasileiro foi instituído pela Lei 9.503 de 1997 e regula a circulação de pedestres, veículos e animais nas vias terrestres abertas ao público. O Sistema Nacional de Trânsito é composto pelo CONTRAN, que é o órgão máximo normativo, pelo DENATRAN ou SENATRAN como órgão executivo federal, pelos CETRAN nos estados, pelos DETRAN como órgãos executivos estaduais e pelos CTM nos municípios. As infrações de trânsito são classificadas em leve, média, grave e gravíssima, conforme a pontuação atribuída à CNH. As infrações gravíssimas resultam em multa de R$ 293,47 e 7 pontos. A embriaguez ao volante é caracterizada quando o condutor apresenta concentração de álcool igual ou superior a 0,05 miligramas por litro de ar alveolar expirado, configurando infração gravíssima. Acima de 0,3 mg/L configura crime de trânsito previsto no artigo 306 do CTB.`,
+
+  penal: `O Direito Penal brasileiro tem como base o Código Penal de 1940, com diversas reformas posteriores. O princípio da legalidade, previsto no artigo 1º do Código Penal e no artigo 5º inciso XXXIX da Constituição Federal, estabelece que não há crime sem lei anterior que o defina nem pena sem prévia cominação legal. O crime é composto de fato típico, ilicitude e culpabilidade. O fato típico exige conduta, resultado, nexo causal e tipicidade. As excludentes de ilicitude estão no artigo 23 do Código Penal e são o estado de necessidade, a legítima defesa, o estrito cumprimento do dever legal e o exercício regular de direito. O dolo pode ser direto, quando o agente quer o resultado, ou eventual, quando o agente prevê o resultado e assume o risco de produzi-lo. A culpa é caracterizada por imprudência, negligência ou imperícia.`,
+
+  constitucional: `A Constituição Federal de 1988, promulgada em 5 de outubro de 1988, é conhecida como Constituição Cidadã. O artigo 1º estabelece os fundamentos da República Federativa do Brasil, que são a soberania, a cidadania, a dignidade da pessoa humana, os valores sociais do trabalho e da livre iniciativa e o pluralismo político. O parágrafo único do artigo 1º determina que todo poder emana do povo, que o exerce por meio de representantes eleitos ou diretamente. Os direitos e garantias fundamentais estão no artigo 5º e incluem a igualdade perante a lei, a liberdade de expressão, a inviolabilidade do domicílio e o devido processo legal. As cláusulas pétreas do artigo 60 parágrafo 4º protegem a forma federativa de Estado, o voto direto secreto universal e periódico, a separação dos poderes e os direitos e garantias individuais.`,
+
+  hediondos: `A Lei 8.072 de 1990 define os crimes hediondos no Brasil. O rol taxativo de crimes hediondos inclui o homicídio qualificado, o homicídio cometido por grupo de extermínio, a lesão corporal dolosa seguida de morte quando o agente é policial ou membro de forças armadas, o latrocínio, a extorsão qualificada pela morte, a extorsão mediante sequestro, o estupro, o estupro de vulnerável, o epidemia com resultado morte, o envenenamento de água potável, a falsificação de medicamentos e o genocídio. Após a Lei 13.964 de 2019, conhecida como Pacote Anticrime, foram acrescentados outros delitos. A progressão de regime para crimes hediondos exige o cumprimento de 40% da pena para primários e 60% para reincidentes específicos. São vedados a anistia, a graça e o indulto para crimes hediondos.`,
+
+  improbidade: `A Lei de Improbidade Administrativa é a Lei 8.429 de 1992, com profundas alterações pela Lei 14.230 de 2021. Após a reforma, passou-se a exigir dolo específico para configuração de ato de improbidade em todas as modalidades, sendo afastada a responsabilização por culpa grave. Os atos de improbidade que importam enriquecimento ilícito estão no artigo 9º e decorrem de obtenção de vantagem patrimonial indevida em razão do exercício do cargo. Os atos que causam lesão ao erário estão no artigo 10º e importam perda patrimonial para a Administração. Os atos que atentam contra os princípios da Administração estão no artigo 11º. As sanções aplicáveis incluem perda dos bens ou valores acrescidos ilicitamente, ressarcimento integral do dano, perda da função pública, suspensão dos direitos políticos e pagamento de multa civil.`,
+};
+
+function selectTopic(btn, key) {
+  document.querySelectorAll('.topic-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('resumo-input').value = TOPICS[key] || '';
+}
+
+function generateResumo() {
+  const text = document.getElementById('resumo-input').value.trim();
+  if (!text) { alert('Digite ou selecione um texto para gerar o resumo.'); return; }
+
+  const output = document.getElementById('resumo-output');
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando...';
+
+  output.innerHTML = `<div class="loading-dots"><span></span><span></span><span></span></div><div style="text-align:center;color:var(--text-muted);font-size:.85rem;margin-top:8px;">Processando com IA...</div>`;
+
+  setTimeout(() => {
+    output.innerHTML = buildResumoHtml(text);
+    document.getElementById('output-actions').style.display = 'flex';
+    btn.disabled = false;
+    btn.textContent = '✨ Gerar Resumo com Lacunas';
+  }, 1500);
+}
+
+function buildResumoHtml(text) {
+  // Split into sentences
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+
+  // Key words to turn into gaps (important terms)
+  const keywords = [
+    'legalidade','impessoalidade','moralidade','publicidade','eficiência','LIMPE',
+    'CONTRAN','DETRAN','SENATRAN','CTB','CNH','multa','infrações',
+    'dolo','culpa','crime','pena','ilicitude','tipicidade',
+    'Constituição','Federal','República','soberania','cidadania','dignidade',
+    'hediondos','progressão','anistia','graça','indulto',
+    'improbidade','enriquecimento','erário','sanções',
+    '37','1988','8.072','8.429','9.503','14.230',
+    '0,05','0,3','293,47','40%','60%','72h'
+  ];
+
+  const gapRe = new RegExp(`\\b(${keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')})\\b`, 'gi');
+
+  let html = '<div style="line-height:2;font-size:.92rem;">';
+  let gapCount = 0;
+
+  sentences.forEach((s, i) => {
+    const processed = s.replace(gapRe, (match) => {
+      if (Math.random() > 0.4) { // 60% chance to make a gap
+        gapCount++;
+        return `<span class="gap-word" onclick="revealGap(this)" title="Clique para revelar">${match}</span>`;
+      }
+      return match;
+    });
+    html += `<p style="margin-bottom:10px;">${processed}</p>`;
+  });
+
+  html += '</div>';
+  if (gapCount === 0) html += `<p style="color:var(--text-muted);font-size:.85rem;margin-top:8px;">Nenhuma lacuna encontrada. Tente um texto com mais termos técnicos.</p>`;
+  html += `<div style="margin-top:16px;padding:12px 16px;background:var(--bg);border-radius:8px;font-size:.78rem;color:var(--text-muted);">📊 <strong>${gapCount} lacunas</strong> geradas • Clique em cada lacuna para revelar a palavra.</div>`;
+  return html;
+}
+
+function revealGap(el) {
+  el.classList.toggle('revealed');
+}
+
+function revealAll() {
+  document.querySelectorAll('.gap-word').forEach(g => g.classList.add('revealed'));
+}
+
+function hideAll() {
+  document.querySelectorAll('.gap-word').forEach(g => g.classList.remove('revealed'));
+}
+
+function clearAll() {
+  document.getElementById('resumo-input').value = '';
+  document.getElementById('resumo-output').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);text-align:center;gap:12px;"><div style="font-size:2.5rem;">📝</div><div style="font-weight:600;">Seu resumo aparecerá aqui</div></div>`;
+  document.getElementById('output-actions').style.display = 'none';
+  document.querySelectorAll('.topic-chip').forEach(b => b.classList.remove('active'));
+}
+</script>
+</body>
+</html>

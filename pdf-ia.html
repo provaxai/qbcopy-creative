@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF IA — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">📄 PDF IA</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+    <div class="content-area narrow">
+
+      <!-- Upload zone -->
+      <div id="upload-section">
+        <div class="pdf-upload-zone" id="drop-zone" onclick="document.getElementById('pdf-input').click()" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+          <div class="pdf-upload-icon">📄</div>
+          <h3>Arraste seu PDF aqui ou clique para selecionar</h3>
+          <p>Suporta arquivos PDF de até 20MB • Apostilas, editais, livros, legislação</p>
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="event.stopPropagation();document.getElementById('pdf-input').click()">📤 Selecionar PDF</button>
+          </div>
+        </div>
+        <input type="file" id="pdf-input" accept=".pdf" style="display:none" onchange="handleFile(this.files[0])">
+
+        <div style="margin-top:20px;">
+          <div style="font-size:.85rem;font-weight:600;color:var(--text-muted);margin-bottom:12px;">Ou use um dos PDFs de exemplo:</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="loadSamplePDF('prf')">📚 Edital PRF 2024</button>
+            <button class="btn btn-ghost btn-sm" onclick="loadSamplePDF('ctb')">🚔 Resumo CTB</button>
+            <button class="btn btn-ghost btn-sm" onclick="loadSamplePDF('const')">⚖️ CF Art. 1-10</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Processing -->
+      <div id="processing-section" style="display:none;text-align:center;padding:60px 20px;">
+        <div class="loading-dots" style="justify-content:center;"><span></span><span></span><span></span></div>
+        <h3 style="margin-top:16px;font-weight:700;" id="proc-title">Processando PDF...</h3>
+        <p style="color:var(--text-muted);font-size:.88rem;" id="proc-sub">Extraindo texto e analisando conteúdo com IA</p>
+        <div style="max-width:300px;margin:20px auto;">
+          <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+            <div id="proc-bar" style="height:100%;background:var(--primary);width:0%;transition:width .3s;border-radius:3px;"></div>
+          </div>
+          <div id="proc-pct" style="font-size:.82rem;color:var(--text-muted);margin-top:8px;">0%</div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="result-section" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="font-size:1.5rem;">📄</div>
+            <div>
+              <div style="font-weight:700;" id="pdf-name">documento.pdf</div>
+              <div style="font-size:.78rem;color:var(--text-muted);" id="pdf-meta">12 páginas • 8.450 palavras</div>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="resetUpload()">📤 Novo PDF</button>
+        </div>
+
+        <div class="pdf-result">
+          <div class="pdf-tabs">
+            <div class="pdf-tab active" onclick="switchTab('resumo',this)">📝 Resumo</div>
+            <div class="pdf-tab" onclick="switchTab('questoes',this)">❓ Questões</div>
+            <div class="pdf-tab" onclick="switchTab('flashcards',this)">🃏 Flashcards</div>
+            <div class="pdf-tab" onclick="switchTab('mapa',this)">🗺️ Tópicos</div>
+          </div>
+
+          <div class="pdf-tab-content active" id="tab-resumo">
+            <div id="resumo-content" style="font-size:.9rem;line-height:1.8;"></div>
+          </div>
+
+          <div class="pdf-tab-content" id="tab-questoes">
+            <div id="questoes-content"></div>
+          </div>
+
+          <div class="pdf-tab-content" id="tab-flashcards">
+            <div id="flashcards-content"></div>
+          </div>
+
+          <div class="pdf-tab-content" id="tab-mapa">
+            <div id="mapa-content"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('pdf');
+initSidebarToggle();
+
+const SAMPLE_DATA = {
+  prf: {
+    name: 'Edital_PRF_2024.pdf',
+    meta: '48 páginas • 22.100 palavras',
+    resumo: `<h3 style="font-weight:700;margin-bottom:12px;">Resumo do Edital PRF 2024</h3>
+<p><strong>Cargo:</strong> Policial Rodoviário Federal. <strong>Vagas:</strong> 1.500 vagas. <strong>Remuneração:</strong> R$ 13.932,00 (inicial) até R$ 20.924,79 (teto).</p>
+<p style="margin-top:10px;"><strong>Requisitos:</strong> Diploma de curso superior reconhecido pelo MEC, CNH categoria B, aprovação em todas as fases do concurso, não ter antecedentes criminais.</p>
+<p style="margin-top:10px;"><strong>Fases:</strong> (1) Prova Objetiva — eliminatória e classificatória; (2) Teste de Aptidão Física (TAF); (3) Avaliação Psicológica; (4) Investigação Social; (5) Exame Médico; (6) Curso de Formação.</p>
+<p style="margin-top:10px;"><strong>Conteúdo programático:</strong> Língua Portuguesa, Raciocínio Lógico-Matemático, Legislação de Trânsito (CTB), Direito Constitucional, Direito Administrativo, Direito Penal e Processual Penal, Informática.</p>`,
+    questoes: [
+      { num:1, text:'Qual o número de vagas previstas no edital PRF 2024?', alt:['(A) 500 vagas','(B) 1.000 vagas','(C) 1.500 vagas ✅','(D) 2.000 vagas'] },
+      { num:2, text:'Qual a remuneração inicial do cargo de Policial Rodoviário Federal?', alt:['(A) R$ 9.000,00','(B) R$ 11.500,00','(C) R$ 13.932,00 ✅','(D) R$ 20.924,79'] },
+      { num:3, text:'Quantas fases compõem o concurso da PRF?', alt:['(A) 3 fases','(B) 4 fases','(C) 5 fases','(D) 6 fases ✅'] },
+    ],
+    flashcards: [
+      { q:'Qual o salário inicial da PRF?', a:'R$ 13.932,00' },
+      { q:'Quantas vagas no concurso PRF 2024?', a:'1.500 vagas' },
+      { q:'Qual CNH mínima exigida?', a:'Categoria B' },
+      { q:'Quantas fases tem o concurso PRF?', a:'6 fases (Objetiva, TAF, Psicológica, Investigação Social, Médico, Formação)' },
+    ],
+    topicos: ['Requisitos e elegibilidade','Remuneração e benefícios','Fases do concurso','Conteúdo programático','Cronograma','Inscrições']
+  },
+  ctb: {
+    name: 'Resumo_CTB_Lei9503_1997.pdf',
+    meta: '24 páginas • 11.300 palavras',
+    resumo: `<h3 style="font-weight:700;margin-bottom:12px;">Código de Trânsito Brasileiro — Resumo</h3>
+<p>O CTB (Lei 9.503/1997) regula a circulação de veículos e pedestres no território nacional. Composto por 341 artigos, divide-se em disposições gerais, Sistema Nacional de Trânsito, normas gerais de circulação, penalidades e crimes de trânsito.</p>
+<p style="margin-top:10px;"><strong>SNT:</strong> CONTRAN (máximo normativo) → SENATRAN → CETRAN/CONTRANDIFE → DETRAN → CTM.</p>
+<p style="margin-top:10px;"><strong>Infrações:</strong> Leve (3 pts), Média (4 pts), Grave (5 pts), Gravíssima (7 pts). Suspensão: 20 pontos em 12 meses.</p>
+<p style="margin-top:10px;"><strong>Crimes de trânsito (arts. 302-312):</strong> Homicídio culposo, lesão culposa, embriaguez ao volante, participação em racha, entre outros.</p>`,
+    questoes: [
+      { num:1, text:'A concentração mínima de álcool por litro de ar alveolar para caracterizar o crime do art. 306 CTB é:', alt:['(A) 0,05 mg/L','(B) 0,1 mg/L','(C) 0,3 mg/L ✅','(D) 0,6 mg/L'] },
+      { num:2, text:'Quantos pontos acumula uma infração gravíssima na CNH?', alt:['(A) 3 pontos','(B) 5 pontos','(C) 7 pontos ✅','(D) 10 pontos'] },
+    ],
+    flashcards: [
+      { q:'Qual o limite de pontos na CNH antes da suspensão?', a:'20 pontos em 12 meses (30 pontos para primários com infrações leves/médias)' },
+      { q:'Quantos artigos tem o CTB?', a:'341 artigos' },
+      { q:'Qual o órgão máximo normativo do SNT?', a:'CONTRAN (Conselho Nacional de Trânsito)' },
+    ],
+    topicos: ['Sistema Nacional de Trânsito','Normas de circulação','Habilitação (CNH)','Infrações e penalidades','Crimes de trânsito','Fiscalização']
+  },
+  const: {
+    name: 'CF_1988_Art1_a_10.pdf',
+    meta: '8 páginas • 4.200 palavras',
+    resumo: `<h3 style="font-weight:700;margin-bottom:12px;">CF/1988 — Artigos 1º ao 10º</h3>
+<p><strong>Art. 1º:</strong> Fundamentos (SOVED) — Soberania, Cidadania, Dignidade da pessoa humana, Valores sociais do trabalho/livre iniciativa, Pluralismo político.</p>
+<p style="margin-top:10px;"><strong>Art. 2º:</strong> Separação dos Poderes — Legislativo, Executivo e Judiciário são independentes e harmônicos.</p>
+<p style="margin-top:10px;"><strong>Art. 3º:</strong> Objetivos fundamentais: construir sociedade livre/justa/solidária; garantir o desenvolvimento nacional; erradicar a pobreza; promover o bem de todos sem discriminações.</p>
+<p style="margin-top:10px;"><strong>Art. 4º:</strong> Princípios das relações internacionais: soberania, não-intervenção, autodeterminação dos povos, paz, repúdio ao terrorismo etc.</p>
+<p style="margin-top:10px;"><strong>Art. 5º:</strong> Direitos fundamentais individuais e coletivos (78 incisos). Aplicação imediata. Cláusula pétrea.</p>`,
+    questoes: [
+      { num:1, text:'Qual NÃO é fundamento da República Federativa do Brasil (art. 1º CF)?', alt:['(A) Soberania','(B) Cidadania','(C) Democracia participativa ✅','(D) Pluralismo político'] },
+      { num:2, text:'O art. 3º da CF/88 trata dos:', alt:['(A) Fundamentos da República','(B) Objetivos fundamentais da República ✅','(C) Princípios das relações internacionais','(D) Direitos fundamentais'] },
+    ],
+    flashcards: [
+      { q:'Quais são os fundamentos da República? (Mnemônico)', a:'SOVED: Soberania, Cidadania, Dignidade, Valores sociais, Pluralismo político' },
+      { q:'Quantos incisos tem o art. 5º da CF/88?', a:'78 incisos' },
+      { q:'Os direitos fundamentais do art. 5º têm aplicação:', a:'Imediata (§1º do art. 5º)' },
+    ],
+    topicos: ['Princípios fundamentais (Arts. 1-4)','Direitos individuais (Art. 5)','Direitos sociais (Art. 6-11)','Fundamentos da República','Objetivos fundamentais','Relações internacionais']
+  }
+};
+
+let currentData = null;
+
+function handleFile(file) {
+  if (!file) return;
+  if (!file.name.endsWith('.pdf')) { alert('Por favor, selecione um arquivo PDF.'); return; }
+  processFile(file.name, file.size);
+}
+
+function loadSamplePDF(key) {
+  const d = SAMPLE_DATA[key];
+  processFile(d.name, null, key);
+}
+
+function processFile(name, size, sampleKey) {
+  document.getElementById('upload-section').style.display = 'none';
+  document.getElementById('processing-section').style.display = 'block';
+  document.getElementById('pdf-name').textContent = name;
+
+  const steps = [
+    { pct:20, title:'Extraindo texto...', sub:'Lendo o conteúdo do PDF' },
+    { pct:45, title:'Analisando com IA...', sub:'Identificando conceitos-chave' },
+    { pct:70, title:'Gerando resumo...', sub:'Organizando o conteúdo' },
+    { pct:90, title:'Criando questões e flashcards...', sub:'Preparando material de estudo' },
+    { pct:100, title:'Concluído!', sub:'Seu material está pronto' },
+  ];
+
+  let si = 0;
+  const interval = setInterval(() => {
+    if (si >= steps.length) {
+      clearInterval(interval);
+      setTimeout(() => showResult(name, sampleKey), 300);
+      return;
+    }
+    const s = steps[si];
+    document.getElementById('proc-bar').style.width = s.pct + '%';
+    document.getElementById('proc-pct').textContent = s.pct + '%';
+    document.getElementById('proc-title').textContent = s.title;
+    document.getElementById('proc-sub').textContent = s.sub;
+    si++;
+  }, 600);
+}
+
+function showResult(name, sampleKey) {
+  document.getElementById('processing-section').style.display = 'none';
+  document.getElementById('result-section').style.display = 'block';
+
+  currentData = sampleKey ? SAMPLE_DATA[sampleKey] : SAMPLE_DATA.prf;
+  document.getElementById('pdf-name').textContent = currentData.name;
+  document.getElementById('pdf-meta').textContent = currentData.meta;
+  document.getElementById('resumo-content').innerHTML = currentData.resumo;
+
+  document.getElementById('questoes-content').innerHTML = currentData.questoes.map(q => `
+    <div class="pdf-question-item">
+      <strong>Questão ${q.num}</strong>
+      ${q.text}
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px;">
+        ${q.alt.map(a => `<div style="padding:6px 10px;border-radius:4px;font-size:.85rem;background:${a.includes('✅')?'#D1FAE5':'var(--bg)'};color:${a.includes('✅')?'#065F46':'var(--text-muted)'};">${a}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  let fcIdx = 0;
+  document.getElementById('flashcards-content').innerHTML = currentData.flashcards.map(fc => `
+    <div class="pdf-question-item" style="cursor:pointer;" onclick="this.querySelector('.fc-answer').style.display=this.querySelector('.fc-answer').style.display==='none'?'block':'none'">
+      <strong>🃏 ${fc.q}</strong>
+      <div class="fc-answer" style="display:none;margin-top:8px;color:var(--primary);font-weight:600;">→ ${fc.a}</div>
+      <div style="font-size:.75rem;color:var(--text-light);margin-top:4px;">Clique para ver a resposta</div>
+    </div>
+  `).join('');
+
+  document.getElementById('mapa-content').innerHTML = `
+    <div style="font-size:.9rem;">
+      <div style="font-weight:800;font-size:1rem;color:var(--primary);margin-bottom:12px;">📌 ${currentData.name}</div>
+      ${currentData.topicos.map((t, i) => `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:${i%2===0?'var(--bg)':'var(--surface)'};border-radius:6px;margin-bottom:6px;font-size:.88rem;">
+          <span style="width:22px;height:22px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;">${i+1}</span>
+          ${t}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.pdf-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.pdf-tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function resetUpload() {
+  document.getElementById('result-section').style.display = 'none';
+  document.getElementById('upload-section').style.display = 'block';
+  document.getElementById('pdf-input').value = '';
+}
+
+function onDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('dragover'); }
+function onDragLeave() { document.getElementById('drop-zone').classList.remove('dragover'); }
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+</script>
+</body>
+</html>

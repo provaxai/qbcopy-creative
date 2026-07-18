@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planos — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body style="background:#fff">
+<nav class="pub-nav">
+  <a href="index.html" class="logo"><div class="logo-icon">⚡</div>QbStudy AI</a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="cursos.html">Cursos</a></li>
+    </ul>
+    <a href="login.html" class="btn btn-ghost btn-sm" id="nav-login">Login</a>
+    <a href="register.html" class="btn btn-primary btn-sm" id="nav-register">Registrar</a>
+  </div>
+</nav>
+
+<div class="pricing-page">
+  <!-- Hero -->
+  <div class="pricing-hero">
+    <div class="hero-badge" style="background:#FEF3C7;border:1px solid #FDE68A;color:#92400E;display:inline-block;padding:6px 18px;border-radius:50px;font-size:.8rem;font-weight:700;letter-spacing:.05em;margin-bottom:16px;">⚡ PROMOÇÃO ESPECIAL</div>
+    <h1>É quase <span>injusto!</span></h1>
+    <p>Estude menos, tire mais e vá pra prova sentindo que é você quem está com vantagem. Estudo interativo, prática real e revisão inteligente, tudo em um só lugar.</p>
+    <a href="#plans" class="btn btn-promo btn-lg" style="margin-top:24px;display:inline-flex;">ATIVAR MINHA VANTAGEM AGORA</a>
+  </div>
+
+  <!-- Journey recap -->
+  <div style="background:var(--bg);border-radius:var(--radius);padding:32px;margin-bottom:48px;text-align:center;">
+    <div style="font-weight:800;font-size:1.1rem;margin-bottom:24px;">A jornada de aprovação em 4 etapas</div>
+    <div class="journey-steps">
+      <div class="journey-step">
+        <div class="journey-num">1</div>
+        <h4>Estude</h4>
+        <p>Conteúdo organizado por tópicos</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">2</div>
+        <h4>Pratique</h4>
+        <p>Questões reais dentro das aulas</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">3</div>
+        <h4>Revise</h4>
+        <p>Flashcards com repetição espaçada</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">4</div>
+        <h4>Avalie</h4>
+        <p>Redação, oral e desempenho</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features highlight -->
+  <div style="margin-bottom:48px;">
+    <h2 style="text-align:center;font-size:1.4rem;font-weight:800;margin-bottom:28px;">8 ferramentas em 1 plataforma</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+      <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;font-size:.85rem;font-weight:600;">📄 PDF com IA</div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;font-size:.85rem;font-weight:600;">🃏 Flashcard IA</div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;font-size:.85rem;font-weight:600;">🗺️ Esquema IA</div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;font-size:.85rem;font-weight:600;">❓ Questões IA</div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;font-size:.85rem;font-weight:600;">✍️ Treinador Redação</div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;font-size:.85rem;font-weight:600;">💬 Chat IA</div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;font-size:.85rem;font-weight:600;">🎤 Prova Oral</div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;font-size:.85rem;font-weight:600;">📚 Cursos Interativos</div>
+    </div>
+  </div>
+
+  <!-- Plans -->
+  <div id="plans">
+    <h2 style="text-align:center;font-size:1.5rem;font-weight:800;margin-bottom:32px;">Escolha seu plano</h2>
+    <div class="plans-grid">
+
+      <!-- Gold Mensal -->
+      <div class="plan-card">
+        <div class="plan-name">Gold Mensal</div>
+        <div class="plan-price"><sup>R$</sup>49<span class="cents">,90</span></div>
+        <div class="plan-period">por mês • cancele quando quiser</div>
+        <div class="plan-original">Flexibilidade total</div>
+        <ul class="plan-features-list">
+          <li><span class="check">✓</span>PDF IA ilimitado</li>
+          <li><span class="check">✓</span>Flashcards ilimitados</li>
+          <li><span class="check">✓</span>Esquema IA</li>
+          <li><span class="check">✓</span>Chat IA</li>
+          <li><span class="check">✓</span>Questões geradas por IA</li>
+          <li><span class="check">✓</span>Treinador de Redação</li>
+          <li><span class="check">✓</span>Simulador de Prova Oral</li>
+          <li><span class="x">✗</span><span style="color:var(--text-light)">Cursos interativos (Diamond)</span></li>
+        </ul>
+        <button class="btn btn-primary btn-full btn-plan" style="padding:14px;" onclick="choosePlan('mensal')">Assinar por R$ 49,90/mês</button>
+        <div style="text-align:center;font-size:.75rem;color:var(--text-light);margin-top:8px;">Menos de R$ 1,66/dia</div>
+      </div>
+
+      <!-- Gold Anual -->
+      <div class="plan-card featured">
+        <div class="plan-popular">⭐ MAIS POPULAR</div>
+        <div class="plan-name">Gold Anual</div>
+        <div class="plan-price"><sup>R$</sup>437</div>
+        <div class="plan-period">por ano • ou 12x de R$ 45,20</div>
+        <div class="plan-original">De R$ 598,80 — economize 27%</div>
+        <ul class="plan-features-list">
+          <li><span class="check">✓</span><strong>Tudo do Mensal</strong></li>
+          <li><span class="check">✓</span>PDF IA ilimitado</li>
+          <li><span class="check">✓</span>Flashcards ilimitados</li>
+          <li><span class="check">✓</span>Esquema IA</li>
+          <li><span class="check">✓</span>Chat IA</li>
+          <li><span class="check">✓</span>Questões geradas por IA</li>
+          <li><span class="check">✓</span>Treinador de Redação</li>
+          <li><span class="check">✓</span>Simulador de Prova Oral</li>
+          <li><span class="x">✗</span><span style="color:var(--text-light)">Cursos interativos (Diamond)</span></li>
+        </ul>
+        <button class="btn btn-primary btn-full btn-plan" style="padding:14px;" onclick="choosePlan('anual')">Assinar por R$ 437/ano</button>
+        <div style="text-align:center;font-size:.75rem;color:var(--text-light);margin-top:8px;">Menos de R$ 1,20/dia</div>
+      </div>
+
+      <!-- Diamond Anual -->
+      <div class="plan-card" style="border-color:#F59E0B;box-shadow:0 8px 30px rgba(245,158,11,.15);">
+        <div class="plan-diamond">💎 DIAMOND — COMPLETO</div>
+        <div class="plan-name" style="margin-top:24px;color:#92400E;">Diamond Anual</div>
+        <div class="plan-price"><sup>R$</sup>870</div>
+        <div class="plan-period">por ano • ou 12x de R$ 89,98</div>
+        <div class="plan-original">De R$ 1.079,76 — economize 19%</div>
+        <ul class="plan-features-list">
+          <li><span class="check">✓</span><strong>Tudo do Gold Anual</strong></li>
+          <li><span class="check" style="color:#F59E0B;">★</span><strong>Cursos interativos desbloqueados</strong></li>
+          <li><span class="check" style="color:#F59E0B;">★</span><strong>Extensivo PRF Interativo</strong></li>
+          <li><span class="check" style="color:#F59E0B;">★</span><strong>Auto-unlock de novos cursos</strong></li>
+          <li><span class="check">✓</span>PDF IA ilimitado</li>
+          <li><span class="check">✓</span>Todas as ferramentas IA</li>
+          <li><span class="check">✓</span>Prioridade no suporte</li>
+        </ul>
+        <button class="btn btn-full btn-plan" style="padding:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-weight:700;" onclick="choosePlan('diamond')">Assinar Diamond R$ 870/ano</button>
+        <div style="text-align:center;font-size:.75rem;color:var(--text-light);margin-top:8px;">Menos de R$ 2,40/dia</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Guarantee -->
+  <div style="background:#D1FAE5;border:1px solid #A7F3D0;border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:48px;">
+    <div style="font-size:2rem;margin-bottom:8px;">🛡️</div>
+    <div style="font-weight:800;font-size:1.1rem;margin-bottom:8px;">Garantia de 7 dias</div>
+    <p style="color:#065F46;font-size:.92rem;max-width:480px;margin:0 auto;">Não gostou? Devolvemos 100% do seu dinheiro sem burocracia dentro dos primeiros 7 dias após a compra.</p>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2>Dúvidas Frequentes</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">Sou iniciante, o QbStudy funciona para mim? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Sim! O QbStudy foi desenvolvido para todos os níveis. Temos conteúdo didático e organizado por nível de dificuldade, além de IA que adapta as explicações ao seu conhecimento atual.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Já tenho curso em outro lugar, posso usar o QbStudy como complemento? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Perfeitamente! O QbStudy é ideal como complemento. Use o PDF IA para transformar materiais do seu curso atual em flashcards e resumos, e o Chat IA para tirar dúvidas em tempo real.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">O QbStudy funciona no celular? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Sim! Todas as ferramentas funcionam perfeitamente no celular e tablet. Você pode estudar em qualquer lugar, inclusive ouvindo as aulas em áudio no trajeto para o trabalho.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Como funciona a garantia de 7 dias? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Se por qualquer motivo você não estiver satisfeito nos primeiros 7 dias, basta entrar em contato com o suporte. Realizamos o reembolso integral, sem perguntas, sem burocracia.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Qual a diferença entre Gold e Diamond? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">O plano Diamond inclui todos os cursos interativos desbloqueados, incluindo o Extensivo PRF Interativo com mais de 280 aulas. O Gold dá acesso a todas as ferramentas IA, mas sem os cursos completos.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">O mercado de concursos policiais ainda está crescendo? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Sim! O Brasil realiza centenas de concursos policiais por ano. A PRF, PF, PC e PM de todos os estados realizam concursos regularmente, com remunerações acima da média nacional.</div>
+    </div>
+  </div>
+
+  <!-- CTA final -->
+  <div style="text-align:center;padding:48px 20px;background:linear-gradient(135deg,#0F172A,#1E3A5F);border-radius:16px;color:#fff;margin-bottom:60px;">
+    <h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px;">Pronto para passar no concurso?</h2>
+    <p style="opacity:.8;margin-bottom:28px;max-width:460px;margin-inline:auto;">Junte-se a milhares de aprovados que usaram o QbStudy para alcançar a aprovação.</p>
+    <a href="register.html" class="btn btn-accent btn-xl">Começar grátis agora →</a>
+    <div style="margin-top:12px;font-size:.8rem;opacity:.6;">Sem cartão de crédito • Acesso imediato</div>
+  </div>
+</div>
+
+<footer style="background:#0F172A;color:#94A3B8;padding:40px max(20px,4vw);text-align:center;border-top:1px solid rgba(255,255,255,.06);">
+  <div style="font-size:1rem;font-weight:800;color:#fff;margin-bottom:6px;">⚡ QbStudy AI</div>
+  <p style="font-size:.78rem;margin-bottom:6px;">Quebrando as Bancas Sistema de Ensino LTDA — CNPJ: 25.219.830/0001-35</p>
+  <p style="font-size:.78rem;">Porto Alegre, RS • © 2026 QbStudy AI. Todos os direitos reservados.</p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+initFaq();
+
+// Update nav if logged in
+const user = Auth.getUser();
+if (user) {
+  document.getElementById('nav-login').textContent = 'Dashboard';
+  document.getElementById('nav-login').href = 'dashboard.html';
+  document.getElementById('nav-register').textContent = 'Minha Conta';
+  document.getElementById('nav-register').href = 'dashboard.html';
+}
+
+function choosePlan(plan) {
+  if (!Auth.isLoggedIn()) {
+    if (confirm('Você precisa ter uma conta para assinar. Criar conta agora?')) {
+      window.location.href = 'register.html';
+    }
+    return;
+  }
+
+  const names = { mensal:'Gold Mensal — R$ 49,90/mês', anual:'Gold Anual — R$ 437/ano', diamond:'Diamond Anual — R$ 870/ano' };
+  const planKey = plan === 'mensal' ? 'pro' : plan === 'anual' ? 'pro' : 'diamond';
+
+  if (confirm(`Você selecionou: ${names[plan]}\n\nEm uma implementação real, você seria redirecionado para o Hotmart.\n\nSimular upgrade agora?`)) {
+    const u = Auth.getUser();
+    u.plan = planKey;
+    Auth.login(u);
+    alert('✅ Plano ativado com sucesso! Bem-vindo ao QbStudy ' + (plan === 'diamond' ? 'Diamond' : 'Gold') + '!');
+    window.location.href = 'dashboard.html';
+  }
+}
+</script>
+</body>
+</html>

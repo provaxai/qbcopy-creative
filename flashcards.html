@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">🃏 Flashcards</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <!-- Deck selector -->
+      <div class="fc-deck-selector card">
+        <div style="font-weight:700;font-size:.95rem;">Selecionar baralho</div>
+        <div class="fc-deck-grid" id="deck-grid">
+          <button class="fc-deck-btn active" onclick="selectDeck(0,this)">📚 Todos</button>
+          <button class="fc-deck-btn" onclick="selectDeck(1,this)">⚖️ Direito Constitucional</button>
+          <button class="fc-deck-btn" onclick="selectDeck(2,this)">🚔 Legislação de Trânsito</button>
+          <button class="fc-deck-btn" onclick="selectDeck(3,this)">📋 Direito Administrativo</button>
+          <button class="fc-deck-btn" onclick="selectDeck(4,this)">🔒 Direito Penal</button>
+          <button class="fc-deck-btn" onclick="selectDeck(5,this)">📐 Matemática</button>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="fc-controls">
+        <div class="fc-progress">
+          <div class="fc-prog-bar"><div class="fc-prog-fill" id="prog-fill" style="width:0%"></div></div>
+          <div class="fc-count" id="prog-count">0 / 0</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="shuffle()">🔀 Embaralhar</button>
+          <button class="btn btn-ghost btn-sm" onclick="restart()">↩ Reiniciar</button>
+        </div>
+      </div>
+
+      <!-- Card arena -->
+      <div class="fc-arena" id="fc-arena">
+        <div class="fc-card-wrap" id="fc-card" onclick="flipCard()">
+          <div class="fc-card-inner">
+            <div class="fc-face fc-front">
+              <div class="fc-face-label">PERGUNTA</div>
+              <div class="fc-face-q" id="fc-question">Carregando...</div>
+              <div class="fc-hint" style="margin-top:16px;">Clique para revelar a resposta</div>
+            </div>
+            <div class="fc-face fc-back">
+              <div class="fc-face-label">RESPOSTA</div>
+              <div class="fc-face-a" id="fc-answer">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="fc-btns" style="display:none;">
+          <div style="text-align:center;font-size:.82rem;color:var(--text-muted);margin-bottom:12px;">Como você foi?</div>
+          <div class="fc-actions">
+            <button class="fc-btn hard"   onclick="rate('hard')">😰 Difícil</button>
+            <button class="fc-btn medium" onclick="rate('medium')">🤔 Médio</button>
+            <button class="fc-btn easy"   onclick="rate('easy')">😊 Fácil</button>
+          </div>
+        </div>
+
+        <div id="fc-done" style="display:none;text-align:center;">
+          <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
+          <h2 style="font-weight:800;margin-bottom:8px;">Baralho concluído!</h2>
+          <p style="color:var(--text-muted);margin-bottom:24px;">Você revisou todos os cartões deste baralho.</p>
+          <div id="fc-stats" style="display:flex;gap:20px;justify-content:center;margin-bottom:24px;flex-wrap:wrap;"></div>
+          <button class="btn btn-primary" onclick="restart()">↩ Revisar novamente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('flashcards');
+initSidebarToggle();
+
+const ALL_CARDS = [
+  // Direito Constitucional
+  { deck:1, q:'Quais são os fundamentos da República Federativa do Brasil (art. 1º, CF)?', a:'SOVED: Soberania, Cidadania, Dignidade da pessoa humana, Valores sociais do trabalho e da livre iniciativa, Pluralismo político.' },
+  { deck:1, q:'O que é o princípio da supremacia constitucional?', a:'A Constituição ocupa o topo da pirâmide normativa (Kelsen). Todas as demais normas devem ser compatíveis com ela, formal e materialmente.' },
+  { deck:1, q:'Quais são os direitos fundamentais individuais e coletivos (art. 5º, CF)?', a:'VLIED: Vida, Liberdade, Igualdade, segurança e propriedade. São cláusulas pétreas e de aplicação imediata (§1º).' },
+  { deck:1, q:'O que é mandado de segurança?', a:'Remédio constitucional para proteger direito líquido e certo não amparado por HC ou HD, contra ato ilegal ou abuso de poder de autoridade pública. Art. 5º, LXIX, CF.' },
+  { deck:1, q:'Diferença entre mandado de segurança individual e coletivo?', a:'Individual: impetrado por pessoa física ou jurídica para direito próprio. Coletivo: impetrado por partido político, sindicato, associação ou entidade de classe em defesa de seus membros.' },
+  // Trânsito
+  { deck:2, q:'Qual o limite de alcoolemia para configurar crime de trânsito (embriaguez ao volante)?', a:'Acima de 0,3 mg/L (no ar alveolar) ou 6 decigramas por litro de sangue — art. 306, CTB. Abaixo disso é infração administrativa.' },
+  { deck:2, q:'Quais as infrações de trânsito de natureza gravíssima?', a:'Excesso de velocidade > 50% do limite, dirigir embriagado, avançar sinal vermelho, usar celular ao volante, ultrapassar em local proibido, não usar cinto, entre outros — art. 258-A CTB. Multa: R$ 293,47 e 7 pontos.' },
+  { deck:2, q:'Em quantas vezes pode ser parcelado o CTB para cancelamento de habilitação por pontuação?', a:'A CNH é suspensa quando o condutor acumula 20 pontos em 12 meses. Para infrator primário com infrações leves/médias pode ser 30 pontos.' },
+  { deck:2, q:'O que é o DETRAN?', a:'Departamento Estadual de Trânsito — órgão executivo de trânsito dos Estados e DF, integrante do SNT. Responsável pelo registro e habilitação de condutores no estado.' },
+  { deck:2, q:'Quais são os órgãos máximos do Sistema Nacional de Trânsito (SNT)?', a:'CONTRAN (normativo) → DENATRAN/SENATRAN (executivo federal) → CETRAN/CONTRANDIFE (estaduais) → DETRAN (executivos estaduais) → CTM (municipais).' },
+  // Direito Administrativo
+  { deck:3, q:'Quais são os princípios expressos do Direito Administrativo (art. 37 CF)?', a:'LIMPE: Legalidade, Impessoalidade, Moralidade, Publicidade e Eficiência.' },
+  { deck:3, q:'O que é ato administrativo vinculado vs. discricionário?', a:'Vinculado: todos os elementos estão determinados em lei, sem margem de escolha. Discricionário: lei confere margem de conveniência e oportunidade no motivo e/ou objeto.' },
+  { deck:3, q:'Quais são os elementos (requisitos) do ato administrativo?', a:'COFIMOT: Competência, Objeto, Forma, Motivo e Finalidade. São os 5 requisitos de validade do ato administrativo.' },
+  { deck:3, q:'O que é autotutela administrativa?', a:'Poder da Administração de anular seus próprios atos quando ilegais e revogá-los por razões de conveniência/oportunidade. Sumulado pelo STF (Súmulas 346 e 473).' },
+  // Direito Penal
+  { deck:4, q:'O que é o princípio da legalidade penal (nullum crimen)?', a:'"Não há crime sem lei anterior que o defina, nem pena sem prévia cominação legal." Art. 5º, XXXIX, CF e art. 1º, CP. É cláusula pétrea e irretroativa.' },
+  { deck:4, q:'Quais são as excludentes de ilicitude no Código Penal?', a:'Art. 23 CP: Estado de necessidade, Legítima defesa, Estrito cumprimento do dever legal e Exercício regular de direito. Elimina a antijuridicidade (injuridicidade).' },
+  { deck:4, q:'Diferença entre dolo direto e dolo eventual?', a:'Dolo direto: agente quer o resultado. Dolo eventual: agente prevê o resultado e assume o risco de produzi-lo ("tanto faz"). Ambos são dolosos — fundamentais para tipificação.' },
+  { deck:4, q:'O que é tentativa no Direito Penal?', a:'Art. 14, II, CP: quando o agente inicia a execução mas não consuma o crime por circunstâncias alheias à sua vontade. Pena reduzida de 1/3 a 2/3.' },
+  // Matemática
+  { deck:5, q:'Como calcular rapidamente 15% de qualquer número?', a:'15% = 10% + 5%. Calcule 10% (divida por 10) e some com a metade desse valor. Ex: 15% de 240 = 24 + 12 = 36.' },
+  { deck:5, q:'Fórmula da porcentagem de variação (aumento/desconto)?', a:'Variação % = [(Valor Final - Valor Inicial) / Valor Inicial] × 100. Para descontos sucessivos: multiplique os fatores. Ex: 20% e 10% = 0,8 × 0,9 = 0,72 (28% total).' },
+  { deck:5, q:'O que é MMC e como calcular?', a:'Mínimo Múltiplo Comum. Decomponha os números em fatores primos. MMC = produto de todos os fatores, com maior expoente. Ex: MMC(4,6) = 2²×3 = 12.' },
+  { deck:5, q:'Como resolver uma equação do 2º grau rapidamente?', a:'Fórmula de Bhaskara: x = (-b ± √Δ) / 2a, onde Δ = b² - 4ac. Se Δ>0: 2 raízes reais. Δ=0: raiz dupla. Δ<0: raízes complexas (sem raízes reais).' },
+];
+
+let deck = [...ALL_CARDS];
+let idx = 0;
+let stats = { easy: 0, medium: 0, hard: 0 };
+let flipped = false;
+
+function selectDeck(deckId, btn) {
+  document.querySelectorAll('.fc-deck-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  deck = deckId === 0 ? [...ALL_CARDS] : ALL_CARDS.filter(c => c.deck === deckId);
+  deck = shuffleArr(deck);
+  idx = 0; stats = {easy:0,medium:0,hard:0};
+  showCard();
+}
+
+function shuffleArr(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffle() { deck = shuffleArr(deck); idx=0; stats={easy:0,medium:0,hard:0}; showCard(); }
+function restart() { shuffle(); document.getElementById('fc-done').style.display='none'; document.getElementById('fc-arena').querySelector('.fc-card-wrap').style.display=''; showCard(); }
+
+function showCard() {
+  const card = document.getElementById('fc-card');
+  const done = document.getElementById('fc-done');
+  const btns = document.getElementById('fc-btns');
+
+  if (idx >= deck.length) {
+    card.style.display = 'none';
+    btns.style.display = 'none';
+    done.style.display = 'block';
+    const total = stats.easy+stats.medium+stats.hard;
+    document.getElementById('fc-stats').innerHTML = `
+      <div class="card" style="padding:14px 20px;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:var(--success)">${stats.easy}</div><div style="font-size:.78rem;color:var(--text-muted)">Fáceis</div></div>
+      <div class="card" style="padding:14px 20px;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:var(--accent)">${stats.medium}</div><div style="font-size:.78rem;color:var(--text-muted)">Médios</div></div>
+      <div class="card" style="padding:14px 20px;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:var(--danger)">${stats.hard}</div><div style="font-size:.78rem;color:var(--text-muted)">Difíceis</div></div>
+    `;
+    return;
+  }
+
+  card.style.display = '';
+  done.style.display = 'none';
+  btns.style.display = 'none';
+
+  // reset flip
+  card.classList.remove('flipped');
+  flipped = false;
+
+  document.getElementById('fc-question').textContent = deck[idx].q;
+  document.getElementById('fc-answer').textContent   = deck[idx].a;
+
+  // progress
+  const pct = (idx / deck.length) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-count').textContent = `${idx} / ${deck.length}`;
+}
+
+function flipCard() {
+  if (idx >= deck.length) return;
+  const card = document.getElementById('fc-card');
+  const btns = document.getElementById('fc-btns');
+  if (!flipped) {
+    card.classList.add('flipped');
+    flipped = true;
+    btns.style.display = 'flex';
+    btns.style.flexDirection = 'column';
+    btns.style.alignItems = 'center';
+  }
+}
+
+function rate(level) {
+  stats[level]++;
+  idx++;
+  showCard();
+}
+
+// init
+selectDeck(0, document.querySelector('.fc-deck-btn.active'));
+</script>
+</body>
+</html>

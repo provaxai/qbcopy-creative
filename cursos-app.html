@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cursos — QbStudy AI</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">📚 Cursos</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+    <div class="content-area">
+
+      <!-- Search & filter -->
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <input type="text" class="form-input" placeholder="🔍 Buscar curso..." style="max-width:320px;" oninput="filterCourses(this.value)">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="topic-chip active" onclick="setFilter('all',this)">Todos</button>
+          <button class="topic-chip" onclick="setFilter('free',this)">Gratuitos</button>
+          <button class="topic-chip" onclick="setFilter('pro',this)">Premium</button>
+          <button class="topic-chip" onclick="setFilter('new',this)">Novos</button>
+        </div>
+      </div>
+
+      <!-- My progress -->
+      <div style="background:linear-gradient(135deg,#EFF6FF,#EDE9FE);border:1px solid #BFDBFE;border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div style="font-size:2rem;">🎯</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;margin-bottom:4px;">Continue de onde parou</div>
+          <div style="font-size:.85rem;color:var(--text-muted);">Você ainda não iniciou nenhum curso. Escolha um abaixo para começar!</div>
+          <div style="height:6px;background:rgba(255,255,255,.5);border-radius:3px;margin-top:8px;max-width:300px;"><div style="width:0%;height:100%;background:var(--primary);border-radius:3px;"></div></div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:1.6rem;font-weight:800;color:var(--primary);">0%</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">progresso geral</div>
+        </div>
+      </div>
+
+      <!-- Courses grid -->
+      <div class="courses-grid" id="courses-grid">
+
+        <div class="course-card card-hover" data-tag="free" data-title="crimes hediondos">
+          <div class="course-header red">
+            <div class="course-header-icon">⚠️</div>
+            <div class="course-header-text">
+              <h3>Crimes Hediondos</h3>
+              <p>Lei 8.072/1990 atualizada</p>
+            </div>
+          </div>
+          <div class="course-body">
+            <div class="course-tags">
+              <span class="badge badge-red">Direito Penal</span>
+              <span class="badge badge-primary">Gratuito</span>
+            </div>
+            <p class="course-desc">Lei 8.072/1990, classificações, restrições legais, Pacote Anticrime, progressão de regime e vedações constitucionais.</p>
+            <div style="height:4px;background:var(--border);border-radius:2px;margin:10px 0;"><div style="width:0%;height:100%;background:var(--success);border-radius:2px;"></div></div>
+            <div class="course-footer">
+              <span style="font-size:.78rem;color:var(--text-muted);">12 aulas • 4h</span>
+              <button class="btn btn-primary btn-sm" onclick="openCourse('hediondos')">Iniciar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card card-hover" data-tag="free" data-title="temas relevantes provas">
+          <div class="course-header slate">
+            <div class="course-header-icon">📋</div>
+            <div class="course-header-text">
+              <h3>Temas Relevantes para Provas</h3>
+              <p>Atualizado 2024</p>
+            </div>
+          </div>
+          <div class="course-body">
+            <div class="course-tags">
+              <span class="badge badge-purple">Multidisciplinar</span>
+              <span class="badge badge-primary">Gratuito</span>
+            </div>
+            <p class="course-desc">Conteúdos recorrentes em concursos — temas de atualidade, questões contemporâneas, legislação em destaque.</p>
+            <div style="height:4px;background:var(--border);border-radius:2px;margin:10px 0;"><div style="width:0%;height:100%;background:var(--success);border-radius:2px;"></div></div>
+            <div class="course-footer">
+              <span style="font-size:.78rem;color:var(--text-muted);">20 aulas • 8h</span>
+              <button class="btn btn-primary btn-sm" onclick="openCourse('temas')">Iniciar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card card-hover" data-tag="pro" data-title="extensivo prf interativo">
+          <div class="course-header blue">
+            <div class="course-header-icon">🚔</div>
+            <div class="course-header-text">
+              <h3>Extensivo PRF Interativo</h3>
+              <p>Curso completo — Diamond</p>
+            </div>
+          </div>
+          <div class="course-body">
+            <div class="course-tags">
+              <span class="badge badge-accent">⭐ Diamond</span>
+              <span class="badge badge-success">Mais Popular</span>
+            </div>
+            <p class="course-desc">Plano de estudos, flashcards, banco de questões por aula, áudios, gamificação e acompanhamento de progresso detalhado.</p>
+            <div style="height:4px;background:var(--border);border-radius:2px;margin:10px 0;"><div style="width:0%;height:100%;background:var(--accent);border-radius:2px;"></div></div>
+            <div class="course-footer">
+              <span style="font-size:.78rem;color:var(--text-muted);">280 aulas • 120h</span>
+              <button class="btn btn-accent btn-sm" onclick="openCourse('prf')">Ver curso</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card card-hover" data-tag="free" data-title="direito antidiscriminatório combate racismo">
+          <div class="course-header green">
+            <div class="course-header-icon">✊</div>
+            <div class="course-header-text">
+              <h3>Direito Antidiscriminatório</h3>
+              <p>Combate ao Racismo — PRF</p>
+            </div>
+          </div>
+          <div class="course-body">
+            <div class="course-tags">
+              <span class="badge badge-success">Gratuito</span>
+              <span class="badge badge-primary">PRF</span>
+            </div>
+            <p class="course-desc">Legislação antidiscriminatória, combate ao racismo, igualdade racial, Estatuto da Igualdade Racial e jurisprudência.</p>
+            <div style="height:4px;background:var(--border);border-radius:2px;margin:10px 0;"><div style="width:0%;height:100%;background:var(--success);border-radius:2px;"></div></div>
+            <div class="course-footer">
+              <span style="font-size:.78rem;color:var(--text-muted);">18 aulas • 6h</span>
+              <button class="btn btn-primary btn-sm" onclick="openCourse('antidisc')">Iniciar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-card card-hover" data-tag="free" data-title="plf câmara deputados">
+          <div class="course-header indigo">
+            <div class="course-header-icon">🏛️</div>
+            <div class="course-header-text">
+              <h3>PLF — Câmara dos Deputados</h3>
+              <p>Policial Legislativo Federal</p>
+            </div>
+          </div>
+          <div class="course-body">
+            <div class="course-tags">
+              <span class="badge badge-purple">Legislativo</span>
+              <span class="badge badge-primary">Gratuito</span>
+            </div>
+            <p class="course-desc">Conteúdo específico para Policial Legislativo Federal da Câmara dos Deputados, atualizado ao edital vigente.</p>
+            <div style="height:4px;background:var(--border);border-radius:2px;margin:10px 0;"><div style="width:0%;height:100%;background:var(--success);border-radius:2px;"></div></div>
+            <div class="course-footer">
+              <span style="font-size:.78rem;color:var(--text-muted);">24 aulas • 10h</span>
+              <button class="btn btn-primary btn-sm" onclick="openCourse('plf')">Iniciar</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Course modal -->
+<div id="course-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);" onclick="if(event.target===this)closeCourse()">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(700px,96vw);max-height:90vh;overflow-y:auto;background:var(--surface);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.3);">
+    <div id="modal-header" style="padding:28px 28px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <div id="modal-title" style="font-size:1.2rem;font-weight:800;margin-bottom:4px;"></div>
+        <div id="modal-meta" style="font-size:.82rem;color:var(--text-muted);"></div>
+      </div>
+      <button onclick="closeCourse()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-muted);padding:4px;">✕</button>
+    </div>
+    <div id="modal-body" style="padding:24px 28px;"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+Auth.requireAuth();
+renderSidebar('cursos');
+initSidebarToggle();
+
+const COURSE_DATA = {
+  hediondos: {
+    title:'⚠️ Crimes Hediondos — Lei 8.072/1990',
+    meta:'12 aulas • 4 horas • Direito Penal',
+    modules:[
+      { name:'Módulo 1 — Introdução', aulas:['1.1 Conceito e histórico dos crimes hediondos','1.2 Fundamentos constitucionais (Art. 5º, XLIII CF)','1.3 Diferença entre hediondo e equiparado'] },
+      { name:'Módulo 2 — Rol Taxativo', aulas:['2.1 Crimes contra a vida (Art. 1º, I e II)','2.2 Crimes patrimoniais (latrocínio, extorsão)','2.3 Crimes sexuais (estupro e vulnerável)','2.4 Outros crimes (terrorismo, tortura, genocídio)'] },
+      { name:'Módulo 3 — Regime de Cumprimento', aulas:['3.1 Vedações: anistia, graça e indulto','3.2 Progressão de regime: 40% e 60%','3.3 STF: fim do regime inicial fechado obrigatório (ADC 06)'] },
+      { name:'Módulo 4 — Atualizações', aulas:['4.1 Pacote Anticrime (Lei 13.964/2019)','4.2 Regime Disciplinar Diferenciado (RDD)','4.3 Questões de provas recentes'] },
+    ]
+  },
+  prf: {
+    title:'🚔 Extensivo PRF Interativo',
+    meta:'280 aulas • 120 horas • Plano Diamond',
+    modules:[
+      { name:'Módulo 1 — Língua Portuguesa', aulas:['1.1 Interpretação de texto','1.2 Ortografia e acentuação','1.3 Morfologia','1.4 Sintaxe','1.5 Estilística'] },
+      { name:'Módulo 2 — Raciocínio Lógico', aulas:['2.1 Lógica proposicional','2.2 Diagramas de Venn','2.3 Sequências e séries','2.4 Geometria analítica'] },
+      { name:'Módulo 3 — Legislação de Trânsito', aulas:['3.1 CTB — Parte Geral','3.2 SNT e órgãos','3.3 Infrações e penalidades','3.4 Crimes de trânsito','3.5 Habilitação e registro'] },
+      { name:'Módulo 4 — Direito Constitucional', aulas:['4.1 Princípios fundamentais','4.2 Direitos e garantias','4.3 Organização do Estado','4.4 Segurança pública (Art. 144)'] },
+      { name:'Módulo 5 — Direito Administrativo', aulas:['5.1 Princípios LIMPE','5.2 Ato administrativo','5.3 Poderes administrativos','5.4 Lei 8.112/90'] },
+    ]
+  },
+  temas: { title:'📋 Temas Relevantes para Provas', meta:'20 aulas • 8 horas', modules:[{ name:'Temas 2024', aulas:['Reforma tributária','Inteligência artificial e legislação','Combate às drogas — Lei 11.343','Violência doméstica — Lei Maria da Penha','Desarmamento — Estatuto do Desarmamento','LGPD — Lei Geral de Proteção de Dados'] }] },
+  antidisc: { title:'✊ Direito Antidiscriminatório', meta:'18 aulas • 6 horas', modules:[{ name:'Módulo 1', aulas:['Estatuto da Igualdade Racial (Lei 12.288)','Lei Caó (Lei 7.716/1989)','Injúria racial vs. crime de racismo','STF e racismo como crime imprescritível','Cotas e ação afirmativa'] }] },
+  plf: { title:'🏛️ PLF — Câmara dos Deputados', meta:'24 aulas • 10 horas', modules:[{ name:'Módulo 1 — Específico PLF', aulas:['Regimento Interno da Câmara','Atribuições do PLF','Segurança institucional','Direito Parlamentar','Legislação especial'] }] },
+};
+
+function openCourse(key) {
+  const d = COURSE_DATA[key];
+  if (!d) return;
+  const user = Auth.getUser();
+  const isPro = user?.plan === 'diamond' || user?.plan === 'pro';
+  if (key === 'prf' && !isPro) {
+    if (confirm('Este curso requer o plano Diamond. Deseja ver os planos?')) window.location.href = 'upgrade.html';
+    return;
+  }
+  document.getElementById('modal-title').textContent = d.title;
+  document.getElementById('modal-meta').textContent = d.meta;
+  document.getElementById('modal-body').innerHTML = d.modules.map((m, mi) => `
+    <div style="margin-bottom:20px;">
+      <div style="font-weight:700;font-size:.92rem;color:var(--primary);margin-bottom:10px;padding:8px 12px;background:var(--primary-light);border-radius:6px;">${m.name}</div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        ${m.aulas.map((a, ai) => {
+          const flatIdx = d.modules.slice(0, mi).reduce((s, mod) => s + mod.aulas.length, 0) + ai;
+          return `
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:background .15s;" onclick="window.location.href='curso-player.html?curso=${key}&aula=${flatIdx}'" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--text-muted);flex-shrink:0;">▶</div>
+            <span style="font-size:.88rem;">${a}</span>
+            <span style="margin-left:auto;font-size:.72rem;color:var(--text-light);">—</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('') + `
+    <div style="border-top:1px solid var(--border);padding-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="window.location.href='curso-player.html?curso=${key}'">▶ Iniciar Curso</button>
+      <button class="btn btn-ghost" onclick="closeCourse()">Fechar</button>
+    </div>
+  `;
+  document.getElementById('course-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCourse() {
+  document.getElementById('course-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function filterCourses(val) {
+  const v = val.toLowerCase();
+  document.querySelectorAll('.course-card').forEach(c => {
+    const title = c.dataset.title || '';
+    c.style.display = title.includes(v) ? '' : 'none';
+  });
+}
+
+function setFilter(f, btn) {
+  document.querySelectorAll('.topic-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.course-card').forEach(c => {
+    if (f === 'all') c.style.display = '';
+    else c.style.display = c.dataset.tag === f ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
