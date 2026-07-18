@@ -1,4 +1,4 @@
-/* ── Provax PRF – Shared Application Logic ── */
+/* ── Prova X – Shared Application Logic ── */
 
 // ── AUTH ────────────────────────────────────────
 const Auth = {
@@ -63,7 +63,7 @@ function renderSidebar(activePage) {
   const html = `
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon">⚡</div>
-      Provax PRF
+      Prova X
     </div>
     <div class="sidebar-user">
       <div class="sidebar-avatar">${avatarLetter}</div>
