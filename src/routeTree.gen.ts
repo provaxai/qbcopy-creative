@@ -9,8 +9,80 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResumosRouteImport } from './routes/resumos'
+import { Route as ProvaOralRouteImport } from './routes/prova-oral'
+import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as PdfIaRouteImport } from './routes/pdf-ia'
+import { Route as LegisRouteImport } from './routes/legis'
+import { Route as FlashcardsRouteImport } from './routes/flashcards'
+import { Route as EsquemaRouteImport } from './routes/esquema'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as DiscursivaRouteImport } from './routes/discursiva'
+import { Route as CursosRouteImport } from './routes/cursos'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ResumosRoute = ResumosRouteImport.update({
+  id: '/resumos',
+  path: '/resumos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProvaOralRoute = ProvaOralRouteImport.update({
+  id: '/prova-oral',
+  path: '/prova-oral',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanosRoute = PlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PdfIaRoute = PdfIaRouteImport.update({
+  id: '/pdf-ia',
+  path: '/pdf-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegisRoute = LegisRouteImport.update({
+  id: '/legis',
+  path: '/legis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlashcardsRoute = FlashcardsRouteImport.update({
+  id: '/flashcards',
+  path: '/flashcards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsquemaRoute = EsquemaRouteImport.update({
+  id: '/esquema',
+  path: '/esquema',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscursivaRoute = DiscursivaRouteImport.update({
+  id: '/discursiva',
+  path: '/discursiva',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CursosRoute = CursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroRoute = CadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +91,200 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/chat': typeof ChatRoute
+  '/cursos': typeof CursosRoute
+  '/discursiva': typeof DiscursivaRoute
+  '/entrar': typeof EntrarRoute
+  '/esquema': typeof EsquemaRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/legis': typeof LegisRoute
+  '/pdf-ia': typeof PdfIaRoute
+  '/planos': typeof PlanosRoute
+  '/prova-oral': typeof ProvaOralRoute
+  '/resumos': typeof ResumosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/chat': typeof ChatRoute
+  '/cursos': typeof CursosRoute
+  '/discursiva': typeof DiscursivaRoute
+  '/entrar': typeof EntrarRoute
+  '/esquema': typeof EsquemaRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/legis': typeof LegisRoute
+  '/pdf-ia': typeof PdfIaRoute
+  '/planos': typeof PlanosRoute
+  '/prova-oral': typeof ProvaOralRoute
+  '/resumos': typeof ResumosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/chat': typeof ChatRoute
+  '/cursos': typeof CursosRoute
+  '/discursiva': typeof DiscursivaRoute
+  '/entrar': typeof EntrarRoute
+  '/esquema': typeof EsquemaRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/legis': typeof LegisRoute
+  '/pdf-ia': typeof PdfIaRoute
+  '/planos': typeof PlanosRoute
+  '/prova-oral': typeof ProvaOralRoute
+  '/resumos': typeof ResumosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/cadastro'
+    | '/chat'
+    | '/cursos'
+    | '/discursiva'
+    | '/entrar'
+    | '/esquema'
+    | '/flashcards'
+    | '/legis'
+    | '/pdf-ia'
+    | '/planos'
+    | '/prova-oral'
+    | '/resumos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/cadastro'
+    | '/chat'
+    | '/cursos'
+    | '/discursiva'
+    | '/entrar'
+    | '/esquema'
+    | '/flashcards'
+    | '/legis'
+    | '/pdf-ia'
+    | '/planos'
+    | '/prova-oral'
+    | '/resumos'
+  id:
+    | '__root__'
+    | '/'
+    | '/cadastro'
+    | '/chat'
+    | '/cursos'
+    | '/discursiva'
+    | '/entrar'
+    | '/esquema'
+    | '/flashcards'
+    | '/legis'
+    | '/pdf-ia'
+    | '/planos'
+    | '/prova-oral'
+    | '/resumos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CadastroRoute: typeof CadastroRoute
+  ChatRoute: typeof ChatRoute
+  CursosRoute: typeof CursosRoute
+  DiscursivaRoute: typeof DiscursivaRoute
+  EntrarRoute: typeof EntrarRoute
+  EsquemaRoute: typeof EsquemaRoute
+  FlashcardsRoute: typeof FlashcardsRoute
+  LegisRoute: typeof LegisRoute
+  PdfIaRoute: typeof PdfIaRoute
+  PlanosRoute: typeof PlanosRoute
+  ProvaOralRoute: typeof ProvaOralRoute
+  ResumosRoute: typeof ResumosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/resumos': {
+      id: '/resumos'
+      path: '/resumos'
+      fullPath: '/resumos'
+      preLoaderRoute: typeof ResumosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prova-oral': {
+      id: '/prova-oral'
+      path: '/prova-oral'
+      fullPath: '/prova-oral'
+      preLoaderRoute: typeof ProvaOralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planos': {
+      id: '/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof PlanosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pdf-ia': {
+      id: '/pdf-ia'
+      path: '/pdf-ia'
+      fullPath: '/pdf-ia'
+      preLoaderRoute: typeof PdfIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legis': {
+      id: '/legis'
+      path: '/legis'
+      fullPath: '/legis'
+      preLoaderRoute: typeof LegisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flashcards': {
+      id: '/flashcards'
+      path: '/flashcards'
+      fullPath: '/flashcards'
+      preLoaderRoute: typeof FlashcardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/esquema': {
+      id: '/esquema'
+      path: '/esquema'
+      fullPath: '/esquema'
+      preLoaderRoute: typeof EsquemaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discursiva': {
+      id: '/discursiva'
+      path: '/discursiva'
+      fullPath: '/discursiva'
+      preLoaderRoute: typeof DiscursivaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cursos': {
+      id: '/cursos'
+      path: '/cursos'
+      fullPath: '/cursos'
+      preLoaderRoute: typeof CursosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro': {
+      id: '/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +297,18 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CadastroRoute: CadastroRoute,
+  ChatRoute: ChatRoute,
+  CursosRoute: CursosRoute,
+  DiscursivaRoute: DiscursivaRoute,
+  EntrarRoute: EntrarRoute,
+  EsquemaRoute: EsquemaRoute,
+  FlashcardsRoute: FlashcardsRoute,
+  LegisRoute: LegisRoute,
+  PdfIaRoute: PdfIaRoute,
+  PlanosRoute: PlanosRoute,
+  ProvaOralRoute: ProvaOralRoute,
+  ResumosRoute: ResumosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
