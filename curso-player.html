@@ -769,7 +769,7 @@ body { overflow: hidden; }
 /* ── AI HELPER ── */
 .ai-helper {
   max-width: 780px;
-  margin: 20px auto 0;
+  margin: 20px auto 40px;
   background: #fff;
   border: 1px solid #E2E8F0;
   border-radius: 12px;
@@ -785,19 +785,89 @@ body { overflow: hidden; }
   display: flex; align-items: center; justify-content: center;
   font-size: .9rem; flex-shrink: 0;
 }
+.ai-helper-content { flex: 1; min-width: 0; }
 .ai-helper-content h4 {
   font-size: .85rem;
   font-weight: 700;
   margin-bottom: 5px;
   color: #D44208;
 }
-.ai-helper-content p {
+.ai-helper-content > p {
   font-size: .84rem;
   line-height: 1.65;
   color: #64748B;
   margin-bottom: 10px;
 }
-.ai-helper-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.ai-helper-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.ai-ask-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 0;
+}
+.ai-ask-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: .82rem;
+  color: #0F172A;
+  outline: none;
+  transition: border-color .15s;
+  font-family: inherit;
+}
+.ai-ask-input:focus { border-color: #FF8C5A; }
+.ai-ask-input::placeholder { color: #CBD5E1; }
+.ai-response {
+  margin-top: 14px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.ai-loading {
+  padding: 14px 16px;
+  background: #FFF3EE;
+  border: 1px solid #FDBEA0;
+  border-radius: 10px;
+  font-size: .83rem;
+  color: #D44208;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: ai-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ai-pulse { 0%,100%{opacity:1} 50%{opacity:.55} }
+.ai-error {
+  padding: 12px 16px;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 10px;
+  font-size: .83rem;
+  color: #991B1B;
+}
+.ai-reply {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-size: .875rem;
+  line-height: 1.75;
+  color: #334155;
+}
+.ai-reply p { margin: 0 0 10px; }
+.ai-reply p:last-child { margin-bottom: 0; }
+.ai-reply strong { color: #0F172A; }
+.ai-flashcard {
+  background: #fff;
+  border: 1.5px solid #FDBEA0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ai-fc-front { font-weight: 700; color: #D44208; font-size: .82rem; }
+.ai-fc-back  { color: #334155; font-size: .82rem; }
 
 /* ── QUIZ ── */
 .lesson-quiz { max-width: 780px; margin: 24px auto 0; }
@@ -1604,19 +1674,85 @@ function retryQuiz(flatIdx) {
 }
 
 // ── AI Helper ─────────────────────────────────────────────────────────────────
+const AI_URL = 'https://fkwivsebcbuxvobcpina.supabase.co/functions/v1/ai-tutor';
+
 function renderAiHelper(lesson) {
-  return `<div class="ai-helper">
+  const idx   = currentFlat;
+  const title = lesson.title.replace(/^\d+\.\d+\s+/, '');
+  return `<div class="ai-helper" id="ai-helper-${idx}">
     <div class="ai-avatar">✨</div>
     <div class="ai-helper-content">
-      <h4>Athena AI — Professora IA</h4>
-      <p>Precisa de uma explicação diferente sobre <em>${lesson.title}</em>? Posso gerar um resumo, criar mais questões ou tirar dúvidas específicas.</p>
+      <h4>Sócrates — Tutor IA</h4>
+      <p>Estudo ativo sobre <em>${title}</em>. Selecione uma ação ou faça uma pergunta.</p>
       <div class="ai-helper-actions">
-        <button class="btn btn-ghost btn-sm" onclick="alert('Chat IA integrado com esta aula — em breve!')">💬 Tirar dúvida</button>
-        <button class="btn btn-ghost btn-sm" onclick="alert('Gerando mais questões sobre este tema...')">➕ Mais questões</button>
-        <button class="btn btn-ghost btn-sm" onclick="alert('Criando flashcards desta aula...')">🃏 Gerar flashcards</button>
+        <button class="btn btn-ghost btn-sm" onclick="callAI('explicar','',null,${idx})">💡 Explicar diferente</button>
+        <button class="btn btn-ghost btn-sm" onclick="callAI('resumo','',null,${idx})">📋 Resumo rápido</button>
+        <button class="btn btn-ghost btn-sm" onclick="callAI('flashcard','',null,${idx})">🃏 Flashcards</button>
+        <button class="btn btn-ghost btn-sm" onclick="callAI('questao','',null,${idx})">📝 Nova questão</button>
       </div>
+      <div class="ai-ask-row">
+        <input class="ai-ask-input" id="ai-input-${idx}" placeholder="Pergunte algo sobre esta aula..."
+          onkeydown="if(event.key==='Enter')callAI('duvida','',this.value,${idx})">
+        <button class="btn btn-primary btn-sm"
+          onclick="callAI('duvida','',document.getElementById('ai-input-${idx}').value,${idx})">Enviar →</button>
+      </div>
+      <div class="ai-response" id="ai-resp-${idx}" style="display:none"></div>
     </div>
   </div>`;
+}
+
+async function callAI(action, text, question, flatIdx) {
+  const resp = document.getElementById(`ai-resp-${flatIdx}`);
+  if (!resp) return;
+  resp.style.display = 'block';
+  resp.innerHTML = '<div class="ai-loading">✨ Sócrates está pensando...</div>';
+
+  const lesson = getLesson(flatIdx);
+  const lessonTitle = lesson.title.replace(/^\d+\.\d+\s+/, '');
+
+  try {
+    const res = await fetch(AI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action,
+        text:   text || lesson.summary || '',
+        question: question || '',
+        lessonTitle,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      resp.innerHTML = `<div class="ai-error">⚠️ ${data.error}</div>`;
+      return;
+    }
+
+    const raw = (data.reply || '').trim();
+    // Render flashcard pairs, bold, paragraphs
+    const formatted = raw
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .split(/\n\n+/)
+      .map(block => {
+        if (/^Frente:/i.test(block)) {
+          const [front, back] = block.split(/\|Verso:/i);
+          return `<div class="ai-flashcard">
+            <span class="ai-fc-front">❓ ${(front.replace(/^Frente:/i,'').trim())}</span>
+            <span class="ai-fc-back">✓ ${(back||'').trim()}</span>
+          </div>`;
+        }
+        return `<p>${block.replace(/\n/g,'<br>')}</p>`;
+      }).join('');
+
+    resp.innerHTML = `<div class="ai-reply">${formatted}</div>`;
+
+    // Clear input after sending question
+    const inp = document.getElementById(`ai-input-${flatIdx}`);
+    if (inp && action === 'duvida') inp.value = '';
+  } catch {
+    resp.innerHTML = `<div class="ai-error">⚠️ Erro de conexão. Verifique sua internet e tente novamente.</div>`;
+  }
 }
 
 // ── Navigation ────────────────────────────────────────────────────────────────
