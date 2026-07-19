@@ -22,6 +22,7 @@ import { Route as CursosRouteImport } from './routes/cursos'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CursosSlugRouteImport } from './routes/cursos.$slug'
 
 const ResumosRoute = ResumosRouteImport.update({
   id: '/resumos',
@@ -88,12 +89,17 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CursosSlugRoute = CursosSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => CursosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
   '/chat': typeof ChatRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/discursiva': typeof DiscursivaRoute
   '/entrar': typeof EntrarRoute
   '/esquema': typeof EsquemaRoute
@@ -103,12 +109,13 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/prova-oral': typeof ProvaOralRoute
   '/resumos': typeof ResumosRoute
+  '/cursos/$slug': typeof CursosSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
   '/chat': typeof ChatRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/discursiva': typeof DiscursivaRoute
   '/entrar': typeof EntrarRoute
   '/esquema': typeof EsquemaRoute
@@ -118,13 +125,14 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/prova-oral': typeof ProvaOralRoute
   '/resumos': typeof ResumosRoute
+  '/cursos/$slug': typeof CursosSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
   '/chat': typeof ChatRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/discursiva': typeof DiscursivaRoute
   '/entrar': typeof EntrarRoute
   '/esquema': typeof EsquemaRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/prova-oral': typeof ProvaOralRoute
   '/resumos': typeof ResumosRoute
+  '/cursos/$slug': typeof CursosSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/prova-oral'
     | '/resumos'
+    | '/cursos/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/prova-oral'
     | '/resumos'
+    | '/cursos/$slug'
   id:
     | '__root__'
     | '/'
@@ -181,13 +192,14 @@ export interface FileRouteTypes {
     | '/planos'
     | '/prova-oral'
     | '/resumos'
+    | '/cursos/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CadastroRoute: typeof CadastroRoute
   ChatRoute: typeof ChatRoute
-  CursosRoute: typeof CursosRoute
+  CursosRoute: typeof CursosRouteWithChildren
   DiscursivaRoute: typeof DiscursivaRoute
   EntrarRoute: typeof EntrarRoute
   EsquemaRoute: typeof EsquemaRoute
@@ -292,14 +304,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cursos/$slug': {
+      id: '/cursos/$slug'
+      path: '/$slug'
+      fullPath: '/cursos/$slug'
+      preLoaderRoute: typeof CursosSlugRouteImport
+      parentRoute: typeof CursosRoute
+    }
   }
 }
+
+interface CursosRouteChildren {
+  CursosSlugRoute: typeof CursosSlugRoute
+}
+
+const CursosRouteChildren: CursosRouteChildren = {
+  CursosSlugRoute: CursosSlugRoute,
+}
+
+const CursosRouteWithChildren =
+  CursosRoute._addFileChildren(CursosRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CadastroRoute: CadastroRoute,
   ChatRoute: ChatRoute,
-  CursosRoute: CursosRoute,
+  CursosRoute: CursosRouteWithChildren,
   DiscursivaRoute: DiscursivaRoute,
   EntrarRoute: EntrarRoute,
   EsquemaRoute: EsquemaRoute,

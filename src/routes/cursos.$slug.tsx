@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "../components/AppShell";
 import { Breadcrumbs } from "../components/Breadcrumbs";
-import { getCursoBySlug, CURSOS } from "../lib/cursos-data";
+import { getCursoBySlug, CURSOS, type Curso } from "../lib/cursos-data";
 
 export const Route = createFileRoute("/cursos/$slug")({
   loader: ({ params }) => {
@@ -43,7 +43,7 @@ function CursoNotFound() {
 type Marks = Record<string, { estudado?: boolean; revisado?: boolean }>;
 
 function CursoDetalhe() {
-  const { curso } = Route.useLoaderData();
+  const { curso } = Route.useLoaderData() as { curso: Curso };
   const storageKey = `estudamais_edital_${curso.slug}`;
   const [marks, setMarks] = useState<Marks>({});
   const [dataProva, setDataProva] = useState<string>("");
