@@ -1204,6 +1204,134 @@ body { overflow: hidden; }
 @media (max-width: 1100px) {
   .px-rsidebar { display: none; }
 }
+
+/* ── PERSISTENT ATHENA AI TOOLBAR ── */
+.px-ai-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 18px;
+  background: #FAFBFF;
+  border-bottom: 1px solid #E2E8F0;
+  flex-wrap: wrap;
+  min-height: 40px;
+}
+.px-ai-bar-label {
+  font-size: .73rem;
+  font-weight: 700;
+  color: #7C3AED;
+  margin-right: 8px;
+  white-space: nowrap;
+  letter-spacing: .01em;
+}
+.px-ai-bar-hint {
+  font-size: .68rem;
+  color: #94A3B8;
+  margin-left: auto;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+.px-ai-bar .sel-btn { background: #F1F5F9; color: #475569; }
+.px-ai-bar .sel-btn:hover { background: #EDE9FE; color: #6D28D9; }
+.px-ai-bar .sel-sep { background: #CBD5E1; }
+
+/* ── SELECTION FLOATING MENU ── */
+.sel-menu {
+  position: fixed;
+  z-index: 1000;
+  background: #0F172A;
+  border-radius: 9px;
+  padding: 4px;
+  display: none;
+  align-items: center;
+  gap: 1px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.4), 0 1px 4px rgba(0,0,0,.2);
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+.sel-menu.visible {
+  display: flex;
+  animation: sel-pop .12s cubic-bezier(.4,0,.2,1);
+}
+@keyframes sel-pop {
+  from { opacity:0; transform:translateX(-50%) scale(.88); }
+  to   { opacity:1; transform:translateX(-50%) scale(1); }
+}
+.sel-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #CBD5E1;
+  font-size: .73rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .1s, color .1s;
+  font-family: inherit;
+}
+.sel-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+.sel-sep { width: 1px; height: 18px; background: rgba(255,255,255,.13); flex-shrink: 0; margin: 0 1px; }
+
+/* ── SELECTION RESPONSE PANEL ── */
+.sel-panel {
+  position: fixed;
+  z-index: 1001;
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  width: 360px;
+  max-height: 56vh;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0,0,0,.18);
+}
+.sel-panel.visible {
+  display: flex;
+  animation: sel-slide .18s cubic-bezier(.4,0,.2,1);
+}
+@keyframes sel-slide {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.sel-panel-head {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #F1F5F9;
+  flex-shrink: 0; background: #fff;
+}
+.sel-panel-title { font-size: .78rem; font-weight: 700; color: #D44208; }
+.sel-panel-snippet {
+  font-size: .67rem; color: #94A3B8;
+  padding: 6px 14px; border-bottom: 1px solid #F8FAFC;
+  background: #FAFAFA; font-style: italic;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+.sel-panel-close {
+  width: 24px; height: 24px;
+  border: none; background: transparent; color: #94A3B8;
+  cursor: pointer; border-radius: 5px; font-size: .78rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .1s;
+}
+.sel-panel-close:hover { background: #F1F5F9; color: #334155; }
+.sel-panel-body {
+  padding: 14px 16px; overflow-y: auto; flex: 1;
+  scrollbar-width: thin; scrollbar-color: #E2E8F0 transparent;
+}
+.sel-panel-body p { margin: 0 0 10px; font-size: .84rem; line-height: 1.75; color: #334155; }
+.sel-panel-body p:last-child { margin-bottom: 0; }
+.sel-panel-body strong { color: #0F172A; }
+.sel-panel-body .ai-flashcard { margin: 6px 0; }
 @media (max-width: 768px) {
   .px-sidebar { position: fixed; left: -290px; top: 0; bottom: 0; z-index: 200; transition: left .25s; box-shadow: 0 0 40px rgba(0,0,0,.4); width: 288px !important; }
   .px-sidebar.open { left: 0; }
@@ -1291,6 +1419,19 @@ body { overflow: hidden; }
       <button class="px-tab active" id="tab-content"  onclick="switchView('content')">📖 Conteúdo</button>
       <button class="px-tab"        id="tab-mindmap"  onclick="switchView('mindmap')">🗺 Mapa Mental</button>
       <button class="px-tab"        id="tab-socratic" onclick="switchView('socratic')">🧠 Revisão Socrática</button>
+    </div>
+
+    <!-- ATHENA AI TOOLBAR — always visible -->
+    <div class="px-ai-bar" id="px-ai-bar">
+      <span class="px-ai-bar-label">✨ Athena IA</span>
+      <div class="sel-sep"></div>
+      <button class="sel-btn" onclick="aiBarAction('explicar')">💡 Explicar</button>
+      <button class="sel-btn" onclick="aiBarAction('simplificar')">✨ Simplificar</button>
+      <button class="sel-btn" onclick="aiBarAction('resumo')">📋 Resumo</button>
+      <button class="sel-btn" onclick="aiBarAction('flashcard')">🃏 Flashcard</button>
+      <button class="sel-btn" onclick="aiBarAction('questao')">📝 Questão</button>
+      <button class="sel-btn" onclick="aiBarAction('audio')">🔊 Áudio</button>
+      <span class="px-ai-bar-hint" id="px-ai-bar-hint">Ou selecione um trecho do texto</span>
     </div>
 
     <!-- BODY: content + right sidebar -->
@@ -1498,6 +1639,17 @@ function init() {
   buildSidebar(course);
   goToLesson(Number(params.get('aula') || 0));
   updateTimerDisplay();
+
+  // Text selection menu
+  document.addEventListener('selectionchange', _onSelectionChange);
+  document.addEventListener('mousedown', e => {
+    const menu  = document.getElementById('sel-menu');
+    const panel = document.getElementById('sel-panel');
+    if (menu  && !menu.contains(e.target))  _hideSelMenu();
+    if (panel && !panel.contains(e.target) && !menu?.contains(e.target)) {
+      panel.classList.remove('visible');
+    }
+  });
 
   // Scroll → reading progress
   document.getElementById('px-content').addEventListener('scroll', function() {
@@ -1823,14 +1975,8 @@ function renderAiHelper(lesson) {
   return `<div class="ai-helper" id="ai-helper-${idx}">
     <div class="ai-avatar">✨</div>
     <div class="ai-helper-content">
-      <h4>Sócrates — Tutor IA</h4>
-      <p>Estudo ativo sobre <em>${title}</em>. Selecione uma ação ou faça uma pergunta.</p>
-      <div class="ai-helper-actions">
-        <button class="btn btn-ghost btn-sm" onclick="callAI('explicar','',null,${idx})">💡 Explicar diferente</button>
-        <button class="btn btn-ghost btn-sm" onclick="callAI('resumo','',null,${idx})">📋 Resumo rápido</button>
-        <button class="btn btn-ghost btn-sm" onclick="callAI('flashcard','',null,${idx})">🃏 Flashcards</button>
-        <button class="btn btn-ghost btn-sm" onclick="callAI('questao','',null,${idx})">📝 Nova questão</button>
-      </div>
+      <h4>Athena — Tutor IA</h4>
+      <p>Tire sua dúvida sobre <em>${title}</em>. Use a barra Athena acima para ações rápidas.</p>
       <div class="ai-ask-row">
         <input class="ai-ask-input" id="ai-input-${idx}" placeholder="Pergunte algo sobre esta aula..."
           onkeydown="if(event.key==='Enter')callAI('duvida','',this.value,${idx})">
@@ -1846,7 +1992,7 @@ async function callAI(action, text, question, flatIdx) {
   const resp = document.getElementById(`ai-resp-${flatIdx}`);
   if (!resp) return;
   resp.style.display = 'block';
-  resp.innerHTML = '<div class="ai-loading">✨ Sócrates está pensando...</div>';
+  resp.innerHTML = '<div class="ai-loading">✨ Athena está pensando...</div>';
 
   const lesson = getLesson(flatIdx);
   const lessonTitle = lesson.title.replace(/^\d+\.\d+\s+/, '');
@@ -2050,6 +2196,196 @@ function updateTimerDisplay() {
   const s = timerSeconds % 60;
   document.getElementById('timer-display').textContent =
     `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ── Athena AI Toolbar (persistent) ───────────────────────────────────────────
+function aiBarAction(action) {
+  const sel = window.getSelection();
+  const selText = (sel?.toString()?.trim()) ?? '';
+  const lesson  = getLesson(currentFlat);
+
+  if (action === 'audio') {
+    const text = selText || lesson.summary || '';
+    if (!text) { alert('Sem conteúdo para ouvir.'); return; }
+    if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'pt-BR'; u.rate = 0.92;
+    const v = speechSynthesis.getVoices().find(x => x.lang.startsWith('pt'));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+    return;
+  }
+
+  _selText = selText || lesson.summary || '';
+  if (!_selText) { alert('Sem conteúdo disponível.'); return; }
+
+  // anchor the result panel below the toolbar
+  const bar = document.getElementById('px-ai-bar');
+  _selRect = bar ? bar.getBoundingClientRect() : { top: 120, bottom: 160, left: window.innerWidth / 2, width: 0 };
+  _selAction(action);
+}
+
+// ── Text Selection Menu ───────────────────────────────────────────────────────
+let _selText = '';
+let _selRect = null;
+
+function _getOrCreateSelMenu() {
+  let m = document.getElementById('sel-menu');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'sel-menu';
+    m.className = 'sel-menu';
+    m.innerHTML = `
+      <button class="sel-btn" data-action="explicar">💡 Explicar</button>
+      <div class="sel-sep"></div>
+      <button class="sel-btn" data-action="simplificar">✨ Simplificar</button>
+      <button class="sel-btn" data-action="resumo">📋 Resumo</button>
+      <div class="sel-sep"></div>
+      <button class="sel-btn" data-action="flashcard">🃏 Flashcard</button>
+      <button class="sel-btn" data-action="questao">📝 Questão</button>
+      <div class="sel-sep"></div>
+      <button class="sel-btn" data-action="audio">🔊 Áudio</button>`;
+    m.addEventListener('mousedown', e => e.preventDefault());
+    m.addEventListener('click', e => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      if (action === 'audio') { _selAudio(); } else { _selAction(action); }
+    });
+    document.body.appendChild(m);
+  }
+  return m;
+}
+
+function _onSelectionChange() {
+  const sel = window.getSelection();
+  const text = sel?.toString()?.trim() ?? '';
+  const hint = document.getElementById('px-ai-bar-hint');
+  if (hint) {
+    hint.textContent = text.length >= 8
+      ? `"${text.slice(0, 45)}${text.length > 45 ? '…' : ''}" selecionado`
+      : 'Ou selecione um trecho do texto';
+  }
+  if (text.length < 8) { _hideSelMenu(); return; }
+  const contentEl = document.getElementById('px-content');
+  if (!contentEl) return;
+  try {
+    const range = sel.getRangeAt(0);
+    if (!contentEl.contains(range.commonAncestorContainer)) { _hideSelMenu(); return; }
+    _selText = text;
+    _selRect = range.getBoundingClientRect();
+    _showSelMenu(_selRect);
+  } catch { _hideSelMenu(); }
+}
+
+function _showSelMenu(rect) {
+  const menu = _getOrCreateSelMenu();
+  const vw = window.innerWidth;
+  let top = rect.top - 48;
+  if (top < 8) top = rect.bottom + 10;
+  let left = rect.left + rect.width / 2;
+  left = Math.max(170, Math.min(left, vw - 170));
+  menu.style.top  = top + 'px';
+  menu.style.left = left + 'px';
+  menu.classList.add('visible');
+}
+
+function _hideSelMenu() {
+  const m = document.getElementById('sel-menu');
+  if (m) m.classList.remove('visible');
+}
+
+async function _selAction(action) {
+  const text = _selText;
+  if (!text) return;
+  window.getSelection()?.removeAllRanges();
+  _hideSelMenu();
+  _showSelPanel('loading', null, action, text);
+
+  const lesson = getLesson(currentFlat);
+  const lessonTitle = lesson.title.replace(/^\d+\.\d+\s+/, '');
+  try {
+    const res = await fetch(AI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, text, lessonTitle }),
+    });
+    const data = await res.json();
+    if (data.error) { _showSelPanel('error', data.error, action, text); return; }
+    _showSelPanel('reply', data.reply, action, text);
+  } catch {
+    _showSelPanel('error', 'Erro de conexão. Tente novamente.', action, text);
+  }
+}
+
+function _selAudio() {
+  const text = _selText;
+  if (!text) return;
+  window.getSelection()?.removeAllRanges();
+  _hideSelMenu();
+  if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'pt-BR'; u.rate = 0.92;
+  const v = speechSynthesis.getVoices().find(x => x.lang.startsWith('pt'));
+  if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+
+const _SEL_LABELS = {
+  explicar: '💡 Explicação', simplificar: '✨ Simplificado',
+  resumo: '📋 Resumo', flashcard: '🃏 Flashcards', questao: '📝 Questão',
+};
+
+function _showSelPanel(state, content, action, snippet) {
+  let panel = document.getElementById('sel-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'sel-panel';
+    panel.className = 'sel-panel';
+    document.body.appendChild(panel);
+  }
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const pw = 360, ph = 320;
+  let left = _selRect ? Math.max(8, Math.min(_selRect.left + _selRect.width/2 - pw/2, vw - pw - 8)) : vw - pw - 12;
+  let top  = _selRect
+    ? (vh - _selRect.bottom >= ph + 52 ? _selRect.bottom + 52 : Math.max(8, _selRect.top - ph - 12))
+    : vh - ph - 80;
+  panel.style.left = left + 'px';
+  panel.style.top  = top + 'px';
+
+  const snippetEl = snippet
+    ? `<div class="sel-panel-snippet">"${esc(snippet.length > 80 ? snippet.slice(0,80)+'…' : snippet)}"</div>` : '';
+  const label = _SEL_LABELS[action] || '✨ Athena';
+  const closeBtn = `<button class="sel-panel-close" onclick="document.getElementById('sel-panel').classList.remove('visible')">✕</button>`;
+
+  if (state === 'loading') {
+    panel.innerHTML = `
+      <div class="sel-panel-head"><span class="sel-panel-title">${label}</span>${closeBtn}</div>
+      ${snippetEl}
+      <div class="sel-panel-body"><div class="ai-loading">✨ Athena está pensando...</div></div>`;
+  } else if (state === 'error') {
+    panel.innerHTML = `
+      <div class="sel-panel-head"><span class="sel-panel-title">⚠️ Erro</span>${closeBtn}</div>
+      <div class="sel-panel-body"><div class="ai-error">${esc(content)}</div></div>`;
+  } else {
+    const formatted = (content || '').trim()
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .split(/\n\n+/)
+      .map(block => {
+        if (/^Frente:/i.test(block)) {
+          const [f, b] = block.split(/\s*\|\s*Verso:/i);
+          return `<div class="ai-flashcard">
+            <span class="ai-fc-front">❓ ${esc(f.replace(/^Frente:/i,'').trim())}</span>
+            <span class="ai-fc-back">✓ ${esc((b||'').trim())}</span></div>`;
+        }
+        return `<p>${block.replace(/\n/g,'<br>')}</p>`;
+      }).join('');
+    panel.innerHTML = `
+      <div class="sel-panel-head"><span class="sel-panel-title">${label}</span>${closeBtn}</div>
+      ${snippetEl}
+      <div class="sel-panel-body">${formatted}</div>`;
+  }
+  panel.classList.add('visible');
 }
 
 // ── Lesson progress tracking (per-session, in-memory) ─────────────────────────

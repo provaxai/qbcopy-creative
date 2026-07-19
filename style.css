@@ -897,6 +897,51 @@ textarea.form-input { resize: vertical; min-height: 120px; line-height: 1.6; }
 .pdf-question-item { background: var(--bg); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 10px; font-size: .88rem; line-height: 1.6; }
 .pdf-question-item strong { display: block; font-weight: 700; margin-bottom: 4px; }
 
+/* ── PDF DOCUMENT VIEWER ── */
+.pdf-viewer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  margin-bottom: 0;
+}
+.pdf-document-viewer {
+  padding: 24px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: #1E293B;
+  background: #fff;
+  max-height: 520px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+.pdf-document-viewer .pdf-page {
+  max-width: 680px;
+  margin: 0 auto 40px;
+  padding-bottom: 32px;
+  border-bottom: 2px dashed #E2E8F0;
+}
+.pdf-document-viewer .pdf-page:last-child { border-bottom: none; }
+.pdf-document-viewer .pdf-page-num {
+  font-size: .7rem;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 18px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #F1F5F9;
+}
+.pdf-document-viewer h2 { font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 6px; }
+.pdf-document-viewer h3 { font-size: .95rem; font-weight: 700; color: #1E3A5F; margin: 20px 0 8px; }
+.pdf-document-viewer p { margin: 0 0 10px; }
+.pdf-document-viewer ul { padding-left: 20px; margin: 0 0 12px; }
+.pdf-document-viewer li { margin-bottom: 5px; }
+.pdf-document-viewer strong { color: #0F172A; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .tools-grid { grid-template-columns: repeat(2,1fr); }
