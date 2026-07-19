@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell, PageHeader } from "../components/AppShell";
+import { Breadcrumbs } from "../components/Breadcrumbs";
 
 export const Route = createFileRoute("/planos")({
   head: () => ({
@@ -44,6 +45,7 @@ const PLANS = [
 function PlanosPage() {
   return (
     <AppShell>
+      <Breadcrumbs />
       <PageHeader
         eyebrow="💎 Planos"
         title="Acelere sua rota até a aprovação"

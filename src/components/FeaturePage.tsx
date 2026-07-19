@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { AppShell, PageHeader } from "./AppShell";
+import { Breadcrumbs, RelatedFeatures } from "./Breadcrumbs";
 
 export type FeaturePageProps = {
   eyebrow: string;
@@ -23,7 +24,9 @@ export function FeaturePage({
 }: FeaturePageProps) {
   return (
     <AppShell>
+      <Breadcrumbs />
       <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
+
 
       <section className="max-w-5xl mx-auto px-4 md:px-8 pb-10">
         <div className="grid md:grid-cols-2 gap-6">
@@ -62,6 +65,8 @@ export function FeaturePage({
         </div>
       </section>
 
+      <RelatedFeatures />
+
       <section className="max-w-5xl mx-auto px-4 md:px-8 pb-20">
         <div className="rounded-3xl bg-slate-900 text-white p-8 md:p-12 text-center">
           <h2 className="text-2xl md:text-3xl font-black">Pronto para experimentar?</h2>
@@ -77,3 +82,4 @@ export function FeaturePage({
     </AppShell>
   );
 }
+

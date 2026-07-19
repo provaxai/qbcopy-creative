@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
+import { Breadcrumbs } from "../components/Breadcrumbs";
 
 export const Route = createFileRoute("/entrar")({
   head: () => ({
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/entrar")({
 function EntrarPage() {
   return (
     <AppShell>
+      <Breadcrumbs />
       <section className="max-w-md mx-auto px-4 md:px-8 pt-16 pb-24">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h1 className="text-2xl font-black text-slate-900">Entrar</h1>
