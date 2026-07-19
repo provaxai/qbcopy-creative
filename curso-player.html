@@ -1400,6 +1400,7 @@ body { overflow: hidden; }
       <div class="px-tb-tools">
         <button class="px-tb-tool px-tb-tool-audio" id="audio-btn" onclick="speakSummary()" title="Ouvir resumo em áudio">🎧</button>
         <button class="px-tb-tool px-tb-tool-blue" onclick="alert('Baixar flashcards — em breve!')">📥 Flashcards</button>
+        <button class="px-tb-tool" id="tb-edital-btn" onclick="openEdital()" title="Ver edital verticalizado" style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;">📋 Edital</button>
         <button class="px-tb-tool px-tb-tool-purple" onclick="switchView('socratic')">🧠 Revisar</button>
         <button class="px-tb-tool px-tb-tool-purple" onclick="switchView('mindmap')">🎯 Questões</button>
         <div class="px-tb-font">
@@ -1878,6 +1879,10 @@ function toggleSocratic(type, idx) {
 }
 
 // ── Audio TTS ─────────────────────────────────────────────────────────────────
+function openEdital() {
+  window.location.href = `edital.html?curso=${courseKey}`;
+}
+
 function speakSummary() {
   const lesson = getLesson(currentFlat);
   const btn = document.getElementById('audio-btn');

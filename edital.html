@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edital Verticalizado — Prova X</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── PAGE LAYOUT ── */
+    .edital-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow-y: auto;
+      background: #F1F5F9;
+    }
+    .edital-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      width: 100%;
+    }
+
+    /* ── HEADER ── */
+    .edital-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .edital-course-name {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -.03em;
+      margin-right: 8px;
+    }
+    .edital-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    .ea-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 13px;
+      border-radius: 20px;
+      border: 1px solid #E2E8F0;
+      background: #fff;
+      font-size: .78rem;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      transition: background .15s, border-color .15s;
+    }
+    .ea-btn:hover { background: #F8FAFC; border-color: #CBD5E1; }
+    .ea-btn.plan {
+      background: linear-gradient(135deg, #7C3AED, #9333EA);
+      border-color: transparent;
+      color: #fff;
+    }
+    .ea-btn.plan:hover { filter: brightness(1.08); }
+    .ea-btn.plan .badge-new {
+      background: #FCD34D;
+      color: #92400E;
+      font-size: .6rem;
+      padding: 1px 5px;
+      border-radius: 10px;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .ea-btn.add {
+      background: #F5520C;
+      border-color: transparent;
+      color: #fff;
+    }
+    .ea-btn.add:hover { background: #E04400; }
+    .ea-btn.back { color: #64748B; }
+
+    /* ── PROGRESS SUMMARY ── */
+    .edital-progress-bar-wrap {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .epb-label { font-size: .78rem; font-weight: 700; color: #64748B; white-space: nowrap; }
+    .epb-track {
+      flex: 1;
+      height: 8px;
+      background: #E2E8F0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .epb-fill-studied {
+      height: 100%;
+      background: linear-gradient(90deg, #F5520C, #FF7040);
+      border-radius: 4px;
+      transition: width .5s ease;
+      width: 0%;
+    }
+    .epb-stats { display: flex; gap: 16px; }
+    .epb-stat { text-align: center; }
+    .epb-stat-num { font-size: 1.05rem; font-weight: 800; color: #0F172A; }
+    .epb-stat-label { font-size: .65rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+
+    /* ── QUICK NAV ── */
+    .edital-qnav {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .qnav-label {
+      font-size: .78rem;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .qnav-select {
+      padding: 6px 32px 6px 12px;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      background: #F8FAFC url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+      appearance: none;
+      font-size: .8rem;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      font-family: inherit;
+      min-width: 220px;
+    }
+    .qnav-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .qnav-chip {
+      padding: 4px 12px;
+      border-radius: 16px;
+      border: 1px solid;
+      font-size: .7rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: transparent;
+      font-family: inherit;
+      transition: background .15s;
+    }
+
+    /* ── TABLE WRAPPER ── */
+    .edital-table-wrap {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .edital-table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+    }
+    .edital-table-head-title {
+      font-size: .88rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      letter-spacing: .01em;
+    }
+    .btn-add-col {
+      padding: 5px 13px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(255,255,255,.45);
+      background: transparent;
+      color: #fff;
+      font-size: .73rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .15s;
+    }
+    .btn-add-col:hover { background: rgba(255,255,255,.15); }
+
+    /* ── TABLE ── */
+    .edital-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .edital-table thead tr {
+      background: #F8FAFC;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .edital-table thead th {
+      padding: 9px 12px;
+      font-size: .7rem;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      text-align: left;
+    }
+    .edital-table thead th.col-check {
+      text-align: center;
+      width: 80px;
+    }
+    .edital-table thead th.col-item { width: 60px; }
+
+    /* Section header row */
+    .edital-table tr.section-row td {
+      padding: 11px 12px 9px;
+      font-size: .8rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .edital-table tr.section-row td:first-child {
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    /* Item row */
+    .edital-table tr.item-row {
+      border-bottom: 1px solid #F1F5F9;
+      transition: background .1s;
+    }
+    .edital-table tr.item-row:hover { background: #FAFBFF; }
+    .edital-table tr.item-row td {
+      padding: 9px 12px;
+      font-size: .8rem;
+      color: #334155;
+      line-height: 1.55;
+    }
+    .edital-table tr.item-row td.col-item-num {
+      font-size: .75rem;
+      font-weight: 700;
+      color: #94A3B8;
+      white-space: nowrap;
+    }
+    .edital-table td.col-check-cell {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    /* ── CUSTOM CHECKBOX ── */
+    .edital-cb {
+      appearance: none;
+      width: 17px;
+      height: 17px;
+      border: 2px solid #CBD5E1;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      position: relative;
+      display: inline-block;
+      transition: border-color .15s, background .15s;
+      vertical-align: middle;
+    }
+    .edital-cb:checked {
+      background: #10B981;
+      border-color: #10B981;
+    }
+    .edital-cb:checked::after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 0px;
+      width: 6px;
+      height: 10px;
+      border: 2px solid #fff;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+    .edital-cb.cb-reviewed:checked {
+      background: #7C3AED;
+      border-color: #7C3AED;
+    }
+
+    /* Row studied state */
+    .edital-table tr.item-row.is-studied td.col-content-cell {
+      color: #94A3B8;
+      text-decoration: line-through;
+      text-decoration-color: #CBD5E1;
+    }
+
+    /* ── SECTION ANCHOR ── */
+    .section-anchor { scroll-margin-top: 20px; }
+
+    /* ── EMPTY STATE ── */
+    .edital-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #94A3B8;
+      font-size: .9rem;
+    }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      .app-layout > aside,
+      .topbar,
+      .edital-actions,
+      .edital-qnav,
+      .btn-add-col { display: none !important; }
+      .edital-wrap { overflow: visible; }
+      .edital-inner { padding: 0; max-width: 100%; }
+      .edital-table-wrap { border: none; border-radius: 0; }
+      body { background: #fff; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .edital-header { gap: 8px; }
+      .edital-actions { margin-left: 0; }
+      .ea-btn { font-size: .72rem; padding: 5px 10px; }
+      .edital-inner { padding: 16px 12px 48px; }
+      .epb-stats { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside id="sidebar"></aside>
+
+  <div class="app-main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">📋 Edital Verticalizado</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+
+    <div class="edital-wrap">
+      <div class="edital-inner">
+
+        <!-- Header -->
+        <div class="edital-header">
+          <h1 class="edital-course-name" id="edital-course-name">Carregando...</h1>
+          <div class="edital-actions">
+            <button class="ea-btn" onclick="openExamDate()">📅 Data da Prova</button>
+            <button class="ea-btn plan">📋 Planejamento <span class="badge-new">NOVO</span></button>
+            <button class="ea-btn" onclick="saveChanges()">💾 Salvar Alterações</button>
+            <button class="ea-btn" onclick="window.print()">📥 Baixar PDF</button>
+            <button class="ea-btn add" onclick="openAddSubject()">+ Adicionar Matéria</button>
+            <button class="ea-btn back" onclick="goBack()">← Voltar</button>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="edital-progress-bar-wrap">
+          <span class="epb-label">Progresso</span>
+          <div class="epb-track">
+            <div class="epb-fill-studied" id="epb-fill"></div>
+          </div>
+          <div class="epb-stats">
+            <div class="epb-stat">
+              <div class="epb-stat-num" id="stat-studied">0</div>
+              <div class="epb-stat-label">Estudados</div>
+            </div>
+            <div class="epb-stat">
+              <div class="epb-stat-num" id="stat-reviewed">0</div>
+              <div class="epb-stat-label">Revisados</div>
+            </div>
+            <div class="epb-stat">
+              <div class="epb-stat-num" id="stat-total">0</div>
+              <div class="epb-stat-label">Total</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick nav -->
+        <div class="edital-qnav">
+          <span class="qnav-label">☰ Navegação Rápida</span>
+          <select class="qnav-select" id="qnav-select" onchange="scrollToSection(this.value)">
+            <option value="">Ir para matéria...</option>
+          </select>
+          <div class="qnav-chips" id="qnav-chips"></div>
+        </div>
+
+        <!-- Main table -->
+        <div class="edital-table-wrap">
+          <div class="edital-table-head">
+            <span class="edital-table-head-title">📋 CONTEÚDO DO EDITAL</span>
+            <button class="btn-add-col" onclick="openAddSubject()">+ Coluna</button>
+          </div>
+          <table class="edital-table">
+            <thead>
+              <tr>
+                <th class="col-item">Item</th>
+                <th>Conteúdo</th>
+                <th class="col-check">Estudado</th>
+                <th class="col-check">Revisado</th>
+              </tr>
+            </thead>
+            <tbody id="edital-body"></tbody>
+          </table>
+        </div>
+
+      </div><!-- /inner -->
+    </div><!-- /wrap -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script src="app.js"></script>
+<script>
+/* ── Edital data per course ─────────────────────────────────────────────── */
+const EDITAL_DATA = {
+  prf: {
+    title: 'PRF',
+    sections: [
+      {
+        id: 1, title: 'LÍNGUA PORTUGUESA', color: '#B45309', bg: '#FFFBEB',
+        items: [
+          { id: '1.1', text: 'Compreensão e interpretação de textos de gêneros variados.' },
+          { id: '1.2', text: 'Reconhecimento de tipos e gêneros textuais.' },
+          { id: '1.3', text: 'Domínio da ortografia oficial.' },
+          { id: '1.4', text: 'Domínio dos mecanismos de coesão textual: emprego de elementos de referenciação, substituição e repetição, de conectores e de outros elementos de sequenciação textual; emprego de tempos e modos verbais.' },
+          { id: '1.5', text: 'Domínio da estrutura morfossintática do período: emprego das classes de palavras; relações de coordenação entre orações e entre termos da oração; relações de subordinação entre orações e entre termos da oração; emprego dos sinais de pontuação; concordância verbal e nominal; regência verbal e nominal; emprego do sinal indicativo de crase; colocação dos pronomes átonos.' },
+          { id: '1.6', text: 'Reescrita de frases e parágrafos do texto: significação das palavras; substituição de palavras ou de trechos de texto; reorganização da estrutura de orações e de períodos do texto; reescrita de textos de diferentes gêneros e níveis de formalidade.' },
+          { id: '1.7', text: 'Correspondência oficial conforme Manual de Redação da Presidência da República: aspectos gerais da redação oficial; finalidade dos expedientes oficiais; adequação da linguagem ao tipo de documento; adequação do formato do texto ao gênero.' },
+        ]
+      },
+      {
+        id: 2, title: 'RACIOCÍNIO LÓGICO-MATEMÁTICO', color: '#047857', bg: '#F0FDF4',
+        items: [
+          { id: '2.1', text: 'Modelagem de situações-problema por meio de equações do primeiro e segundo graus e sistemas lineares.' },
+          { id: '2.2', text: 'Noção de função: análise gráfica; funções afim, quadrática, exponencial e logarítmica; aplicações.' },
+          { id: '2.3', text: 'Taxas de variação de grandezas: razão e proporção com aplicações; regra de três simples e composta.' },
+          { id: '2.4', text: 'Porcentagem.' },
+          { id: '2.5', text: 'Regularidades e padrões em sequências: sequências numéricas; progressão aritmética e progressão geométrica.' },
+          { id: '2.6', text: 'Noções básicas de contagem, probabilidade e estatística.' },
+          { id: '2.7', text: 'Descrição e análise de dados: leitura e interpretação de tabelas e gráficos apresentados em diferentes linguagens e representações; cálculo de médias e análise de desvios de conjuntos de dados.' },
+          { id: '2.8', text: 'Noções básicas de teoria dos conjuntos.' },
+          { id: '2.9', text: 'Análise e interpretação de diferentes representações de figuras planas, como desenhos, mapas e plantas: utilização de escalas; visualização de figuras espaciais em diferentes posições; representações bidimensionais de projeções, planificações e cortes.' },
+          { id: '2.10', text: 'Transformação digital: internet das coisas (IoT); big data; inteligência artificial.' },
+          { id: '2.11', text: 'Métrica: áreas e volumes; estimativas; aplicações.' },
+        ]
+      },
+      {
+        id: 3, title: 'INFORMÁTICA', color: '#1D4ED8', bg: '#EFF6FF',
+        items: [
+          { id: '3.1', text: 'Conceito de internet e intranet.' },
+          { id: '3.2', text: 'Conceitos e modos de utilização de tecnologias, ferramentas, aplicativos e procedimentos associados à internet/intranet; ferramentas e aplicativos comerciais de navegação, de correio eletrônico, de grupos de discussão, de busca, de redes sociais e ferramentas colaborativas; noções de sistema operacional (ambiente Windows); acesso à distância a computadores, transferência de informação e arquivos, aplicativos de áudio, vídeo e multimídia.' },
+          { id: '3.3', text: 'Transformação digital: internet das coisas (IoT); big data; inteligência artificial.' },
+          { id: '3.4', text: 'Conceitos de proteção e segurança: noções de vírus, worms, phishing e pragas virtuais; aplicativos para segurança (antivírus, firewall, anti-spyware, VPN, etc.).' },
+          { id: '3.5', text: 'Computação em nuvem (cloud computing).' },
+        ]
+      },
+      {
+        id: 4, title: 'FÍSICA', color: '#B91C1C', bg: '#FEF2F2',
+        items: [
+          { id: '4.1', text: 'Cinemática escalar e cinemática vetorial.' },
+          { id: '4.2', text: 'Dinâmica: leis de Newton; forças; atrito; impulso; quantidade de movimento; colisões.' },
+          { id: '4.3', text: 'Gravitação universal.' },
+          { id: '4.4', text: 'Estática: equilíbrio de corpos e sistemas de forças.' },
+          { id: '4.5', text: 'Trabalho, energia e potência mecânica: trabalho de uma força; teorema trabalho-energia cinética; forças conservativas e não conservativas; energia potencial; conservação de energia mecânica.' },
+          { id: '4.6', text: 'Pressão, densidade e fluidos.' },
+          { id: '4.7', text: 'Temperatura, calor e termodinâmica: termometria; calorimetria; mudança de estado físico; propagação de calor; gases ideais; leis da termodinâmica.' },
+          { id: '4.8', text: 'Ondulatória: natureza das ondas; propriedades e fenômenos ondulatórios; espectro eletromagnético.' },
+          { id: '4.9', text: 'Óptica: reflexão; refração; espelhos e lentes.' },
+          { id: '4.10', text: 'Eletricidade e eletromagnetismo: eletrostática; corrente elétrica; circuitos elétricos; eletromagnetismo.' },
+        ]
+      },
+      {
+        id: 5, title: 'LEGISLAÇÃO DE TRÂNSITO', color: '#6D28D9', bg: '#F5F3FF',
+        items: [
+          { id: '5.1', text: 'Lei nº 9.503/1997 (Código de Trânsito Brasileiro — CTB) e suas alterações.' },
+          { id: '5.2', text: 'Crimes de trânsito: Capítulo XIX do CTB (arts. 291 a 312).' },
+          { id: '5.3', text: 'Infrações e penalidades: Capítulos XV e XVI do CTB (arts. 161 a 268).' },
+          { id: '5.4', text: 'Medidas administrativas: Capítulo XVII do CTB (arts. 269 a 279).' },
+          { id: '5.5', text: 'Processo administrativo: Capítulo XVIII do CTB (arts. 280 a 290).' },
+          { id: '5.6', text: 'Normas gerais de circulação e conduta: Capítulo III do CTB (arts. 26 a 70).' },
+          { id: '5.7', text: 'Sistema Nacional de Trânsito: competências dos órgãos integrantes (arts. 5 a 25).' },
+          { id: '5.8', text: 'Habilitação: requisitos, categorias e renovação da CNH (Capítulo VIII, arts. 140 a 160).' },
+          { id: '5.9', text: 'Resolução CONTRAN nº 912/2022 e suas alterações.' },
+        ]
+      },
+      {
+        id: 6, title: 'DIREITO CONSTITUCIONAL', color: '#9D174D', bg: '#FDF2F8',
+        items: [
+          { id: '6.1', text: 'Constitucionalismo: conceito e evolução histórica das constituições.' },
+          { id: '6.2', text: 'Constituição Federal de 1988: princípios fundamentais (arts. 1º ao 4º).' },
+          { id: '6.3', text: 'Direitos e garantias fundamentais: direitos e deveres individuais e coletivos; direitos sociais; direitos de nacionalidade; direitos políticos.' },
+          { id: '6.4', text: 'Organização do Estado: organização político-administrativa; União; Estados; Distrito Federal e Municípios; intervenção federal e estadual.' },
+          { id: '6.5', text: 'Organização dos Poderes: Poder Legislativo; Poder Executivo; Poder Judiciário; funções essenciais à Justiça.' },
+          { id: '6.6', text: 'Tribunal de Contas da União.' },
+          { id: '6.7', text: 'Defesa do Estado e das Instituições Democráticas: estado de defesa; estado de sítio; forças armadas; segurança pública.' },
+          { id: '6.8', text: 'Ordem social: base e objetivos; seguridade social; educação; cultura; desporto; ciência e tecnologia; meio ambiente; família.' },
+        ]
+      },
+      {
+        id: 7, title: 'DIREITO ADMINISTRATIVO', color: '#C2410C', bg: '#FFF7ED',
+        items: [
+          { id: '7.1', text: 'Estado, governo e administração pública: conceitos, elementos, poderes e organização.' },
+          { id: '7.2', text: 'Princípios da Administração Pública: legalidade, impessoalidade, moralidade, publicidade e eficiência (LIMPE).' },
+          { id: '7.3', text: 'Poderes administrativos: hierárquico, disciplinar, regulamentar e de polícia.' },
+          { id: '7.4', text: 'Atos administrativos: conceito, requisitos, atributos, classificação, espécies e invalidação.' },
+          { id: '7.5', text: 'Licitações e contratos: Lei nº 14.133/2021 e suas alterações.' },
+          { id: '7.6', text: 'Serviços públicos: conceito, classificação, formas e delegação de prestação.' },
+          { id: '7.7', text: 'Agentes públicos: espécies e classificação; poderes, deveres e prerrogativas; cargos, empregos e funções; regime jurídico único; provimento e vacância.' },
+          { id: '7.8', text: 'Controle da Administração Pública: controle administrativo, legislativo e judicial.' },
+          { id: '7.9', text: 'Improbidade administrativa: Lei nº 8.429/1992 e suas alterações.' },
+          { id: '7.10', text: 'Responsabilidade civil do Estado: responsabilidade objetiva e subjetiva.' },
+        ]
+      },
+      {
+        id: 8, title: 'LEGISLAÇÃO ESPECIAL', color: '#0E7490', bg: '#ECFEFF',
+        items: [
+          { id: '8.1', text: 'Estatuto da Criança e do Adolescente — ECA (Lei nº 8.069/1990) e suas alterações.' },
+          { id: '8.2', text: 'Lei nº 11.340/2006 (Lei Maria da Penha) e suas alterações.' },
+          { id: '8.3', text: 'Lei nº 9.455/1997 (Lei de Tortura).' },
+          { id: '8.4', text: 'Lei nº 7.210/1984 (Lei de Execução Penal) e suas alterações.' },
+          { id: '8.5', text: 'Lei nº 8.072/1990 (Lei dos Crimes Hediondos) e suas alterações.' },
+          { id: '8.6', text: 'Lei nº 11.343/2006 (Lei de Drogas) e suas alterações.' },
+          { id: '8.7', text: 'Lei nº 10.826/2003 (Estatuto do Desarmamento) e suas alterações.' },
+          { id: '8.8', text: 'Decreto-Lei nº 2.848/1940 (Código Penal): parte geral e parte especial — crimes contra a pessoa, o patrimônio, a Administração Pública e a fé pública.' },
+          { id: '8.9', text: 'Decreto-Lei nº 3.689/1941 (Código de Processo Penal): disposições preliminares; inquérito policial; ação penal; prisão, medidas cautelares e liberdade provisória.' },
+        ]
+      },
+    ]
+  },
+  hediondos: {
+    title: 'Crimes Hediondos',
+    sections: [
+      {
+        id: 1, title: 'LEI Nº 8.072/1990 — CRIMES HEDIONDOS', color: '#B91C1C', bg: '#FEF2F2',
+        items: [
+          { id: '1.1', text: 'Base constitucional: Art. 5º, XLIII da CF/88 — inafiançabilidade e insuscetibilidade de graça ou anistia.' },
+          { id: '1.2', text: 'Conceito e rol de crimes hediondos: homicídio doloso qualificado; latrocínio; extorsão qualificada pela morte; extorsão mediante sequestro; estupro; estupro de vulnerável; epidemia com resultado morte; falsificação de medicamento; genocídio.' },
+          { id: '1.3', text: 'Crimes equiparados a hediondos: tortura (Lei 9.455/97); tráfico ilícito de entorpecentes (Lei 11.343/06); terrorismo (Lei 13.260/16).' },
+          { id: '1.4', text: 'Vedações: anistia; graça; indulto; fiança.' },
+          { id: '1.5', text: 'Progressão de regime: prazos diferenciados — primário sem morte (40%); reincidente (50%); qualquer com resultado morte (60%).' },
+          { id: '1.6', text: 'Livramento condicional: cumprimento mínimo de 2/3 da pena; vedação ao reincidente específico.' },
+          { id: '1.7', text: 'Associação criminosa: causa de aumento e tipo específico.' },
+        ]
+      },
+      {
+        id: 2, title: 'LEGISLAÇÃO CORRELATA', color: '#6D28D9', bg: '#F5F3FF',
+        items: [
+          { id: '2.1', text: 'Lei nº 9.455/1997 — Tortura: conceito; sujeito ativo e passivo; formas equiparadas; penas; progressão.' },
+          { id: '2.2', text: 'Lei nº 11.343/2006 — Drogas: usuário vs. traficante; tráfico privilegiado; associação para o tráfico; financiamento; crimes assemelhados.' },
+          { id: '2.3', text: 'Lei nº 13.260/2016 — Terrorismo: conceito legal; atos preparatórios; atos de terrorismo; financiamento.' },
+          { id: '2.4', text: 'CF/88 Art. 5º: direitos e garantias em casos de crimes hediondos e equiparados.' },
+        ]
+      },
+    ]
+  }
+};
+
+/* ── State ────────────────────────────────────────────────────────────────── */
+const params  = new URLSearchParams(window.location.search);
+const courseKey = params.get('curso') || 'prf';
+const edital  = EDITAL_DATA[courseKey] || EDITAL_DATA.prf;
+
+const LS_STUDIED  = `pvx_edital_studied_${courseKey}`;
+const LS_REVIEWED = `pvx_edital_reviewed_${courseKey}`;
+
+let studied  = new Set(JSON.parse(localStorage.getItem(LS_STUDIED)  || '[]'));
+let reviewed = new Set(JSON.parse(localStorage.getItem(LS_REVIEWED) || '[]'));
+
+/* ── Helpers ─────────────────────────────────────────────────────────────── */
+function saveState() {
+  localStorage.setItem(LS_STUDIED,  JSON.stringify([...studied]));
+  localStorage.setItem(LS_REVIEWED, JSON.stringify([...reviewed]));
+}
+
+function countTotals() {
+  let total = 0;
+  edital.sections.forEach(s => total += s.items.length);
+  return { total, studied: studied.size, reviewed: reviewed.size };
+}
+
+function updateProgress() {
+  const { total, studied: s, reviewed: r } = countTotals();
+  const pct = total ? Math.round((s / total) * 100) : 0;
+  const fill = document.getElementById('epb-fill');
+  if (fill) fill.style.width = pct + '%';
+  const setEl = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setEl('stat-studied', s);
+  setEl('stat-reviewed', r);
+  setEl('stat-total', total);
+}
+
+/* ── Build nav ───────────────────────────────────────────────────────────── */
+function buildNav() {
+  const sel   = document.getElementById('qnav-select');
+  const chips = document.getElementById('qnav-chips');
+  edital.sections.forEach(sec => {
+    const opt = document.createElement('option');
+    opt.value = `section-${sec.id}`;
+    opt.textContent = `${sec.id} ${sec.title}`;
+    sel.appendChild(opt);
+
+    const chip = document.createElement('button');
+    chip.className = 'qnav-chip';
+    chip.textContent = sec.id;
+    chip.title = sec.title;
+    chip.style.borderColor = sec.color;
+    chip.style.color = sec.color;
+    chip.addEventListener('click', () => {
+      sel.value = `section-${sec.id}`;
+      scrollToSection(`section-${sec.id}`);
+    });
+    chips.appendChild(chip);
+  });
+}
+
+function scrollToSection(id) {
+  if (!id) return;
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── Build table ─────────────────────────────────────────────────────────── */
+function buildTable() {
+  const tbody = document.getElementById('edital-body');
+  let html = '';
+
+  edital.sections.forEach(sec => {
+    html += `
+      <tr class="section-row section-anchor" id="section-${sec.id}" style="background:${sec.bg}">
+        <td style="color:${sec.color}">${sec.id}</td>
+        <td colspan="3" style="color:${sec.color}">${sec.title}</td>
+      </tr>`;
+
+    sec.items.forEach(item => {
+      const isStudied  = studied.has(item.id);
+      const isReviewed = reviewed.has(item.id);
+      html += `
+        <tr class="item-row${isStudied ? ' is-studied' : ''}" id="row-${item.id}">
+          <td class="col-item-num">${item.id}</td>
+          <td class="col-content-cell">${item.text}</td>
+          <td class="col-check-cell">
+            <input type="checkbox" class="edital-cb"
+              ${isStudied ? 'checked' : ''}
+              onchange="toggleStudied('${item.id}', this.checked)">
+          </td>
+          <td class="col-check-cell">
+            <input type="checkbox" class="edital-cb cb-reviewed"
+              ${isReviewed ? 'checked' : ''}
+              onchange="toggleReviewed('${item.id}', this.checked)">
+          </td>
+        </tr>`;
+    });
+  });
+
+  tbody.innerHTML = html;
+}
+
+/* ── Checkbox handlers ───────────────────────────────────────────────────── */
+function toggleStudied(id, checked) {
+  if (checked) studied.add(id); else studied.delete(id);
+  saveState();
+  updateProgress();
+  const row = document.getElementById(`row-${id}`);
+  if (row) row.classList.toggle('is-studied', checked);
+}
+
+function toggleReviewed(id, checked) {
+  if (checked) reviewed.add(id); else reviewed.delete(id);
+  saveState();
+  updateProgress();
+}
+
+/* ── Action stubs ────────────────────────────────────────────────────────── */
+function saveChanges() {
+  saveState();
+  const btn = document.querySelector('.ea-btn:nth-child(3)');
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = '✅ Salvo!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  }
+}
+
+function openExamDate() {
+  const date = prompt('Data da prova (ex: 25/01/2026):',
+    localStorage.getItem(`pvx_exam_date_${courseKey}`) || '');
+  if (date !== null) {
+    localStorage.setItem(`pvx_exam_date_${courseKey}`, date);
+    alert(`Data da prova salva: ${date}`);
+  }
+}
+
+function openAddSubject() {
+  alert('Em breve: adicione matérias personalizadas ao seu edital.');
+}
+
+function goBack() {
+  const ref = document.referrer;
+  if (ref && ref.includes(window.location.hostname)) {
+    history.back();
+  } else {
+    window.location.href = `cursos-app.html`;
+  }
+}
+
+/* ── Init ────────────────────────────────────────────────────────────────── */
+Auth.requireAuth();
+renderSidebar('edital');
+initSidebarToggle();
+
+document.getElementById('edital-course-name').textContent = edital.title;
+document.title = `Edital — ${edital.title} | Prova X`;
+
+buildNav();
+buildTable();
+updateProgress();
+</script>
+</body>
+</html>
