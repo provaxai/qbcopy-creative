@@ -65,6 +65,8 @@ export function FeaturePage({
         </div>
       </section>
 
+      <RelatedFeatures />
+
       <section className="max-w-5xl mx-auto px-4 md:px-8 pb-20">
         <div className="rounded-3xl bg-slate-900 text-white p-8 md:p-12 text-center">
           <h2 className="text-2xl md:text-3xl font-black">Pronto para experimentar?</h2>
@@ -80,3 +82,4 @@ export function FeaturePage({
     </AppShell>
   );
 }
+
