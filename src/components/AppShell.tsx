@@ -16,23 +16,14 @@ export const NAV_ITEMS = [
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <div className="min-h-screen bg-[oklch(0.985_0.005_285)] text-slate-800">
-      <header className="fixed top-0 left-0 right-0 z-30 h-16 bg-white/90 backdrop-blur border-b border-slate-200 flex items-center justify-between px-4 md:px-6">
-        <div className="flex items-center gap-3">
-          <button
-            aria-label="Alternar menu"
-            onClick={() => setOpen((v) => !v)}
-            className="md:hidden p-2 rounded-md hover:bg-slate-100"
-          >
-            <span className="block w-5 h-0.5 bg-slate-700 mb-1" />
-            <span className="block w-5 h-0.5 bg-slate-700 mb-1" />
-            <span className="block w-5 h-0.5 bg-slate-700" />
-          </button>
-          <Link to="/" className="flex items-center gap-2">
+      <header className="fixed top-0 left-0 right-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 h-16">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 grid place-items-center text-white font-bold">
               E+
             </div>
@@ -40,56 +31,78 @@ export function AppShell({ children }: { children: ReactNode }) {
               EstudaMais<span className="text-indigo-600">.app</span>
             </span>
           </Link>
+
+          <nav className="hidden lg:flex items-center gap-1">
+            {NAV_ITEMS.map((it) => {
+              const active =
+                it.to === "/" ? pathname === "/" : pathname.startsWith(it.to);
+              return (
+                <Link
+                  key={it.to}
+                  to={it.to}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition ${
+                    active
+                      ? "bg-indigo-50 text-indigo-700"
+                      : "text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  {it.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-1 md:gap-2">
+            <Link
+              to="/entrar"
+              className="px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100"
+            >
+              ↪ Entrar
+            </Link>
+            <Link
+              to="/cadastro"
+              className="px-3 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              ✦ Cadastrar
+            </Link>
+            <button
+              aria-label="Alternar menu"
+              onClick={() => setOpen((v) => !v)}
+              className="lg:hidden p-2 rounded-md hover:bg-slate-100 ml-1"
+            >
+              <span className="block w-5 h-0.5 bg-slate-700 mb-1" />
+              <span className="block w-5 h-0.5 bg-slate-700 mb-1" />
+              <span className="block w-5 h-0.5 bg-slate-700" />
+            </button>
+          </div>
         </div>
-        <nav className="flex items-center gap-1 md:gap-2">
-          <Link
-            to="/entrar"
-            className="px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-100"
-          >
-            ↪ Entrar
-          </Link>
-          <Link
-            to="/cadastro"
-            className="px-3 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-          >
-            ✦ Cadastrar
-          </Link>
-        </nav>
+
+        {open && (
+          <nav className="lg:hidden border-t border-slate-200 bg-white px-4 py-3 flex flex-wrap gap-1">
+            {NAV_ITEMS.map((it) => {
+              const active =
+                it.to === "/" ? pathname === "/" : pathname.startsWith(it.to);
+              return (
+                <Link
+                  key={it.to}
+                  to={it.to}
+                  onClick={() => setOpen(false)}
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                    active
+                      ? "bg-indigo-50 text-indigo-700"
+                      : "text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  <span className="mr-1">{it.icon}</span>
+                  {it.label}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
       </header>
 
-      <aside
-        className={`fixed top-16 bottom-0 left-0 z-20 w-64 bg-white border-r border-slate-200 p-4 overflow-y-auto transition-transform ${
-          open ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0`}
-      >
-        <nav className="flex flex-col gap-1">
-          {NAV_ITEMS.map((it) => {
-            const active =
-              it.to === "/" ? pathname === "/" : pathname.startsWith(it.to);
-            return (
-              <Link
-                key={it.to}
-                to={it.to}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
-                  active
-                    ? "bg-indigo-50 text-indigo-700"
-                    : "text-slate-700 hover:bg-slate-100"
-                }`}
-              >
-                <span className="text-lg leading-none">{it.icon}</span>
-                {it.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="mt-6">
-          <button className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 shadow-md shadow-emerald-500/30 transition">
-            🎧 Suporte
-          </button>
-        </div>
-      </aside>
-
-      <main className="pt-16 md:pl-64">{children}</main>
+      <main className="pt-16">{children}</main>
     </div>
   );
 }
