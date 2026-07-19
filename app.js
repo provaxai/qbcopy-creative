@@ -40,6 +40,7 @@ function renderSidebar(activePage) {
     { id: 'dashboard',  icon: '🏠', label: 'Dashboard',              href: 'dashboard.html' },
     { id: 'cursos',     icon: '📚', label: 'Cursos',                  href: 'cursos-app.html' },
     { id: 'edital',    icon: '📋', label: 'Edital Verticalizado',     href: 'edital.html',         pro: false },
+    { id: 'cronograma', icon: '🗓️', label: 'Cronograma',              href: 'cronograma.html',      pro: false },
     { id: 'resumo',     icon: '📝', label: 'Resumo Inteligente',       href: 'resumo.html',        pro: false },
     { id: 'chat',       icon: '💬', label: 'Chat IA',                 href: 'chat.html',           pro: false },
     { id: 'pdf',        icon: '📄', label: 'PDF IA',                  href: 'pdf-ia.html',         pro: false },

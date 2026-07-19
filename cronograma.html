@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cronograma — Prova X</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── PAGE ── */
+    .crono-page { flex:1; overflow-y:auto; background:#F1F5F9; }
+    .crono-inner { max-width:1120px; margin:0 auto; padding:28px 24px 60px; }
+
+    /* ── HEADER ── */
+    .crono-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px; }
+    .crono-h1 { font-size:1.55rem; font-weight:800; color:#0F172A; letter-spacing:-.03em; line-height:1.2; }
+    .crono-sub { font-size:.82rem; color:#64748B; margin-top:3px; }
+    .crono-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+    /* ── BUTTONS ── */
+    .crono-btn {
+      display:inline-flex; align-items:center; gap:6px; padding:7px 14px;
+      border-radius:10px; border:1px solid #E2E8F0; background:#fff;
+      font-size:.78rem; font-weight:600; color:#475569; cursor:pointer;
+      font-family:inherit; white-space:nowrap; transition:all .15s;
+    }
+    .crono-btn:hover { background:#F8FAFC; border-color:#CBD5E1; }
+    .crono-btn.amber { color:#B45309; border-color:#FDE68A; background:#FFFBEB; }
+    .crono-btn.amber:hover { background:#FEF3C7; }
+    .crono-btn.spinning .crono-spin { animation:spin .8s linear infinite; display:inline-block; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── VIEW TOGGLE ── */
+    .view-toggle { display:flex; padding:3px; border-radius:10px; border:1px solid #E2E8F0; background:#fff; }
+    .vt-btn { padding:5px 16px; border-radius:8px; border:none; background:transparent; font-size:.75rem; font-weight:700; color:#64748B; cursor:pointer; font-family:inherit; transition:all .15s; }
+    .vt-btn.active { background:#F1F5F9; color:#1E293B; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+
+    /* ── RECALIBRATING ── */
+    .recal-state { background:#0F172A; border:1px solid #1E293B; border-radius:14px; padding:48px 24px; text-align:center; margin-bottom:24px; }
+    .recal-icon { font-size:2rem; animation:spin .9s linear infinite; display:inline-block; }
+    .recal-msg { font-size:.85rem; color:#CBD5E1; margin-top:14px; font-family:monospace; }
+    .recal-hint { font-size:.73rem; color:#475569; margin-top:6px; }
+
+    /* ── WEEKLY GRID ── */
+    .weekly-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:14px; margin-bottom:20px; }
+
+    /* ── DAY CARD ── */
+    .day-card { background:#fff; border:1px solid #E2E8F0; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; transition:border-color .15s; }
+    .day-card:hover { border-color:#C7D2FE; }
+    .day-card.weekend { background:#FFFBEB; border-color:#FEF08A; }
+    .day-header { padding:12px 14px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; background:#FAFBFF; }
+    .day-card.weekend .day-header { background:#FFF7ED; border-bottom-color:#FDE68A; }
+    .day-name { font-size:.8rem; font-weight:800; color:#0F172A; }
+    .day-card.weekend .day-name { color:#B45309; }
+    .day-type { font-size:.6rem; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+    .day-card.weekend .day-type { color:#D97706; }
+    .day-badge { padding:3px 10px; border-radius:8px; font-size:.67rem; font-weight:700; font-family:monospace; background:#F1F5F9; color:#475569; border:1px solid #E2E8F0; white-space:nowrap; }
+    .day-badge.rest { background:#ECFDF5; color:#059669; border-color:#A7F3D0; }
+    .day-body { padding:10px; flex:1; display:flex; flex-direction:column; gap:8px; }
+
+    /* ── DISCIPLINE BLOCK ── */
+    .disc-block { position:relative; padding:10px 10px 10px 15px; border-radius:10px; border:1px solid #E2E8F0; background:#fff; cursor:pointer; overflow:hidden; transition:border-color .15s, background .15s; }
+    .disc-block:hover { border-color:#A5B4FC; background:#F8F7FF; }
+    .disc-strip { position:absolute; left:0; top:0; bottom:0; width:3px; }
+    .disc-strip.teoria   { background:#3B82F6; }
+    .disc-strip.questoes { background:#F59E0B; }
+    .disc-strip.revisao  { background:#8B5CF6; }
+    .disc-strip.simulado { background:#EF4444; }
+    .disc-top { display:flex; align-items:flex-start; gap:6px; justify-content:space-between; }
+    .disc-name { font-size:.75rem; font-weight:700; color:#1E293B; line-height:1.35; flex:1; min-width:0; }
+    .disc-badge { padding:2px 7px; border-radius:5px; font-size:.62rem; font-weight:700; text-transform:uppercase; white-space:nowrap; flex-shrink:0; border:1px solid; }
+    .disc-badge.teoria   { background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE; }
+    .disc-badge.questoes { background:#FFFBEB; color:#B45309; border-color:#FDE68A; }
+    .disc-badge.revisao  { background:#F5F3FF; color:#6D28D9; border-color:#DDD6FE; }
+    .disc-badge.simulado { background:#FEF2F2; color:#B91C1C; border-color:#FECACA; }
+    .disc-topic { font-size:.7rem; color:#64748B; margin-top:5px; line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .disc-foot { display:flex; align-items:center; justify-content:space-between; margin-top:7px; padding-top:7px; border-top:1px solid #F1F5F9; font-size:.67rem; color:#94A3B8; font-family:monospace; }
+    .disc-foot-cta { transition:color .1s; }
+    .disc-block:hover .disc-foot-cta { color:#F5520C; }
+
+    /* ── EMPTY DAY ── */
+    .day-empty { border:1.5px dashed #E2E8F0; border-radius:10px; padding:24px 12px; text-align:center; }
+    .day-empty-icon { font-size:1.4rem; }
+    .day-empty-label { font-size:.7rem; font-weight:700; color:#059669; margin-top:4px; text-transform:uppercase; letter-spacing:.04em; }
+    .day-empty-hint { font-size:.68rem; color:#94A3B8; margin-top:3px; line-height:1.4; }
+
+    /* ── DAY FOOTER ── */
+    .day-foot { padding:6px 14px 10px; display:flex; justify-content:space-between; font-size:.65rem; color:#94A3B8; font-family:monospace; }
+
+    /* ── MONTHLY ── */
+    .monthly-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:14px; margin-bottom:20px; }
+    .week-card { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:20px; }
+    .week-num { font-size:.67rem; font-weight:800; color:#8B5CF6; text-transform:uppercase; letter-spacing:.1em; font-family:monospace; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; }
+    .week-dot { width:6px; height:6px; border-radius:50%; background:#F59E0B; }
+    .week-theme { font-size:.88rem; font-weight:700; color:#0F172A; margin-bottom:6px; line-height:1.3; }
+    .week-sub { font-size:.73rem; color:#64748B; margin-bottom:10px; line-height:1.4; }
+    .week-tags-label { font-size:.62rem; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; font-family:monospace; }
+    .week-tags { display:flex; flex-wrap:wrap; gap:5px; }
+    .week-tag { padding:3px 10px; border-radius:20px; font-size:.67rem; font-weight:600; background:#F1F5F9; color:#475569; border:1px solid #E2E8F0; }
+
+    /* ── HINT BAR ── */
+    .crono-hint { background:#EFF6FF; border:1px solid #BFDBFE; border-radius:12px; padding:12px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:.78rem; color:#1D4ED8; flex-wrap:wrap; }
+    .crono-hint-ts { font-size:.65rem; color:#3B82F6; font-family:monospace; flex-shrink:0; }
+
+    /* ── SLOT MODAL ── */
+    .modal-overlay { position:fixed; inset:0; z-index:700; background:rgba(0,0,0,.72); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; padding:16px; }
+    .slot-box { background:#fff; border-radius:18px; width:min(480px,100%); box-shadow:0 24px 60px rgba(0,0,0,.3); overflow:hidden; animation:modal-pop .18s cubic-bezier(.4,0,.2,1); }
+    @keyframes modal-pop { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
+    .slot-head { display:flex; gap:14px; align-items:flex-start; padding:24px 24px 20px; border-bottom:1px solid #F1F5F9; }
+    .slot-icon { width:46px; height:46px; border-radius:12px; background:#FFFBEB; border:1px solid #FDE68A; display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0; }
+    .slot-day-label { font-size:.68rem; font-weight:800; color:#F5520C; text-transform:uppercase; letter-spacing:.08em; font-family:monospace; }
+    .slot-disc-name { font-size:1.05rem; font-weight:800; color:#0F172A; margin-top:3px; line-height:1.25; }
+    .slot-topic { font-size:.73rem; color:#64748B; margin-top:3px; font-style:italic; }
+    .slot-body { padding:20px 24px; }
+    .slot-justif { background:#FAFAFA; border:1px solid #F1F5F9; border-radius:10px; padding:14px; font-size:.82rem; color:#334155; line-height:1.65; font-style:italic; margin-bottom:16px; }
+    .slot-meta { display:flex; align-items:center; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid #F1F5F9; margin-bottom:16px; font-size:.73rem; font-family:monospace; color:#64748B; }
+    .slot-actions { display:flex; justify-content:flex-end; }
+    .btn-slot-close { padding:10px 26px; background:#F5520C; color:#fff; border:none; border-radius:10px; font-size:.8rem; font-weight:800; cursor:pointer; font-family:inherit; transition:background .15s; }
+    .btn-slot-close:hover { background:#E04400; }
+
+    /* ── SETTINGS MODAL ── */
+    .settings-box { background:#0F172A; border:1px solid #1E293B; border-radius:18px; width:min(640px,100%); max-height:90vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,0,0,.6); animation:modal-pop .18s cubic-bezier(.4,0,.2,1); }
+    .settings-head { padding:24px 24px 20px; border-bottom:1px solid #1E293B; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .settings-eyebrow { font-size:.65rem; font-weight:800; color:#F59E0B; text-transform:uppercase; letter-spacing:.12em; font-family:monospace; }
+    .settings-title { font-size:1.1rem; font-weight:800; color:#fff; margin-top:4px; }
+    .settings-sub { font-size:.75rem; color:#64748B; margin-top:4px; line-height:1.5; }
+    .btn-s-close { background:#1E293B; border:1px solid #334155; border-radius:8px; color:#94A3B8; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1rem; transition:all .15s; flex-shrink:0; }
+    .btn-s-close:hover { background:#334155; color:#fff; }
+    .settings-body { padding:20px 24px; display:flex; flex-direction:column; gap:14px; }
+    .s-section { background:rgba(255,255,255,.025); border:1px solid #1E293B; border-radius:12px; padding:16px; }
+    .s-label { font-size:.68rem; font-weight:800; color:#94A3B8; text-transform:uppercase; letter-spacing:.08em; font-family:monospace; display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .s-val-badge { font-size:.73rem; font-weight:700; color:#34D399; background:rgba(52,211,153,.1); border:1px solid rgba(52,211,153,.2); padding:2px 10px; border-radius:6px; font-family:monospace; }
+    input[type="range"] { -webkit-appearance:none; width:100%; height:4px; background:#1E293B; border-radius:2px; outline:none; cursor:pointer; margin:8px 0; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:#F59E0B; cursor:pointer; border:2px solid #0F172A; }
+    .preset-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+    .preset-btn { padding:8px; border-radius:8px; border:1px solid #1E293B; background:#0F172A; color:#64748B; font-size:.68rem; font-weight:700; text-transform:uppercase; cursor:pointer; font-family:monospace; transition:all .15s; }
+    .preset-btn:hover, .preset-btn.active { background:#34D399; color:#0F172A; border-color:#34D399; }
+    .day-tuner { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+    .day-tune-cell { background:rgba(255,255,255,.03); border:1px solid #1E293B; border-radius:10px; padding:10px 4px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:5px; }
+    .dt-label { font-size:.58rem; font-weight:800; color:#64748B; text-transform:uppercase; font-family:monospace; }
+    .dt-val { font-size:.78rem; font-weight:800; color:#fff; font-family:monospace; min-height:18px; }
+    .dt-btns { display:flex; gap:3px; }
+    .dt-btn { width:20px; height:20px; border-radius:5px; border:1px solid #1E293B; background:#0F172A; color:#94A3B8; font-size:.82rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; line-height:1; }
+    .dt-btn.plus:hover { background:#F59E0B; color:#0F172A; border-color:#F59E0B; }
+    .dt-btn.minus:hover { background:#334155; color:#fff; }
+    .s-row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .s-field label { display:block; font-size:.68rem; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; font-family:monospace; }
+    .s-input { width:100%; background:#0F172A; border:1px solid #1E293B; border-radius:8px; padding:8px 12px; font-size:.78rem; color:#fff; font-family:inherit; outline:none; transition:border-color .15s; box-sizing:border-box; }
+    .s-input:focus { border-color:#F59E0B; }
+    .lang-toggle { display:flex; gap:8px; }
+    .lang-btn { flex:1; padding:8px; border-radius:8px; border:1px solid #1E293B; background:#0F172A; color:#64748B; font-size:.75rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all .15s; }
+    .lang-btn.active { background:#1B2744; border-color:#F59E0B; color:#F59E0B; }
+    .settings-foot { padding:16px 24px; border-top:1px solid #1E293B; display:flex; justify-content:flex-end; }
+    .btn-s-save { padding:11px 32px; background:linear-gradient(135deg,#F59E0B,#F97316); color:#0F172A; border:none; border-radius:10px; font-size:.8rem; font-weight:800; cursor:pointer; font-family:inherit; text-transform:uppercase; letter-spacing:.05em; transition:filter .15s; }
+    .btn-s-save:hover { filter:brightness(1.1); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width:640px) {
+      .crono-header { gap:10px; }
+      .crono-actions { flex-wrap:wrap; }
+      .crono-inner { padding:16px 12px 48px; }
+      .day-tuner { grid-template-columns:repeat(4,1fr); }
+      .s-row2 { grid-template-columns:1fr; }
+      .weekly-grid { grid-template-columns:1fr; }
+    }
+    @media print {
+      .app-layout > aside, .topbar, .crono-actions, .crono-hint { display:none !important; }
+      .crono-page { overflow:visible; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside id="sidebar"></aside>
+
+  <div class="app-main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button id="sidebar-toggle" class="btn btn-ghost btn-sm">☰</button>
+        <div class="topbar-title">🗓️ Cronograma</div>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-user" style="font-size:.85rem;color:var(--text-muted);"></span>
+      </div>
+    </div>
+
+    <div class="crono-page">
+      <div class="crono-inner">
+
+        <!-- Header -->
+        <div class="crono-header">
+          <div>
+            <h1 class="crono-h1">Cronograma</h1>
+            <p class="crono-sub">Plano adaptativo para Policial Rodoviário Federal (PRF)</p>
+          </div>
+          <div class="crono-actions">
+            <div class="view-toggle">
+              <button class="vt-btn active" onclick="setView('weekly')">Semanal</button>
+              <button class="vt-btn" onclick="setView('monthly')">Mensal</button>
+            </div>
+            <button class="crono-btn amber" id="btn-recal" onclick="recalibrate()">
+              <span class="crono-spin">🔄</span> Recalibrar IA
+            </button>
+            <button class="crono-btn" onclick="openSettings()">⚙️ Configurar</button>
+          </div>
+        </div>
+
+        <!-- Recalibrating state -->
+        <div class="recal-state" id="recal-state" style="display:none">
+          <div class="recal-icon">🔄</div>
+          <p class="recal-msg" id="recal-msg">Analisando seu desempenho CEBRASPE recente...</p>
+          <p class="recal-hint">A IA está recalculando a carga do edital...</p>
+        </div>
+
+        <!-- Weekly view -->
+        <div class="weekly-grid" id="weekly-view"></div>
+
+        <!-- Monthly view -->
+        <div class="monthly-grid" id="monthly-view" style="display:none"></div>
+
+        <!-- Hint bar -->
+        <div class="crono-hint">
+          <span>✅ <strong>Dica:</strong> Clique em qualquer bloco para ver a justificativa da IA para aquela alocação. Use <strong>Configurar</strong> para ajustar as horas por dia.</span>
+          <span class="crono-hint-ts" id="crono-ts">Cronograma: —</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SLOT DETAIL MODAL ── -->
+<div class="modal-overlay" id="slot-modal" style="display:none" onclick="if(event.target===this)closeSlot()">
+  <div class="slot-box">
+    <div class="slot-head">
+      <div class="slot-icon">🦉</div>
+      <div>
+        <div class="slot-day-label" id="slot-day">Segunda-feira</div>
+        <div class="slot-disc-name" id="slot-disc">Legislação de Trânsito</div>
+        <div class="slot-topic" id="slot-topic">Tópico: —</div>
+      </div>
+    </div>
+    <div class="slot-body">
+      <div class="slot-justif" id="slot-justif">—</div>
+      <div class="slot-meta">
+        <span id="slot-duration">⏱ — min</span>
+        <span class="disc-badge" id="slot-type-badge">Teoria</span>
+      </div>
+      <div class="slot-actions">
+        <button class="btn-slot-close" onclick="closeSlot()">Entendido, avançar!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETTINGS MODAL ── -->
+<div class="modal-overlay" id="settings-modal" style="display:none" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-box">
+    <div class="settings-head">
+      <div>
+        <div class="settings-eyebrow">Painel do Planejamento</div>
+        <div class="settings-title">Configurações de Carga Horária</div>
+        <div class="settings-sub">Ajuste sua rotina de estudos. A IA adequará o cronograma automaticamente.</div>
+      </div>
+      <button class="btn-s-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="settings-body">
+
+      <!-- Daily hours -->
+      <div class="s-section">
+        <div class="s-label">
+          ⚡ Tempo de Estudo Geral
+          <span class="s-val-badge" id="s-hours-label">4h por dia</span>
+        </div>
+        <input type="range" min="1" max="10" step="1" value="4" id="s-hours-range"
+          oninput="onHoursSlider(this.value)">
+        <div class="preset-row">
+          <button class="preset-btn" data-val="1" onclick="setPreset(1)">1h Manutenção</button>
+          <button class="preset-btn active" data-val="4" onclick="setPreset(4)">4h Padrão</button>
+          <button class="preset-btn" data-val="10" onclick="setPreset(10)">10h Imersão</button>
+        </div>
+      </div>
+
+      <!-- Per-day fine tune -->
+      <div class="s-section">
+        <div class="s-label">⚙️ Diária Ajustada (Segunda a Domingo)</div>
+        <div class="day-tuner" id="day-tuner"></div>
+      </div>
+
+      <!-- Exam date + Language -->
+      <div class="s-row2">
+        <div class="s-field">
+          <label>📅 Data da Prova</label>
+          <input type="date" class="s-input" id="s-exam-date">
+        </div>
+        <div class="s-field">
+          <label>🌐 Idioma da Prova</label>
+          <div class="lang-toggle">
+            <button class="lang-btn active" data-lang="Inglês" onclick="setLang('Inglês', this)">Inglês</button>
+            <button class="lang-btn" data-lang="Espanhol" onclick="setLang('Espanhol', this)">Espanhol</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="settings-foot">
+      <button class="btn-s-save" onclick="applySettings()">Salvar e Aplicar Carga</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════
+   CRONOGRAMA — Prova X
+   ═══════════════════════════════════════════════════ */
+
+const DAYS = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+
+const TEMPLATE = {
+  'Segunda': [
+    { name:'Legislação de Trânsito', type:'teoria',   topic:'Artigos 1º ao 16º: Sistema Nacional de Trânsito no CTB', w:.45 },
+    { name:'Língua Portuguesa',      type:'teoria',   topic:'Sintaxe e regência de termos — foco nas permutas de palavras CEBRASPE', w:.35 },
+    { name:'Direito Constitucional', type:'revisao',  topic:'Defesa do Estado e Segurança Pública (Art. 144 CF)', w:.20 },
+  ],
+  'Terça': [
+    { name:'Direito Penal',               type:'questoes', topic:'Teoria do crime: fato típico, culpabilidade, ilicitude e dolo', w:.40 },
+    { name:'Raciocínio Lógico-Matemático',type:'teoria',   topic:'Proposições lógicas, conectivos, tabela-verdade e tautologia', w:.30 },
+    { name:'Física',                      type:'teoria',   topic:'Energia cinética e dinâmica do trauma veicular', w:.30 },
+  ],
+  'Quarta': [
+    { name:'Legislação de Trânsito', type:'questoes', topic:'Normas Gerais de Circulação e Conduta (Art. 26 ao 48 CTB)', w:.45 },
+    { name:'Direito Administrativo', type:'teoria',   topic:'Poder de polícia administrativa, limites e discricionariedade', w:.30 },
+    { name:'Informática',            type:'revisao',  topic:'Redes de computadores, protocolos e segurança da informação', w:.25 },
+  ],
+  'Quinta': [
+    { name:'Língua Portuguesa',        type:'questoes', topic:'Reescrita de frases e substituição de palavras no padrão CEBRASPE', w:.40 },
+    { name:'Dir. Processual Penal',    type:'teoria',   topic:'Inquérito policial: características, prazos e valor probatório', w:.30 },
+    { name:'Língua Estrangeira',       type:'revisao',  topic:'Vocabulário técnico de ocorrências policiais em Inglês', w:.30 },
+  ],
+  'Sexta': [
+    { name:'Legislação de Trânsito', type:'teoria',   topic:'Resolução CONTRAN 432: testes de alcoolemia e margens de erro', w:.40 },
+    { name:'Legislação Especial',    type:'teoria',   topic:'Lei de Drogas (Lei 11.343/06) e Estatuto do Desarmamento', w:.30 },
+    { name:'Direitos Humanos',       type:'revisao',  topic:'Direitos Humanos na CF/88 e Declaração Universal', w:.30 },
+  ],
+  'Sábado': [
+    { name:'Revisão Geral', type:'revisao',  topic:'Resgate ativo do conteúdo e flashcards de fixação da semana', w:.50 },
+    { name:'Simulado',      type:'simulado', topic:'Simulado CEBRASPE com penalidades reais (1 errada anula 1 certa)', w:.50 },
+  ],
+  'Domingo': [
+    { name:'Planejamento e Descanso Ativo', type:'revisao', topic:'Análise de métricas semanais e calibração do cronograma', w:1 },
+  ],
+};
+
+const MONTHLY_DATA = [
+  { week:1, theme:'Fundamentos Jurídicos', sub:'Início do ciclo — teoria e base legal.', focus:['Legislação de Trânsito','Língua Portuguesa','Dir. Constitucional'] },
+  { week:2, theme:'Cálculo e Lógica',      sub:'Módulo de raciocínio e disciplinas exatas.',  focus:['Raciocínio Lógico','Física','Informática'] },
+  { week:3, theme:'Legislação Especial',   sub:'Foco em leis específicas do edital PRF.',     focus:['Direito Penal','Dir. Processual Penal','Legislação Especial'] },
+  { week:4, theme:'Revisão e Simulados',   sub:'Consolidação e prova simulada CEBRASPE.',     focus:['Revisão Geral','Simulado','Direitos Humanos'] },
+];
+
+/* ── State ────────────────────────────────────────── */
+let settings = JSON.parse(localStorage.getItem('pvx_crono_settings') || 'null') || {
+  hoursPerDay: 4, examDate: '', language: 'Inglês'
+};
+let schedule = JSON.parse(localStorage.getItem('pvx_crono_weekly') || 'null');
+let currentView = 'weekly';
+
+if (!schedule) schedule = buildSchedule(settings.hoursPerDay);
+
+function saveAll() {
+  localStorage.setItem('pvx_crono_weekly', JSON.stringify(schedule));
+  localStorage.setItem('pvx_crono_settings', JSON.stringify(settings));
+}
+
+/* ── Build schedule from template ── */
+function buildSchedule(hoursPerDay) {
+  return DAYS.map(day => {
+    const templates = TEMPLATE[day];
+    let h = hoursPerDay;
+    if (day === 'Sábado') h = Math.max(1, Math.round(hoursPerDay * 2) / 2);
+    if (day === 'Domingo') h = Math.max(0.5, Math.round(hoursPerDay * 0.5 * 2) / 2);
+    const mins = Math.round(h * 60);
+
+    const disciplines = templates.map(t => ({
+      name: t.name, type: t.type, topic: t.topic,
+      duration: Math.max(20, Math.round((t.w * mins) / 5) * 5)
+    }));
+
+    const sum = disciplines.reduce((s, d) => s + d.duration, 0);
+    const diff = mins - sum;
+    if (diff !== 0 && disciplines.length) disciplines[0].duration = Math.max(20, disciplines[0].duration + diff);
+
+    return { day, disciplines };
+  });
+}
+
+/* ── Helpers ── */
+function typeLabel(t) {
+  return { teoria:'Teoria', questoes:'Questões', revisao:'Revisão', simulado:'Simulado' }[t] || t;
+}
+
+function getDayLabel(day) {
+  if (day === 'Sábado' || day === 'Domingo') return day;
+  return day + '-feira';
+}
+
+function getJustification(name, type, topic) {
+  if (name.includes('Trânsito'))
+    return `Concurseiro(a), o bloco de <b>Legislação de Trânsito</b> representa o maior contingente de questões no edital da PRF. Esta sessão focada em "${topic}" alterna teoria com fixação das resoluções CONTRAN de alta incidência no CEBRASPE.`;
+  if (type === 'questoes')
+    return `Ciclos de <b>questões CEBRASPE</b> imediatamente após sessões teóricas aumentam a fixação e expõem os pontos cegos antes que a curva do esquecimento atue. A alocação de <b>${name}</b> aqui segue a cadência ideal do método de espaçamento ativo.`;
+  if (type === 'revisao')
+    return `A <b>revisão espaçada</b> de <b>${name}</b> cobre o intervalo ideal de recapitulação antes que a curva do esquecimento de Ebbinghaus atinja o conteúdo. Tópico: "${topic}".`;
+  if (type === 'simulado')
+    return `O <b>simulado no padrão CEBRASPE</b> com penalidade real prepara seu sistema nervoso para as condições reais de prova. O Sábado é o dia ideal para simular a maratona cognitiva de uma prova completa.`;
+  return `Esta alocação cumpre o edital verticalizado da PRF. O conteúdo de <b>${name}</b> — "${topic}" — foi posicionado aqui para intercalar temas de alta abstração com disciplinas de peso estratégico do edital.`;
+}
+
+/* ── Render weekly ── */
+function renderWeekly() {
+  const grid = document.getElementById('weekly-view');
+
+  grid.innerHTML = schedule.map(({ day, disciplines }) => {
+    const totalMins = disciplines.reduce((s, d) => s + d.duration, 0);
+    const totalHrs  = Math.round((totalMins / 60) * 10) / 10;
+    const isWeekend = day === 'Sábado' || day === 'Domingo';
+    const dayLabel  = getDayLabel(day);
+    const dayType   = isWeekend ? 'Consolidação' : 'Estudo';
+
+    const badge = totalHrs === 0
+      ? `<span class="day-badge rest">✨ Descanso</span>`
+      : `<span class="day-badge">⏱ ${totalHrs}h</span>`;
+
+    const discsHtml = disciplines.length === 0
+      ? `<div class="day-empty">
+           <div class="day-empty-icon">🏝️</div>
+           <div class="day-empty-label">Descanso Estratégico</div>
+           <div class="day-empty-hint">Aproveite para revisar flashcards ou descansar a mente.</div>
+         </div>`
+      : disciplines.map((d, i) => `
+          <div class="disc-block" data-day="${day}" data-idx="${i}">
+            <div class="disc-strip ${d.type}"></div>
+            <div class="disc-top">
+              <span class="disc-name">${d.name}</span>
+              <span class="disc-badge ${d.type}">${typeLabel(d.type)}</span>
+            </div>
+            <p class="disc-topic">${d.topic}</p>
+            <div class="disc-foot">
+              <span>⏱ ${d.duration} min</span>
+              <span class="disc-foot-cta">Analisar alocação →</span>
+            </div>
+          </div>`).join('');
+
+    return `
+      <div class="day-card${isWeekend ? ' weekend' : ''}">
+        <div class="day-header">
+          <div>
+            <div class="day-name">${dayLabel}</div>
+            <div class="day-type">${dayType}</div>
+          </div>
+          ${badge}
+        </div>
+        <div class="day-body">${discsHtml}</div>
+        <div class="day-foot">
+          <span>Ciclo ativo</span>
+          <span>${disciplines.length} ${disciplines.length === 1 ? 'matéria' : 'matérias'}</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Attach click handlers via delegation
+  grid.querySelectorAll('.disc-block').forEach(el => {
+    el.addEventListener('click', () => {
+      openSlot(el.dataset.day, parseInt(el.dataset.idx));
+    });
+  });
+}
+
+/* ── Render monthly ── */
+function renderMonthly() {
+  const grid = document.getElementById('monthly-view');
+  grid.innerHTML = MONTHLY_DATA.map(w => `
+    <div class="week-card">
+      <div class="week-num">SEMANA ${w.week} <span class="week-dot"></span></div>
+      <div class="week-theme">${w.theme}</div>
+      <div class="week-sub">${w.sub}</div>
+      <div class="week-tags-label">Disciplinas em Foco</div>
+      <div class="week-tags">${w.focus.map(f => `<span class="week-tag">${f}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+/* ── View switch ── */
+function setView(type) {
+  currentView = type;
+  document.getElementById('weekly-view').style.display  = type === 'weekly'  ? '' : 'none';
+  document.getElementById('monthly-view').style.display = type === 'monthly' ? '' : 'none';
+  document.querySelectorAll('.vt-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', (i === 0 && type === 'weekly') || (i === 1 && type === 'monthly'));
+  });
+  if (type === 'monthly') renderMonthly();
+}
+
+/* ── Recalibrate ── */
+const RECAL_MSGS = [
+  'Analisando seu desempenho CEBRASPE recente...',
+  'Mapeando pontos fracos em Direito Penal e Física...',
+  'Distribuindo sessões prioritárias de CTB/Multas...',
+  'Calibrando carga horária por disciplina...',
+  'Aplicando espaçamento de Ebbinghaus ao edital...',
+];
+
+function recalibrate() {
+  const state   = document.getElementById('recal-state');
+  const msgEl   = document.getElementById('recal-msg');
+  const wGrid   = document.getElementById('weekly-view');
+  const mGrid   = document.getElementById('monthly-view');
+  const btn     = document.getElementById('btn-recal');
+
+  state.style.display = 'block';
+  wGrid.style.display  = 'none';
+  mGrid.style.display  = 'none';
+  btn.classList.add('spinning');
+  btn.disabled = true;
+
+  let idx = 0;
+  msgEl.textContent = RECAL_MSGS[0];
+  const timer = setInterval(() => { msgEl.textContent = RECAL_MSGS[++idx % RECAL_MSGS.length]; }, 1100);
+
+  setTimeout(() => {
+    clearInterval(timer);
+    schedule = buildSchedule(settings.hoursPerDay);
+    saveAll();
+    renderWeekly();
+    state.style.display = 'none';
+    btn.classList.remove('spinning');
+    btn.disabled = false;
+    setView('weekly');
+    const today = new Date().toLocaleDateString('pt-BR');
+    document.getElementById('crono-ts').textContent = `Recalibrado: ${today}`;
+  }, 4400);
+}
+
+/* ── Slot modal ── */
+function openSlot(day, idx) {
+  const dayData = schedule.find(d => d.day === day);
+  if (!dayData) return;
+  const disc = dayData.disciplines[idx];
+  if (!disc) return;
+
+  document.getElementById('slot-day').textContent   = getDayLabel(day);
+  document.getElementById('slot-disc').textContent  = disc.name;
+  document.getElementById('slot-topic').textContent = `Tópico: ${disc.topic}`;
+  document.getElementById('slot-justif').innerHTML  = `"${getJustification(disc.name, disc.type, disc.topic)}"`;
+  document.getElementById('slot-duration').textContent = `⏱ Duração: ${disc.duration} minutos`;
+
+  const badge = document.getElementById('slot-type-badge');
+  badge.textContent = typeLabel(disc.type);
+  badge.className = `disc-badge ${disc.type}`;
+
+  document.getElementById('slot-modal').style.display = 'flex';
+}
+
+function closeSlot() { document.getElementById('slot-modal').style.display = 'none'; }
+
+/* ── Settings modal ── */
+function openSettings() {
+  const modal = document.getElementById('settings-modal');
+
+  document.getElementById('s-hours-range').value = settings.hoursPerDay;
+  document.getElementById('s-hours-label').textContent = `${settings.hoursPerDay}h por dia`;
+  document.getElementById('s-exam-date').value = settings.examDate || '';
+
+  // Language
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === settings.language));
+
+  // Presets
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.val) === settings.hoursPerDay));
+
+  renderDayTuner();
+  modal.style.display = 'flex';
+}
+
+function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+
+function onHoursSlider(val) {
+  const h = parseInt(val);
+  document.getElementById('s-hours-label').textContent = `${h}h por dia`;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.val) === h));
+}
+
+function setPreset(h) {
+  settings.hoursPerDay = h;
+  document.getElementById('s-hours-range').value = h;
+  document.getElementById('s-hours-label').textContent = `${h}h por dia`;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.val) === h));
+  schedule = buildSchedule(h);
+  renderDayTuner();
+}
+
+function setLang(lang, btn) {
+  settings.language = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── Day tuner ── */
+function renderDayTuner() {
+  const tuner = document.getElementById('day-tuner');
+  tuner.innerHTML = DAYS.map(day => {
+    const dayData  = schedule.find(d => d.day === day);
+    const totalMin = dayData ? dayData.disciplines.reduce((s, d) => s + d.duration, 0) : 0;
+    const hours    = Math.round((totalMin / 60) * 10) / 10;
+    const isWE     = day === 'Sábado' || day === 'Domingo';
+    const valHtml  = hours === 0
+      ? `<span style="font-size:.58rem;background:rgba(52,211,153,.12);color:#34D399;padding:1px 5px;border-radius:4px;">Folga</span>`
+      : `${hours}h`;
+    return `
+      <div class="day-tune-cell">
+        <span class="dt-label" style="${isWE ? 'color:#F59E0B' : ''}">${day.slice(0,3)}</span>
+        <div class="dt-val" id="dtv-${day}">${valHtml}</div>
+        <div class="dt-btns">
+          <button class="dt-btn minus" onclick="adjustDay('${day}',-0.5)">−</button>
+          <button class="dt-btn plus"  onclick="adjustDay('${day}', 0.5)">+</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function adjustDay(day, delta) {
+  const dayData  = schedule.find(d => d.day === day);
+  if (!dayData) return;
+
+  const totalMin   = dayData.disciplines.reduce((s, d) => s + d.duration, 0);
+  const curHours   = totalMin / 60;
+  const newHours   = Math.max(0, Math.min(12, Math.round((curHours + delta) * 2) / 2));
+  const newMins    = Math.round(newHours * 60);
+
+  if (newMins === 0) {
+    dayData.disciplines = [];
+  } else {
+    const tpl = TEMPLATE[day] || TEMPLATE['Segunda'];
+    let discs = dayData.disciplines.length
+      ? dayData.disciplines.map(d => ({ ...d }))
+      : tpl.map(t => ({ name:t.name, type:t.type, topic:t.topic, duration:0 }));
+
+    const origSum = discs.reduce((s, d) => s + d.duration, 0);
+    if (origSum > 0) {
+      discs = discs.map(d => ({
+        ...d, duration: Math.max(20, Math.round((d.duration / origSum * newMins) / 5) * 5)
+      }));
+    } else {
+      discs = tpl.map(t => ({
+        name:t.name, type:t.type, topic:t.topic,
+        duration: Math.max(20, Math.round((t.w * newMins) / 5) * 5)
+      }));
+    }
+
+    const sum  = discs.reduce((s, d) => s + d.duration, 0);
+    const diff = newMins - sum;
+    if (diff !== 0 && discs.length) discs[0].duration = Math.max(20, discs[0].duration + diff);
+    dayData.disciplines = discs;
+  }
+
+  renderDayTuner();
+}
+
+function applySettings() {
+  settings.hoursPerDay = parseInt(document.getElementById('s-hours-range').value);
+  settings.examDate    = document.getElementById('s-exam-date').value;
+  saveAll();
+  renderWeekly();
+  closeSettings();
+  const today = new Date().toLocaleDateString('pt-BR');
+  document.getElementById('crono-ts').textContent = `Atualizado: ${today}`;
+}
+
+/* ── Keyboard close ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeSlot(); closeSettings(); }
+});
+
+/* ── Init ── */
+Auth.requireAuth();
+renderSidebar('cronograma');
+initSidebarToggle();
+
+document.getElementById('crono-ts').textContent =
+  `Cronograma: ${new Date().toLocaleDateString('pt-BR')}`;
+
+renderWeekly();
+saveAll();
+</script>
+</body>
+</html>
