@@ -18,6 +18,10 @@ export const NAV_ITEMS = [
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isLanding = pathname === "/";
+  const navItems = isLanding
+    ? NAV_ITEMS.filter((it) => it.to === "/" || it.to === "/cursos")
+    : NAV_ITEMS;
 
   return (
     <div className="min-h-screen bg-[oklch(0.985_0.005_285)] text-slate-800">
@@ -33,7 +37,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
-            {NAV_ITEMS.map((it) => {
+            {navItems.map((it) => {
               const active =
                 it.to === "/" ? pathname === "/" : pathname.startsWith(it.to);
               return (
@@ -79,7 +83,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         {open && (
           <nav className="lg:hidden border-t border-slate-200 bg-white px-4 py-3 flex flex-wrap gap-1">
-            {NAV_ITEMS.map((it) => {
+            {navItems.map((it) => {
               const active =
                 it.to === "/" ? pathname === "/" : pathname.startsWith(it.to);
               return (
