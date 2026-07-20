@@ -18,6 +18,10 @@ export const NAV_ITEMS = [
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isLanding = pathname === "/";
+  const navItems = isLanding
+    ? NAV_ITEMS.filter((it) => it.to === "/" || it.to === "/cursos")
+    : NAV_ITEMS;
 
   return (
     <div className="min-h-screen bg-[oklch(0.985_0.005_285)] text-slate-800">
