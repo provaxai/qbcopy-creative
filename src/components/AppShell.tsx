@@ -37,7 +37,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
-            {NAV_ITEMS.map((it) => {
+            {navItems.map((it) => {
               const active =
                 it.to === "/" ? pathname === "/" : pathname.startsWith(it.to);
               return (
@@ -83,7 +83,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         {open && (
           <nav className="lg:hidden border-t border-slate-200 bg-white px-4 py-3 flex flex-wrap gap-1">
-            {NAV_ITEMS.map((it) => {
+            {navItems.map((it) => {
               const active =
                 it.to === "/" ? pathname === "/" : pathname.startsWith(it.to);
               return (
