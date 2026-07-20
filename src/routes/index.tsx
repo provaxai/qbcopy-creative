@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "../components/AppShell";
+import { CURSOS } from "../lib/cursos-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
