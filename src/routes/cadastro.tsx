@@ -31,6 +31,7 @@ function CadastroPage() {
         "estudamais_user",
         JSON.stringify({ nome, email, criadoEm: new Date().toISOString() }),
       );
+      window.dispatchEvent(new Event("estudamais:auth"));
     } catch {}
     setTimeout(() => {
       setLoading(false);
