@@ -211,8 +211,41 @@ function Home() {
         </div>
       </section>
 
+      {/* Cursos em destaque */}
+      <section className="max-w-6xl mx-auto px-4 md:px-8 pb-16">
+        <div className="text-center mb-8">
+          <div className="text-xs font-bold tracking-widest text-indigo-600 uppercase">Cursos ativos</div>
+          <h2 className="mt-2 text-3xl md:text-4xl font-black text-slate-900">Comece por um curso</h2>
+          <p className="mt-2 text-slate-600">Clique em qualquer curso para abrir o edital verticalizado.</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {CURSOS.map((c) => (
+            <Link
+              key={c.slug}
+              to="/cursos/$slug"
+              params={{ slug: c.slug }}
+              className="group rounded-2xl overflow-hidden bg-white border border-slate-200 hover:border-indigo-300 hover:-translate-y-0.5 transition shadow-sm hover:shadow-lg"
+            >
+              <div className={`h-32 bg-gradient-to-br ${c.cor} grid place-items-center text-5xl`}>{c.emoji}</div>
+              <div className="p-5">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">{c.subtitulo}</div>
+                <div className="mt-1 font-bold text-slate-900">{c.titulo}</div>
+                <p className="mt-2 text-xs text-slate-600 line-clamp-3">{c.descricao}</p>
+                <div className="mt-4 text-sm font-semibold text-indigo-600 group-hover:underline">Abrir curso →</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-6 text-center">
+          <Link to="/cursos" className="inline-flex items-center rounded-full bg-slate-900 text-white font-semibold px-6 py-3 hover:bg-slate-800">
+            Ver todos os cursos →
+          </Link>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="max-w-5xl mx-auto px-4 md:px-8 pb-16">
+
         <div className="text-center mb-8">
           <div className="text-xs font-bold tracking-widest text-indigo-600 uppercase">Prova social</div>
           <h2 className="mt-2 text-3xl md:text-4xl font-black text-slate-900">Quem já estuda com a EstudaMais</h2>
