@@ -23,6 +23,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CursosSlugRouteImport } from './routes/cursos.$slug'
+import { Route as CursosSlugEstudarRouteImport } from './routes/cursos.$slug.estudar'
 
 const ResumosRoute = ResumosRouteImport.update({
   id: '/resumos',
@@ -94,6 +95,11 @@ const CursosSlugRoute = CursosSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => CursosRoute,
 } as any)
+const CursosSlugEstudarRoute = CursosSlugEstudarRouteImport.update({
+  id: '/estudar',
+  path: '/estudar',
+  getParentRoute: () => CursosSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -109,7 +115,8 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/prova-oral': typeof ProvaOralRoute
   '/resumos': typeof ResumosRoute
-  '/cursos/$slug': typeof CursosSlugRoute
+  '/cursos/$slug': typeof CursosSlugRouteWithChildren
+  '/cursos/$slug/estudar': typeof CursosSlugEstudarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,7 +132,8 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/prova-oral': typeof ProvaOralRoute
   '/resumos': typeof ResumosRoute
-  '/cursos/$slug': typeof CursosSlugRoute
+  '/cursos/$slug': typeof CursosSlugRouteWithChildren
+  '/cursos/$slug/estudar': typeof CursosSlugEstudarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -142,7 +150,8 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/prova-oral': typeof ProvaOralRoute
   '/resumos': typeof ResumosRoute
-  '/cursos/$slug': typeof CursosSlugRoute
+  '/cursos/$slug': typeof CursosSlugRouteWithChildren
+  '/cursos/$slug/estudar': typeof CursosSlugEstudarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/prova-oral'
     | '/resumos'
     | '/cursos/$slug'
+    | '/cursos/$slug/estudar'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/prova-oral'
     | '/resumos'
     | '/cursos/$slug'
+    | '/cursos/$slug/estudar'
   id:
     | '__root__'
     | '/'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/prova-oral'
     | '/resumos'
     | '/cursos/$slug'
+    | '/cursos/$slug/estudar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -311,15 +323,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CursosSlugRouteImport
       parentRoute: typeof CursosRoute
     }
+    '/cursos/$slug/estudar': {
+      id: '/cursos/$slug/estudar'
+      path: '/estudar'
+      fullPath: '/cursos/$slug/estudar'
+      preLoaderRoute: typeof CursosSlugEstudarRouteImport
+      parentRoute: typeof CursosSlugRoute
+    }
   }
 }
 
+interface CursosSlugRouteChildren {
+  CursosSlugEstudarRoute: typeof CursosSlugEstudarRoute
+}
+
+const CursosSlugRouteChildren: CursosSlugRouteChildren = {
+  CursosSlugEstudarRoute: CursosSlugEstudarRoute,
+}
+
+const CursosSlugRouteWithChildren = CursosSlugRoute._addFileChildren(
+  CursosSlugRouteChildren,
+)
+
 interface CursosRouteChildren {
-  CursosSlugRoute: typeof CursosSlugRoute
+  CursosSlugRoute: typeof CursosSlugRouteWithChildren
 }
 
 const CursosRouteChildren: CursosRouteChildren = {
-  CursosSlugRoute: CursosSlugRoute,
+  CursosSlugRoute: CursosSlugRouteWithChildren,
 }
 
 const CursosRouteWithChildren =
