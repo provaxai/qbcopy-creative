@@ -115,10 +115,20 @@ function CursoDetalhe() {
                 className="bg-transparent outline-none text-xs"
               />
             </label>
-            <button className="inline-flex items-center gap-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 text-sm">
-              🔒 Planejamento
-              <span className="text-[9px] bg-amber-400 text-amber-950 rounded px-1.5 py-0.5">PRO</span>
-            </button>
+            <Link
+              to="/cursos/$slug/estudar"
+              params={{ slug: curso.slug }}
+              className="inline-flex items-center gap-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 text-sm"
+            >
+              📊 Painel de Estudos
+            </Link>
+            <Link
+              to="/cursos/$slug/estudar"
+              params={{ slug: curso.slug }}
+              className="inline-flex items-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 text-sm"
+            >
+              📅 Planejamento
+            </Link>
             <button
               onClick={() => window.print()}
               className="inline-flex items-center gap-2 rounded-full bg-rose-50 border border-rose-200 text-rose-700 font-semibold px-4 py-2 text-sm hover:bg-rose-100"
